@@ -53,7 +53,7 @@
         </LinearLayout>
 
         <!--Placeholder for Fragment - Day/WeekPager,具体日程记录显示-->
-        <fragment
+        <FrameLayout
             android:id="@+id/fragment_frame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
