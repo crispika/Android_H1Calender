@@ -53,8 +53,9 @@
         </LinearLayout>
 
         <!--Placeholder for Fragment - Day/WeekPager,具体日程记录显示-->
+
         <FrameLayout
-            android:id="@+id/fragment_frame"
+            android:id="@+id/Event_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -92,13 +93,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:orientation="vertical"
         android:background="@android:color/white">
-
         <ListView
             android:id="@+id/left_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
         </ListView>
 
     </LinearLayout>
