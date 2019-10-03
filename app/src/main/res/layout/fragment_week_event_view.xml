@@ -4,14 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:id="@+id/tv_week_event"
+    <ListView
+        android:id="@+id/lv_week_event"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="I am week event view fragment"
-        android:textSize="24sp"
-        android:textColor="#000"
-        android:gravity="center" />
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

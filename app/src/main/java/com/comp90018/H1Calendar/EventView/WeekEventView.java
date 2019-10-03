@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -16,7 +17,8 @@ import com.comp90018.H1Calendar.R;
  */
 public class WeekEventView extends Fragment {
 
-    private TextView tv_day;
+    private TextView tv_week;
+    private ListView lv_week;
 
     public WeekEventView() {
         // Required empty public constructor
@@ -32,7 +34,9 @@ public class WeekEventView extends Fragment {
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        tv_day = view.findViewById(R.id.tv_day_event);
+        tv_week = view.findViewById(R.id.tv_week_event);
+        lv_week = view.findViewById(R.id.lv_week_event);
+        lv_week.setAdapter(new WeekEventListViewAdapter(WeekEventView.this.getActivity()));
     }
 
 }
