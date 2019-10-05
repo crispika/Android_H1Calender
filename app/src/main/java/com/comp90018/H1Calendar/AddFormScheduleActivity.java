@@ -27,6 +27,7 @@ import butterknife.OnClick;
 import butterknife.ButterKnife;
 
 import com.comp90018.H1Calendar.EventSettingActivity.EventColorSet;
+import com.comp90018.H1Calendar.EventSettingActivity.EventLocalSet;
 import com.comp90018.H1Calendar.utils.*;
 
 public class AddFormScheduleActivity extends Activity {
@@ -104,6 +105,10 @@ public class AddFormScheduleActivity extends Activity {
     void NeedNotify() {
         isNeedNotify = !isNeedNotify;
         cEvent.setIsNeedNotify(isNeedNotify);
+    }
+    @OnClick(R.id.event_local)
+    void openSetLocalActivity(){
+        startActivityForResult(new Intent(AddFormScheduleActivity.this, EventLocalSet.class), 1);
     }
 
     @OnClick(R.id.event_color)
@@ -262,8 +267,8 @@ public class AddFormScheduleActivity extends Activity {
          if (requestCode == 1) {
             if (resultCode == 1) {
                 if (data != null) {
-                    event_local.setText(data.getStringExtra("local"));
-                    cEvent.setLocal(data.getStringExtra("local"));
+                    event_local.setText(data.getStringExtra("location"));
+                    cEvent.setLocal(data.getStringExtra("location"));
                 }
             }
         } else if (requestCode == 2) {
