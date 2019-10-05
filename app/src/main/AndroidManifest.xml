@@ -16,6 +16,7 @@
         </activity>
         <activity android:name=".AddFormScheduleActivity" />
         <activity android:name=".AddQRCodeScheduleActivity" />
+        <activity android:name=".EventSettingActivity.EventColorSet" />
 
 
     </application>
