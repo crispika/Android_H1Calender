@@ -5,13 +5,11 @@
     import android.graphics.BitmapFactory;
     import android.net.Uri;
     import android.os.Bundle;
-    import android.os.Environment;
     import android.provider.MediaStore;
     import android.widget.ImageView;
 
     import androidx.annotation.Nullable;
 
-    import java.io.File;
     import java.io.IOException;
 
     import butterknife.BindView;
@@ -20,10 +18,8 @@
 
 
     public class AddQRCodeScheduleActivity extends Activity {
-        private static Uri imageUri;
-        public static final int PHOTO_REQUEST_CAMERA = 100;// 相机
-        public static final int PHOTO_REQUEST_GALLERY = 101;// 相册
-        public static File tempFile;
+        public static final int PHOTO_REQUEST_CAMERA = 100;// camera intent code
+        public static final int PHOTO_REQUEST_GALLERY = 101;// gallery intent code
         @BindView(R.id.QR_photo) ImageView image;
         @OnClick(R.id.bottom_camera)
         void openCamera(){
@@ -55,10 +51,10 @@
                         image.setImageBitmap(bitmap);
                     }
                     break;
-                case PHOTO_REQUEST_GALLERY:   //相册返回的数据（相册的返回码）
-                    Uri uri02 = data.getData();
+                case PHOTO_REQUEST_GALLERY:
+                    Uri uri = data.getData();
                     try {
-                        Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri02));
+                        Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri));
                         image.setImageBitmap(bitmap);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -70,9 +66,9 @@
 
 
         private void toGallery(){
-            Intent intent = new Intent(Intent.ACTION_PICK);  //跳转到 ACTION_IMAGE_CAPTURE
+            Intent intent = new Intent(Intent.ACTION_PICK);  // open gallery
             intent.setType("image/*");
-            startActivityForResult(intent,PHOTO_REQUEST_GALLERY); // 101: 相机的返回码参数（随便一个值就行，只要不冲突就好）
+            startActivityForResult(intent,PHOTO_REQUEST_GALLERY);
         }
 
         private void toCamera() {
