@@ -1,10 +1,13 @@
 package com.comp90018.H1Calendar;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 //import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -18,6 +21,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.comp90018.H1Calendar.EventView.DayEventView;
 import com.comp90018.H1Calendar.EventView.WeekEventView;
 import com.comp90018.H1Calendar.utils.CalendarManager;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionHelper;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout;
@@ -42,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
     private WeekEventView weekEventView;
     private Button btnDWswitch;
     private ListView leftList;
+    private NavigationView myNavigationView;
+
     //Region for basic UI
     //侧栏开关
     @BindView(R.id.drawer_layout)
@@ -92,7 +99,31 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         initCalendarView();
         init_FAB();
         dayEventView = new DayEventView();
+        weekEventView = new WeekEventView();
+        myNavigationView = this.findViewById(R.id.navigation);
+        if (myNavigationView != null) {
+            myNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                    switch(menuItem.getItemId()){
+                        case R.id.dayview:
+                            getSupportFragmentManager().beginTransaction().replace(R.id.Event_container, dayEventView).commitAllowingStateLoss();
+                            break;
+                        case R.id.weeklyview:
+                            getSupportFragmentManager().beginTransaction().replace(R.id.Event_container, weekEventView).commitAllowingStateLoss();
+                            break;
+                        default:
+                            break;
+                    }
+                    return false;
+                }
+            });
+        }
+        getSupportFragmentManager().beginTransaction().add(R.id.Event_container, dayEventView).commitAllowingStateLoss();
 
+//        Menu menuNav = myNavigationView.getMenu();
+//        MenuItem dayEventItem = menuNav.findItem(R.id.dayview);
+//        dayEventItem.setOnMenuItemClickListener()
         //可以在这里创建数据库
 
     }
