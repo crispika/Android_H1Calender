@@ -40,4 +40,9 @@ dependencies {
     //RXjava 1.0
     implementation 'io.reactivex:rxandroid:1.1.0'
     implementation 'io.reactivex:rxjava:1.1.0'
+
+    // navigation view
+    implementation 'com.android.support:design:28.0.0-rc01'
+    // circle image view
+    implementation 'de.hdodenhof:circleimageview:3.0.1'
 }

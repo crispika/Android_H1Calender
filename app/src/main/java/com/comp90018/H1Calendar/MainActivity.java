@@ -87,27 +87,10 @@ public class MainActivity extends Activity implements RapidFloatingActionContent
         setCalendarInfo();
         initCalendarView();
         init_FAB();
-
-        //Initiate day/week EventView
-        weekEventView = new WeekEventView();
         dayEventView = new DayEventView();
-        //find list view
-        leftList = findViewById(R.id.left_list);
-        //set list view adapter
-        leftList.setAdapter(new LeftListAdapter(MainActivity.this));
-        leftList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (i == 0) {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.Event_container, dayEventView).commitAllowingStateLoss();
-                } else if (i == 1) {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.Event_container, weekEventView).commitAllowingStateLoss();
-                }
 
-            }
-        });
-        //add dayEventView into Activity
-        getSupportFragmentManager().beginTransaction().add(R.id.Event_container, dayEventView).commitAllowingStateLoss();
+        //可以在这里创建数据库
+
     }
 
     /**
