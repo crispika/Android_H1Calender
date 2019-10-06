@@ -3,4 +3,18 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+
+    <!-- Event Color -->
+    <color name="Green">#009688</color>
+    <color name="Yellow">#F5A623</color>
+    <color name="Red">#dd3333</color>
+    <color name="Blue">#00537F</color>
+
+    <!--For CalendarView-->
+    <color name="cal_circle_current">#49B1A3</color>
+
+    <color name="calendar_text_current_day">#1D1D1D</color>
+    <color name="calendar_text_past_day">#6C242222</color>
+    <color name="cal_circle_selected">#dee1e2</color>
+    <color name="calendar_text_header">#FFFFFF</color>
 </resources>

@@ -4,37 +4,40 @@ import androidx.appcompat.app.AppCompatActivity;
 //import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
+
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.comp90018.H1Calendar.EventView.DayEventView;
 import com.comp90018.H1Calendar.EventView.WeekEventView;
+import com.comp90018.H1Calendar.utils.CalendarManager;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionHelper;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout;
 import com.wangjie.rapidfloatingactionbutton.contentimpl.labellist.RFACLabelItem;
 import com.wangjie.rapidfloatingactionbutton.contentimpl.labellist.RapidFloatingActionContentLabelList;
 
+import com.comp90018.H1Calendar.calendar.CalendarView;
+
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class MainActivity extends AppCompatActivity implements RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener {
+public class MainActivity extends Activity implements RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener {
 
-    private DayEventView dayEventView;
-    private WeekEventView weekEventView;
-    private Button btnDWswitch;
-    private ListView leftList;
     //Region for basic UI
     //侧栏开关
     @BindView(R.id.drawer_layout)
@@ -49,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
     private boolean isOpen = true;
 
     @BindView(R.id.calendar_view)
-    LinearLayout calendar_view;
+    CalendarView calendar_view;
 
     @OnClick(R.id.hide_calendar)
     public void hide_calendar_view() {
@@ -61,9 +64,11 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
             isOpen = true;
         }
     }
-    //End Region
 
-    //Region for Fab Layout
+    //CalendarView自定义控件的属性
+    private int calendar_CurrentDayTextColor, calendar_PastDayTextColor, calendar_HeaderTextColor;
+
+    //FAB 按钮
     private RapidFloatingActionHelper rfabHelper; //Helper for Fab
 
     @BindView(R.id.main_fab_layout)
@@ -72,13 +77,15 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
     @BindView(R.id.main_fab_button)
     RapidFloatingActionButton main_fab_button;
 
-    //End Region
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_drawerlayout);
         ButterKnife.bind(this);
+
+        setCalendarInfo();
+        initCalendarView();
         init_FAB();
 
         //Initiate day/week EventView
@@ -103,6 +110,39 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         getSupportFragmentManager().beginTransaction().add(R.id.Event_container, dayEventView).commitAllowingStateLoss();
     }
 
+    /**
+     * set the data in the calendar
+     */
+    private void setCalendarInfo() {
+        Calendar min = Calendar.getInstance();
+        Calendar max = Calendar.getInstance();
+
+        //前推10个月
+        min.add(Calendar.MONTH, -10);
+        min.add(Calendar.DAY_OF_MONTH, 1);
+
+        //后推10个月
+        max.add(Calendar.MONTH, 11);
+        max.set(Calendar.DAY_OF_MONTH, 1);
+        max.add(Calendar.DAY_OF_MONTH, -1);
+
+        Locale locale = Locale.getDefault();
+
+        CalendarManager.getInstance().initCalendar(min, max, locale);
+    }
+
+    /**
+     * init the style, color, theme of the calendar
+     */
+    private void initCalendarView(){
+        calendar_HeaderTextColor = getColor(R.color.calendar_text_header);
+        calendar_CurrentDayTextColor = getColor(R.color.calendar_text_current_day);
+        calendar_PastDayTextColor = getColor(R.color.calendar_text_past_day);
+
+        calendar_view.init(calendar_HeaderTextColor,calendar_CurrentDayTextColor,calendar_PastDayTextColor);
+    }
+
+    //region Fab Setting
     private void init_FAB() {
         RapidFloatingActionContentLabelList rfaContent = new RapidFloatingActionContentLabelList(this);
         rfaContent.setOnRapidFloatingActionContentLabelListListener(this);
@@ -154,6 +194,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
             case 0:
                 Intent intent_to_form = new Intent();
                 intent_to_form.setClass(this, AddFormScheduleActivity.class);
+                intent_to_form.putExtra("type","addEvent");
                 startActivity(intent_to_form);
                 break;
             case 1:
@@ -167,5 +208,6 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
 
     }
+    //endregion
 }
 
