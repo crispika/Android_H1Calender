@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class CalenderEvent implements Serializable {
 
-    private int id;
+    private String eventId;
     private String title;
     private boolean isAllday;//是否是全天
     private boolean isNeedNotify;//是否需要提醒
@@ -24,12 +24,12 @@ public class CalenderEvent implements Serializable {
 
     }
 
-    public int getId() {
-        return id;
+    public String getEventId() {
+        return eventId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setEventId(String id) {
+        this.eventId = id;
     }
 
     public String getTitle() {
