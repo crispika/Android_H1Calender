@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <item android:id="@+id/schedule"
+            android:checkable="true"
+            android:title="schedule"
+            android:icon="@drawable/ic_schedule"/>
+
+        <item android:id="@+id/dayview"
+            android:checkable="true"
+            android:title="day view"
+            android:icon="@drawable/ic_dayview"/>
+
+        <item android:id="@+id/weeklyview"
+            android:checkable="true"
+            android:title="weeklyview"
+            android:icon="@drawable/ic_weeklyview"/>
+
+        <item android:id="@+id/setting"
+            android:checkable="true"
+            android:title="setting"
+            android:icon="@drawable/ic_setting"/>
+
+        <item android:id="@+id/contactus"
+            android:checkable="true"
+            android:title="contact us"
+            android:icon="@drawable/ic_contactus"/>
+
+    </group>
+
+</menu>

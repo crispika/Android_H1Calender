@@ -1,15 +1,22 @@
 package com.comp90018.H1Calendar;
 
-import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
+//import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 
 
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.comp90018.H1Calendar.EventView.DayEventView;
+import com.comp90018.H1Calendar.EventView.WeekEventView;
 import com.comp90018.H1Calendar.utils.CalendarManager;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionHelper;
@@ -29,10 +36,13 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class MainActivity extends Activity implements RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener {
-    final String LOG_TAG = "Main Activity";
+public class MainActivity extends AppCompatActivity implements RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener {
 
-
+    private DayEventView dayEventView;
+    private WeekEventView weekEventView;
+    private Button btnDWswitch;
+    private ListView leftList;
+    //Region for basic UI
     //侧栏开关
     @BindView(R.id.drawer_layout)
     DrawerLayout drawer_layout;
@@ -81,6 +91,10 @@ public class MainActivity extends Activity implements RapidFloatingActionContent
         setCalendarInfo();
         initCalendarView();
         init_FAB();
+        dayEventView = new DayEventView();
+
+        //可以在这里创建数据库
+
     }
 
     /**
