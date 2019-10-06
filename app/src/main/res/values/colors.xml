@@ -3,4 +3,12 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+
+    <!--For CalendarView-->
+    <color name="cal_circle_current">#49B1A3</color>
+
+    <color name="calendar_text_current_day">#1D1D1D</color>
+    <color name="calendar_text_past_day">#6C242222</color>
+    <color name="cal_circle_selected">#dee1e2</color>
+    <color name="calendar_text_header">#FFFFFF</color>
 </resources>
