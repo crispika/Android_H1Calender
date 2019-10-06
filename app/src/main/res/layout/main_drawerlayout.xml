@@ -20,16 +20,12 @@
 
             <ImageButton
                 android:id="@+id/open_drawer_btn"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical"
-                android:background="@color/colorPrimaryDark"
                 android:src="@drawable/ic_menu_white_24dp" />
 
             <LinearLayout
                 android:id="@+id/hide_calendar"
-                android:layout_weight="2"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent">
                 <TextView
@@ -42,12 +38,19 @@
 
         </LinearLayout>
 
-        <!--Calendar 自定义组件-->
-        <com.comp90018.H1Calendar.calendar.CalendarView
+        <!--Placeholder for CalendarView月历栏-->
+        <LinearLayout
             android:id="@+id/calendar_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
+            android:layout_height="100dp"
+            android:background="#FF64D6CB">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="placeholder for Calendar View" />
+        </LinearLayout>
 
         <!--Placeholder for Fragment - Day/WeekPager,具体日程记录显示-->
 

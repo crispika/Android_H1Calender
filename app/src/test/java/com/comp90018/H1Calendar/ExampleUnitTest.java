@@ -1,13 +1,6 @@
 package com.comp90018.H1Calendar;
 
-import com.comp90018.H1Calendar.model.WeekItem;
-import com.comp90018.H1Calendar.utils.CalendarManager;
-
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Locale;
 
 import static org.junit.Assert.*;
 
@@ -21,30 +14,4 @@ public class ExampleUnitTest {
     public void addition_isCorrect() {
         assertEquals(4, 2 + 2);
     }
-
-    @Test
-    public void testCalendarManager(){
-        Calendar min = Calendar.getInstance();
-        Calendar max = Calendar.getInstance();
-
-        //前推10个月
-        min.add(Calendar.MONTH, -10);
-        min.add(Calendar.DAY_OF_MONTH, 1);
-
-        //后推10个月
-        max.add(Calendar.MONTH, 11);
-        max.set(Calendar.DAY_OF_MONTH, 1);
-        max.add(Calendar.DAY_OF_MONTH, -1);
-
-        Locale locale = Locale.getDefault();
-
-        CalendarManager.getInstance().initCalendar(min, max, locale);
-
-        ArrayList<WeekItem> week_list = CalendarManager.getInstance().getWeekList();
-        System.out.println("Size of week_list: " + week_list.size());
-        System.out.println(week_list.get(0).getDayItems().get(0).getDate());
-
-    }
-
 }
-
