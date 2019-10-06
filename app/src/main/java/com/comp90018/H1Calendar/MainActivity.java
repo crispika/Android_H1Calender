@@ -36,8 +36,12 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class MainActivity extends Activity implements RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener {
+public class MainActivity extends AppCompatActivity implements RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener {
 
+    private DayEventView dayEventView;
+    private WeekEventView weekEventView;
+    private Button btnDWswitch;
+    private ListView leftList;
     //Region for basic UI
     //侧栏开关
     @BindView(R.id.drawer_layout)
