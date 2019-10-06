@@ -3,4 +3,10 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+
+    <!-- Event Color -->
+    <color name="Green">#009688</color>
+    <color name="Yellow">#F5A623</color>
+    <color name="Red">#dd3333</color>
+    <color name="Blue">#00537F</color>
 </resources>

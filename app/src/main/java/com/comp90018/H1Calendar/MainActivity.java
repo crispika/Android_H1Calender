@@ -123,6 +123,7 @@ public class MainActivity extends Activity implements RapidFloatingActionContent
             case 0:
                 Intent intent_to_form = new Intent();
                 intent_to_form.setClass(this, AddFormScheduleActivity.class);
+                intent_to_form.putExtra("type","addEvent");
                 startActivity(intent_to_form);
                 break;
             case 1:
