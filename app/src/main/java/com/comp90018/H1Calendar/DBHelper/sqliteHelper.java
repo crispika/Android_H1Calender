@@ -5,29 +5,21 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 import com.comp90018.H1Calendar.utils.CalenderEvent;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 public class sqliteHelper extends SQLiteOpenHelper {
 
-    public sqliteHelper(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, version);
-    }
-
-
     // create a DB
-    public static final String DATABASENAME = "dbName.db";
-    // create a table
-    public static final String TABLENAME = "studentTable";
-    public static final String col1 = "ID";
-    public static final String col2 = "NAME";
-    public static final String col3 = "SURNAME";
-    public static final String col4 = "MARKS";
-
-
+    public static final String DATABASENAME = "H1Calendar.db";
 
     public sqliteHelper(@Nullable Context context) {
         super(context, DATABASENAME, null, 1);
@@ -40,14 +32,17 @@ public class sqliteHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
-        // create table1
-        String sqlStatement = "CREATE TABLE IF NOT EXISTS alarmlist(_id integer primary key autoincrement,title char(20),isAllday int(20)," +
-                "isVibrate int(20),year int(20),month int(20),day int(20),startTimeHour int(20),startTimeMinute int(20),"+
-                "endTimeHour int(20),endTimeMinute int(20),alarmTime char(20),alarmColor char(20),alarmTonePath char(20),local char(20),"+
-                "description char(100),replay char(20))";
+        // create user table
+        String createUserTable = "CREATE TABLE USER(userId char(36) PRIMARY KEY, userName char(20), password char(20), email char(50))";
+        sqLiteDatabase.execSQL(createUserTable);
 
-        sqLiteDatabase.execSQL(sqlStatement);
+        // create event table
+        String createEventTable = "CREATE TABLE EVENT(eventId char(36) PRIMARY KEY, title char(20), isAllday int(20), isNeedNotify int(20), date char(20), startTimeHour int(20),startTimeMinute int(20), endTimeHour int(20),endTimeMinute int(20), eventColor char(20), local char(20), description char(500),updateTime datetime)";
+        sqLiteDatabase.execSQL(createEventTable);
 
+
+        // print log msg
+        Log.d("createDB", "successful");
     }
 
     // 如果数据库文件存在，并且当前版本号高于上次创建或升级的版本号，SQLiteOpenHelper会调用onUpgrade()方法，调用该方法后会更新数据库的版本号。
@@ -55,24 +50,49 @@ public class sqliteHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLENAME);
+        String dropUserTable = "DROP TABLE IF EXISTS USER";
+        sqLiteDatabase.execSQL(dropUserTable);
+
+        String dropEventTable = "DROP TABLE IF EXISTS EVENT";
+        sqLiteDatabase.execSQL(dropEventTable);
+
         onCreate(sqLiteDatabase);
+
+        // print log msg
+        Log.d("updateDB", "successful");
 
     }
 
 
-
-
-
     // 增加
-    public boolean insert(CalenderEvent name){
+    public boolean insert(CalenderEvent calenderEvent){
 
         SQLiteDatabase sqlitedb = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
 //        contentValues.put(col2, name);
 
-        long result = sqlitedb.insert(TABLENAME, null, contentValues);
+        // combine day, month, year into date
+        int day = calenderEvent.getDay();
+        int month = calenderEvent.getMonth();
+        int year = calenderEvent.getYear();
+
+        String dateStr = day + "/" + month + "/" + year;
+
+        contentValues.put("date", dateStr);
+        contentValues.put("startTimeHour", calenderEvent.getStartTimeHour());
+        contentValues.put("startTimeMinute", calenderEvent.getStartTimeMinute());
+        contentValues.put("endTimeHour", calenderEvent.getEndTimeHour());
+        contentValues.put("endTimeMinute", calenderEvent.getEndTimeMinute());
+        contentValues.put("eventColor", calenderEvent.getEventColor());
+        contentValues.put("local", calenderEvent.getLocal());
+        contentValues.put("description", calenderEvent.getDescription());
+
+        // CalenderEvent中没有updateTime
+        // contentValues.put("updateTime", calenderEvent.getUpdateTime());
+
+        long result = sqlitedb.insert("EVENT", null, contentValues);
+
         if(result == -1){
             return false;
         }
@@ -87,14 +107,14 @@ public class sqliteHelper extends SQLiteOpenHelper {
     // 删除
     public int deleteDataById(String id){
         SQLiteDatabase sqlitedb = this.getWritableDatabase();
-        return sqlitedb.delete(TABLENAME, "id = ?", new String[] {id});
+        return sqlitedb.delete("EVENT", "id = ?", new String[] {id});
     }
 
     // 查找
     // get all data
     public Cursor getAllData(){
         SQLiteDatabase sqlitedb = this.getWritableDatabase();
-        Cursor result = sqlitedb.rawQuery("select * from " + TABLENAME, null);
+        Cursor result = sqlitedb.rawQuery("select * from " + "EVENT", null);
         return result;
 
     }
@@ -104,9 +124,9 @@ public class sqliteHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase sqlitedb = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(col2, id);
+        contentValues.put("col2", id);
 
-        sqlitedb.update(TABLENAME, contentValues, "ID = ?", new String[] {id});
+        sqlitedb.update("EVENT", contentValues, "ID = ?", new String[] {id});
         return true;
 
     }

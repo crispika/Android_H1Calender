@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.DatePicker;
@@ -156,6 +157,14 @@ public class AddFormScheduleActivity extends Activity {
             }
             cEvent.setEventId(getEventID());
             //TODO: store event into DB
+            sqliteHelper helper = new sqliteHelper(this);
+            if(helper.insert(cEvent)){
+                Log.d("insert", "successful");
+            }
+            else{
+                Log.d("insert", "unsuccessful");
+            }
+
 
             boolean isSucceed = dbhelper.insert(cEvent);
             if(isSucceed){
