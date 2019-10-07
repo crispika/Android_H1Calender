@@ -149,6 +149,8 @@ public class AddFormScheduleActivity extends Activity {
                 cEvent.setIsAllday(true);
                 cEvent.setStartTimeHour(0);
                 cEvent.setStartTimeMinute(0);
+                cEvent.setEndTimeHour(0);
+                cEvent.setEndTimeMinute(0);
             } else {
                 cEvent.setIsAllday(false);
             }
