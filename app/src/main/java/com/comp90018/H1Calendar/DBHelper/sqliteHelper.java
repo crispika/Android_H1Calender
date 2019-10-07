@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
-import com.google.android.material.tabs.TabLayout;
+import com.comp90018.H1Calendar.utils.CalenderEvent;
 
 
 public class sqliteHelper extends SQLiteOpenHelper {
@@ -29,9 +29,9 @@ public class sqliteHelper extends SQLiteOpenHelper {
 
 
 
-//    public sqliteHelper(@Nullable Context context) {
-//        super(context, DATABASENAME, null, 1);
-//    }
+    public sqliteHelper(@Nullable Context context) {
+        super(context, DATABASENAME, null, 1);
+    }
 
 
     // onCreate()方法在数据库文件第一次创建时调用。
@@ -65,12 +65,12 @@ public class sqliteHelper extends SQLiteOpenHelper {
 
 
     // 增加
-    public boolean insert(String name){
+    public boolean insert(CalenderEvent name){
 
         SQLiteDatabase sqlitedb = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
-        contentValues.put(col2, name);
+//        contentValues.put(col2, name);
 
         long result = sqlitedb.insert(TABLENAME, null, contentValues);
         if(result == -1){

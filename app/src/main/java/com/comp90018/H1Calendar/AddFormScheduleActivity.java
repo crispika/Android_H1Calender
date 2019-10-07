@@ -21,11 +21,13 @@ import androidx.core.content.ContextCompat;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.ButterKnife;
 
+import com.comp90018.H1Calendar.DBHelper.sqliteHelper;
 import com.comp90018.H1Calendar.EventSettingActivity.EventColorSet;
 import com.comp90018.H1Calendar.EventSettingActivity.EventLocalSet;
 import com.comp90018.H1Calendar.utils.*;
@@ -38,9 +40,10 @@ public class AddFormScheduleActivity extends Activity {
     private Calendar startTime;
     private Calendar endTime;
     private CalenderEvent cEvent;
-    private int eventId;
+    private String eventId;
     private boolean isAllDay = false;
     private boolean isNeedNotify = false;
+    private sqliteHelper dbhelper;
 
     @BindView(R.id.event_title)
     EditText event_title;
@@ -147,10 +150,16 @@ public class AddFormScheduleActivity extends Activity {
             } else {
                 cEvent.setIsAllday(false);
             }
-
+            cEvent.setEventId(getEventID());
             //TODO: store event into DB
 
-            Toast.makeText(this, "Save Sucessful!", Toast.LENGTH_SHORT).show();
+            boolean isSucceed = dbhelper.insert(cEvent);
+            if(isSucceed){
+                Toast.makeText(this, "Save Sucessful!", Toast.LENGTH_SHORT).show();
+            }else {
+                Toast.makeText(this, "Save ERROR!", Toast.LENGTH_SHORT).show();
+            }
+
             startActivity(new Intent(this, MainActivity.class));
             finish();
         }
@@ -169,7 +178,7 @@ public class AddFormScheduleActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_form_schedule);
         ButterKnife.bind(this);
-
+        dbhelper = new sqliteHelper(getApplicationContext());
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this,R.color.colorPrimary));
         cEvent = new CalenderEvent();
@@ -177,12 +186,12 @@ public class AddFormScheduleActivity extends Activity {
             edit_event_title.setText("New Event");
         } else {
             Intent intent = getIntent();
-            CalenderEvent bean = (CalenderEvent) intent.getSerializableExtra("CalenderEvent");
-            eventId = bean.getId();
-            event_title.setText(bean.getTitle());
-            event_color.setText(bean.getEventColor());
-            event_detail.setText(bean.getDescription());
-            event_local.setText(bean.getLocal());
+            CalenderEvent StoreEvent = (CalenderEvent) intent.getSerializableExtra("CalenderEvent");
+            eventId = StoreEvent.getEventId();
+            event_title.setText(StoreEvent.getTitle());
+            event_color.setText(StoreEvent.getEventColor());
+            event_detail.setText(StoreEvent.getDescription());
+            event_local.setText(StoreEvent.getLocal());
             edit_event_title.setText("Edit Event");
 
         }
@@ -198,6 +207,9 @@ public class AddFormScheduleActivity extends Activity {
                 calendar.set(year, monthOfYear, dayOfMonth);
                 SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd  EEE");
                 event_date.setText(df.format(calendar.getTime()));
+                cEvent.setYear(year);
+                cEvent.setMonth(monthOfYear);
+                cEvent.setDay(dayOfMonth);
 
             }
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
@@ -242,6 +254,7 @@ public class AddFormScheduleActivity extends Activity {
                 calendar.set(Calendar.MINUTE, minute);
                 SimpleDateFormat df = new SimpleDateFormat("HH:mm");
                 if(startTime == null || calendar.after(startTime)){
+                    endTime = calendar;
                     event_end_time.setText("To:    " + df.format(calendar.getTime()));
                     //设置开始时间的小时、分钟
                     cEvent.setEndTimeHour(hourOfDay);
@@ -280,6 +293,13 @@ public class AddFormScheduleActivity extends Activity {
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private String getEventID(){
+        UUID uuid = UUID.randomUUID();
+        String uniqueId = uuid.toString();
+        System.out.println("eventID: "+uniqueId);
+        return uniqueId;
     }
 
 
