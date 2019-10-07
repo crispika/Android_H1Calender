@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.DatePicker;
@@ -128,6 +129,8 @@ public class AddFormScheduleActivity extends Activity {
             Toast.makeText(getApplicationContext(), "Event Date Missing",
                     Toast.LENGTH_SHORT).show();
         } else {
+            //set title
+            cEvent.setTitle(event_title.getText().toString());
             //event description
             if (event_detail.getText().toString().equals("")) {
                 cEvent.setDescription("None");
@@ -147,11 +150,21 @@ public class AddFormScheduleActivity extends Activity {
                 cEvent.setIsAllday(true);
                 cEvent.setStartTimeHour(0);
                 cEvent.setStartTimeMinute(0);
+                cEvent.setEndTimeHour(0);
+                cEvent.setEndTimeMinute(0);
             } else {
                 cEvent.setIsAllday(false);
             }
             cEvent.setEventId(getEventID());
             //TODO: store event into DB
+            sqliteHelper helper = new sqliteHelper(this);
+            if(helper.insert(cEvent)){
+                Log.d("insert", "successful");
+            }
+            else{
+                Log.d("insert", "unsuccessful");
+            }
+
 
             boolean isSucceed = dbhelper.insert(cEvent);
             if(isSucceed){
