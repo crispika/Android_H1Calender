@@ -207,6 +207,9 @@ public class AddFormScheduleActivity extends Activity {
                 calendar.set(year, monthOfYear, dayOfMonth);
                 SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd  EEE");
                 event_date.setText(df.format(calendar.getTime()));
+                cEvent.setYear(year);
+                cEvent.setMonth(monthOfYear);
+                cEvent.setDay(dayOfMonth);
 
             }
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
