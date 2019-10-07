@@ -128,6 +128,8 @@ public class AddFormScheduleActivity extends Activity {
             Toast.makeText(getApplicationContext(), "Event Date Missing",
                     Toast.LENGTH_SHORT).show();
         } else {
+            //set title
+            cEvent.setTitle(event_title.getText().toString());
             //event description
             if (event_detail.getText().toString().equals("")) {
                 cEvent.setDescription("None");
