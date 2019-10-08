@@ -21,7 +21,9 @@ import android.widget.Toast;
 import androidx.core.content.ContextCompat;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.UUID;
 
 import butterknife.BindView;
@@ -157,14 +159,6 @@ public class AddFormScheduleActivity extends Activity {
             }
             cEvent.setEventId(getEventID());
             //TODO: store event into DB
-            sqliteHelper helper = new sqliteHelper(this);
-            if(helper.insert(cEvent)){
-                Log.d("insert", "successful");
-            }
-            else{
-                Log.d("insert", "unsuccessful");
-            }
-
 
             boolean isSucceed = dbhelper.insert(cEvent);
             if(isSucceed){
@@ -172,6 +166,40 @@ public class AddFormScheduleActivity extends Activity {
             }else {
                 Toast.makeText(this, "Save ERROR!", Toast.LENGTH_SHORT).show();
             }
+
+
+            // test for selection statement
+
+            // weekly
+//            List<CalenderEvent> weeklyCalenderEventList = new ArrayList<CalenderEvent>();
+//            weeklyCalenderEventList = dbhelper.getEventsByWeek("8/9/2019", "8/9/2019");
+//            Log.d("weekly", weeklyCalenderEventList.size()+"");
+//
+//            CalenderEvent c1 = new CalenderEvent();
+//            c1 = weeklyCalenderEventList.get(weeklyCalenderEventList.size() - 1);
+//            Log.d("weekly", c1.getTitle() + " day " + c1.getDay() + " month " + c1.getMonth() + " year " + c1.getYear());
+//
+//            // daily
+//            List<CalenderEvent> dailyCalenderEventList = new ArrayList<CalenderEvent>();
+//            dailyCalenderEventList = dbhelper.getEventsByDay("8/9/2019");
+//            Log.d("daily", dailyCalenderEventList.size()+"");
+//
+//            CalenderEvent c2 = new CalenderEvent();
+//            c2 = dailyCalenderEventList.get(dailyCalenderEventList.size() - 1);
+//            Log.d("daily", c2.getTitle() + " day " + c2.getDay() + " month " + c2.getMonth() + " year " + c2.getYear());
+//
+//            // all
+//            List<CalenderEvent> allCalenderEventList = new ArrayList<CalenderEvent>();
+//            allCalenderEventList = dbhelper.getAllEvents();
+//            Log.d("all", allCalenderEventList.size()+"");
+//
+//            CalenderEvent c3 = new CalenderEvent();
+//            c3 = allCalenderEventList.get(allCalenderEventList.size() - 1);
+//            Log.d("all", c3.getTitle() + " day " + c3.getDay() + " month " + c3.getMonth() + " year " + c3.getYear());
+
+
+            // end here
+
 
             startActivity(new Intent(this, MainActivity.class));
             finish();
