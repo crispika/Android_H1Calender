@@ -7,100 +7,100 @@
     android:layout_height="match_parent">
 
     <!--DrawerLayout第一个子view是内容区-->
-    <LinearLayout
+    <!--FloatingActionButton FAB 组件-->
+    <com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout xmlns:rfal="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/main_fab_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        rfal:rfal_frame_alpha="0.7"
+        rfal:rfal_frame_color="#ffffff">
 
-        <!--导航栏-->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimaryDark"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <ImageButton
-                android:id="@+id/open_drawer_btn"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical"
-                android:background="@color/colorPrimaryDark"
-                android:src="@drawable/ic_menu_white_24dp" />
-
+            <!--导航栏-->
             <LinearLayout
-                android:id="@+id/hide_calendar"
-                android:layout_weight="2"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent">
-                <TextView
-                    android:layout_width="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimaryDark"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/open_drawer_btn"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="Placeholder for Month Title" />
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:background="@color/colorPrimaryDark"
+                    android:src="@drawable/ic_menu_white_24dp" />
+
+                <LinearLayout
+                    android:id="@+id/hide_calendar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Placeholder for Month Title" />
+                </LinearLayout>
+
             </LinearLayout>
 
+            <!--Calendar 自定义组件-->
+            <com.comp90018.H1Calendar.calendar.CalendarView
+                android:id="@+id/calendar_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
+            <!--Placeholder for Fragment - Day/WeekPager,具体日程记录显示-->
+
+            <FrameLayout
+                android:id="@+id/Event_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
-        <!--Calendar 自定义组件-->
-        <com.comp90018.H1Calendar.calendar.CalendarView
-            android:id="@+id/calendar_view"
-            android:layout_width="match_parent"
+
+        <com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton xmlns:rfab="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/main_fab_button"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            />
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="15dp"
+            android:layout_marginBottom="15dp"
+            android:padding="8dp"
+            rfab:rfab_color_normal="#37474f"
+            rfab:rfab_color_pressed="#263238"
+            rfab:rfab_drawable="@drawable/rfab__drawable_rfab_default"
+            rfab:rfab_shadow_color="#999999"
+            rfab:rfab_shadow_dx="0dp"
+            rfab:rfab_shadow_dy="5dp"
+            rfab:rfab_shadow_radius="7dp"
+            rfab:rfab_size="normal" />
+    </com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout>
 
-        <!--Placeholder for Fragment - Day/WeekPager,具体日程记录显示-->
-
-        <FrameLayout
-            android:id="@+id/Event_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <!--FloatingActionButton FAB 组件-->
-        <com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout xmlns:rfal="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/main_fab_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            rfal:rfal_frame_alpha="0.7"
-            rfal:rfal_frame_color="#ffffff">
-
-            <com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton xmlns:rfab="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/main_fab_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginRight="15dp"
-                android:layout_marginBottom="15dp"
-                android:padding="8dp"
-                rfab:rfab_color_normal="#37474f"
-                rfab:rfab_color_pressed="#263238"
-                rfab:rfab_drawable="@drawable/rfab__drawable_rfab_default"
-                rfab:rfab_shadow_color="#999999"
-                rfab:rfab_shadow_dx="0dp"
-                rfab:rfab_shadow_dy="5dp"
-                rfab:rfab_shadow_radius="7dp"
-                rfab:rfab_size="normal" />
-        </com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout>
-
-    </LinearLayout>
 
     <!--DrawerLayout第二个子view会作为侧滑菜单-->
-<!--    <LinearLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:layout_gravity="start"-->
-<!--        android:background="@android:color/white">-->
+    <!--    <LinearLayout-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent"-->
+    <!--        android:layout_gravity="start"-->
+    <!--        android:background="@android:color/white">-->
 
-<!--        <ListView-->
-<!--            android:id="@+id/left_list"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent">-->
+    <!--        <ListView-->
+    <!--            android:id="@+id/left_list"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="match_parent">-->
 
-<!--        </ListView>-->
+    <!--        </ListView>-->
 
-<!--    </LinearLayout>-->
+    <!--    </LinearLayout>-->
 
 
     <!--navigation view-->
