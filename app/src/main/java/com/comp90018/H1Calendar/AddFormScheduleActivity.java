@@ -196,6 +196,11 @@ public class AddFormScheduleActivity extends Activity {
 //            CalenderEvent c3 = new CalenderEvent();
 //            c3 = allCalenderEventList.get(allCalenderEventList.size() - 1);
 //            Log.d("all", c3.getTitle() + " day " + c3.getDay() + " month " + c3.getMonth() + " year " + c3.getYear());
+//
+//            // select an event by event Id
+//            CalenderEvent c4 = new CalenderEvent();
+//            c4 = dbhelper.getEventByEventId("3984429d-f33c-4816-abb7-87d77f32fbce");
+//            Log.d("eventId", c4.getTitle() + " day " + c4.getDay() + " month " + c4.getMonth() + " year " + c4.getYear());
 
 
             // end here

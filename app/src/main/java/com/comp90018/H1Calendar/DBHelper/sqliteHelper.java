@@ -114,6 +114,44 @@ public class sqliteHelper extends SQLiteOpenHelper {
 
 
     // 查找
+    // get an event by eventId
+    public CalenderEvent getEventByEventId(String eventId){
+        SQLiteDatabase sqlitedb = this.getWritableDatabase();
+
+        CalenderEvent calenderEvent = new CalenderEvent();
+
+        Cursor cursor = sqlitedb.rawQuery("SELECT * FROM EVENT WHERE eventId = ?", new String[] {eventId});
+
+        while (cursor.moveToNext()){
+
+            calenderEvent.setEventId(cursor.getString(0));
+            calenderEvent.setTitle(cursor.getString(1));
+            calenderEvent.setIsAllday((cursor.getInt(2)==1)?true:false);
+            calenderEvent.setIsNeedNotify((cursor.getInt(3)==1)?true:false);
+
+            String date = cursor.getString(4);
+            String[] subStrings = date.split("/");
+            calenderEvent.setDay(Integer.parseInt(subStrings[0]));
+            calenderEvent.setMonth(Integer.parseInt(subStrings[1]));
+            calenderEvent.setYear(Integer.parseInt(subStrings[2]));
+
+            calenderEvent.setStartTimeHour(Integer.parseInt(cursor.getString(5)));
+            calenderEvent.setStartTimeMinute(Integer.parseInt(cursor.getString(6)));
+            calenderEvent.setEndTimeHour(Integer.parseInt(cursor.getString(7)));
+            calenderEvent.setEndTimeMinute(Integer.parseInt(cursor.getString(8)));
+            calenderEvent.setEventColor(cursor.getString(9));
+            calenderEvent.setLocal(cursor.getString(10));
+            calenderEvent.setDescription(cursor.getString(11));
+
+        }
+
+
+
+        return calenderEvent;
+
+    }
+
+
     // get all events
     // input: userId
     public List<CalenderEvent> getAllEvents(){
