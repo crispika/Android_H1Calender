@@ -16,6 +16,8 @@ import com.comp90018.H1Calendar.R;
 import com.comp90018.H1Calendar.model.DayItem;
 import com.comp90018.H1Calendar.model.WeekItem;
 import com.comp90018.H1Calendar.utils.CalendarManager;
+import com.comp90018.H1Calendar.utils.EventBus;
+import com.comp90018.H1Calendar.utils.Events;
 
 import java.util.ArrayList;
 
@@ -108,11 +110,11 @@ public class WeekViewAdapter extends RecyclerView.Adapter<WeekViewAdapter.WeekVi
                 //clear下方曾经用过的设置，下面重新设置，否则会因为view recycle而出现错误设置
                 month_label.setVisibility(View.GONE);
                 circle.setVisibility(View.GONE);
-                day_label.setTypeface(null,Typeface.NORMAL);
-                month_label.setTypeface(null,Typeface.NORMAL);
+                day_label.setTypeface(null, Typeface.NORMAL);
+                month_label.setTypeface(null, Typeface.NORMAL);
 
-                //TODO to set click circle color for selected day
-                //dayview.setOnClickListener(view ->);
+                //Send Click event
+                dayview.setOnClickListener(view -> EventBus.getInstance().send(new Events.DayClickedEvent(dayItem)));
 
                 day_label.setText(dayItem.getDayOfTheMonth() + "");
                 //设置字体颜色
@@ -123,21 +125,24 @@ public class WeekViewAdapter extends RecyclerView.Adapter<WeekViewAdapter.WeekVi
                     day_label.setTextColor(currentDayTextColor);
                     month_label.setTextColor(currentDayTextColor);
                 }
+
+                //如果被选中，就只显示选中的背景circle
+                if (dayItem.isSelected()) {
+                    circle.setVisibility(View.VISIBLE);
+                    circle.setBackgroundResource(R.drawable.dayview_circle_selected);
+                } else if (dayItem.isToday()) {
+                    circle.setVisibility(View.VISIBLE);
+                    circle.setBackgroundResource(R.drawable.dayview_circle_current);
+                }
                 //控制每月第一天显示month_label
-                if (dayItem.isFirstDayOfTheMonth()) {
+                else if (dayItem.isFirstDayOfTheMonth()) {
                     month_label.setVisibility(View.VISIBLE);
                     month_label.setText(dayItem.getMonth());
                     //字体加粗
                     month_label.setTypeface(null, Typeface.BOLD);
-                    day_label.setTypeface(null,Typeface.BOLD);
+                    day_label.setTypeface(null, Typeface.BOLD);
                     //System.err.println("Month setted for" + dayItem.toString());
                 }
-
-                if (dayItem.isToday()){
-                    circle.setVisibility(View.VISIBLE);
-                    circle.setBackgroundResource(R.drawable.dayview_circle_current);
-                }
-
             }
         }
     }

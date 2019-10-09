@@ -13,9 +13,10 @@ import rx.subjects.Subject;
 public class EventBus {
     public static EventBus instance;
 
-    private final Subject<Object, Object> eventBus = new SerializedSubject<>(PublishSubject.create());
+    //使subject线程安全
+    private static final Subject<Object, Object> eventBus = new SerializedSubject<>(PublishSubject.create());
 
-    public EventBus getInstance(){
+    public static EventBus getInstance(){
         if (instance == null) {
             instance = new EventBus();
         }
@@ -23,7 +24,7 @@ public class EventBus {
     }
 
     //发送event
-    public void send(Object object){eventBus.onNext(object);}
+    public static void send(Object object){eventBus.onNext(object);}
     //得到subject
     public Observable<Object> getSubject(){return eventBus;}
 }

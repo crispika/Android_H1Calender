@@ -2,7 +2,6 @@ package com.comp90018.H1Calendar.model;
 
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class DayItem implements Serializable {
@@ -12,7 +11,7 @@ public class DayItem implements Serializable {
     private int mDayOfTheWeek; //一个星期中的第几天
     private boolean mToday; //是否是今天
     private boolean mFirstDayOfTheMonth = false; //是否是当前月的第一天
-    private boolean mSelected;//是否选中
+    private boolean isSelected;//是否选中
     private String mMonth; // 月份名的简称
     private int weekListPosition;
 
@@ -58,11 +57,11 @@ public class DayItem implements Serializable {
     }
 
     public boolean isSelected() {
-        return mSelected;
+        return isSelected;
     }
 
     public void setSelected(boolean selected) {
-        this.mSelected = selected;
+        this.isSelected = selected;
     }
 
     public boolean isFirstDayOfTheMonth() {
