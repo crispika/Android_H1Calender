@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.comp90018.H1Calendar.R;
 import com.comp90018.H1Calendar.model.WeekItem;
@@ -15,9 +14,7 @@ import com.comp90018.H1Calendar.utils.CalendarManager;
 import com.comp90018.H1Calendar.utils.DateManager;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 /**
  * CalendarView is a customized widget for a section to display a scrollable calendar with click/scroll events.
@@ -76,6 +73,7 @@ public class CalendarView extends LinearLayout {
         MarginLayoutParams layoutParams = (MarginLayoutParams) getLayoutParams();
         layoutParams.height  = (int) (getResources().getDimension(R.dimen.calendarview_header) + 5 * getResources().getDimension(R.dimen.calendarview_weekitem));
         setLayoutParams(layoutParams);
+        //TODO 接收click事件，
     }
     //endregion
 
@@ -108,7 +106,7 @@ public class CalendarView extends LinearLayout {
         }
 
         if (position != null) {
-            //post()方法run
+            //Example处用了post()方法run
             //weekView.post(() -> scrollToPosition(position));
             scrollToPosition(position);
         }
