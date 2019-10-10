@@ -23,31 +23,44 @@
             <!--导航栏-->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:background="@color/colorPrimaryDark"
                 android:orientation="horizontal">
 
                 <ImageButton
                     android:id="@+id/open_drawer_btn"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
+                    android:layout_height="30dp"
                     android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:scaleType="centerInside"
                     android:background="@color/colorPrimaryDark"
                     android:src="@drawable/ic_menu_white_24dp" />
 
                 <LinearLayout
                     android:id="@+id/hide_calendar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="2">
+                    android:layout_width="270dp"
+                    android:layout_height="match_parent">
 
                     <TextView
+                        android:id="@+id/title_month_label"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="Placeholder for Month Title" />
+                        android:layout_height="30dp"
+                        android:layout_gravity="center_vertical"
+                        android:textSize="20dp"
+                        android:gravity="center"
+                        android:textColor="#fff" />
                 </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/back_to_today"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:scaleType="centerInside"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_today_white_24dp"
+                    android:background="@color/colorPrimaryDark"/>
 
             </LinearLayout>
 

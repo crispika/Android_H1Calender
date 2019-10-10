@@ -1,5 +1,7 @@
 package com.comp90018.H1Calendar.utils;
 
+import com.google.gson.Gson;
+
 import java.io.Serializable;
 
 public class CalenderEvent implements Serializable {
@@ -142,6 +144,12 @@ public class CalenderEvent implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String toJsonStr(){
+        Gson gson = new Gson();
+        String json = gson.toJson(this);
+        return json;
     }
 
 

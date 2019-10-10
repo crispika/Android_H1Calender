@@ -2,6 +2,7 @@ package com.comp90018.H1Calendar;
 
 import com.comp90018.H1Calendar.model.WeekItem;
 import com.comp90018.H1Calendar.utils.CalendarManager;
+import com.comp90018.H1Calendar.utils.DateManager;
 
 import org.junit.Test;
 
@@ -44,6 +45,16 @@ public class ExampleUnitTest {
         System.out.println("Size of week_list: " + week_list.size());
         System.out.println(week_list.get(0).getDayItems().get(0).getDate());
 
+    }
+
+    @Test
+    public void testDateManager(){
+        Locale locale = Locale.getDefault();
+        Calendar cal = Calendar.getInstance(locale);
+
+        System.out.println(DateManager.dateToStr(cal.getTime()));
+        cal.add(Calendar.DATE,31);
+        System.out.println(DateManager.dateToStr(cal.getTime()));
     }
 
 }

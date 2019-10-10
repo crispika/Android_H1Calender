@@ -5,8 +5,8 @@
     import android.graphics.BitmapFactory;
     import android.net.Uri;
     import android.os.Bundle;
-    import android.provider.MediaStore;
     import android.widget.ImageView;
+    import android.widget.Toast;
 
     import androidx.annotation.Nullable;
 
@@ -16,9 +16,14 @@
     import butterknife.ButterKnife;
     import butterknife.OnClick;
 
+    import com.comp90018.H1Calendar.utils.CalenderEvent;
+    import com.google.gson.Gson;
+    import com.google.zxing.integration.android.IntentIntegrator;
+    import com.google.zxing.integration.android.IntentResult;
+
 
     public class AddQRCodeScheduleActivity extends Activity {
-        public static final int PHOTO_REQUEST_CAMERA = 100;// camera intent code
+        public static final int PHOTO_REQUEST_CAMERA = 0x0000c0de;// QR scan intent code
         public static final int PHOTO_REQUEST_GALLERY = 101;// gallery intent code
         @BindView(R.id.QR_photo) ImageView image;
         @OnClick(R.id.bottom_camera)
@@ -45,10 +50,19 @@
         protected void onActivityResult(int requestCode, int resultCode, Intent data) {
             switch (requestCode) {
                 case PHOTO_REQUEST_CAMERA:
-                    if (resultCode == RESULT_OK) {
-                        Bundle extras = data.getExtras();
-                        Bitmap bitmap = (Bitmap) extras.get("data");
-                        image.setImageBitmap(bitmap);
+                    IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+                    if (result != null) {
+                        if (result.getContents() == null) {
+                            Toast.makeText(this, "cancel scan", Toast.LENGTH_LONG).show();
+                        } else {
+                            CalenderEvent cEvent = QRdata2Event(result.getContents());
+                            Intent intent_to_form = new Intent();
+                            intent_to_form.setClass(this, AddFormScheduleActivity.class);
+                            intent_to_form.putExtra("type","addFromQR");
+                            intent_to_form.putExtra("QR_event",cEvent);
+                            System.out.println(cEvent.toJsonStr());
+                            startActivity(intent_to_form);
+                        }
                     }
                     break;
                 case PHOTO_REQUEST_GALLERY:
@@ -59,8 +73,11 @@
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
                     break;
+
+                default:
+                    break;
+
             }
         }
 
@@ -72,10 +89,21 @@
         }
 
         private void toCamera() {
-            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                startActivityForResult(takePictureIntent, PHOTO_REQUEST_CAMERA);
+//            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            IntentIntegrator intentIntegrator = new IntentIntegrator(AddQRCodeScheduleActivity.this);
+            intentIntegrator.initiateScan();
+
+        }
+
+        private CalenderEvent QRdata2Event(String dataStr){
+            CalenderEvent event = new CalenderEvent();
+            Gson gson = new Gson();
+            try {
+                event = gson.fromJson(dataStr,CalenderEvent.class);
+            }catch (Exception e) {
+                e.printStackTrace();
             }
+            return event;
         }
 
 
