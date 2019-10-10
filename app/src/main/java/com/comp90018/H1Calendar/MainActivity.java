@@ -120,9 +120,11 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                     switch(menuItem.getItemId()){
                         case R.id.dayview:
                             getSupportFragmentManager().beginTransaction().replace(R.id.Event_container, dayEventView).commitAllowingStateLoss();
+                            drawer_layout.closeDrawers();
                             break;
                         case R.id.weeklyview:
                             getSupportFragmentManager().beginTransaction().replace(R.id.Event_container, weekEventView).commitAllowingStateLoss();
+                            drawer_layout.closeDrawers();
                             break;
                         default:
                             break;
