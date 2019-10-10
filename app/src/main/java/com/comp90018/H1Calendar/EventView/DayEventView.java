@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.comp90018.H1Calendar.R;
 
+import java.util.Date;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -20,6 +22,7 @@ public class DayEventView extends Fragment {
 
     private TextView tv_day;
     private ListView lv_day;
+    private DayEventListViewAdapter dayEventListViewAdapter;
 
     public DayEventView() {
         // Required empty public constructor
@@ -37,7 +40,12 @@ public class DayEventView extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         tv_day = view.findViewById(R.id.tv_day_event);
         lv_day = view.findViewById(R.id.lv_day_event);
-        lv_day.setAdapter(new DayEventListViewAdapter(DayEventView.this.getActivity()));
+        dayEventListViewAdapter = new DayEventListViewAdapter(DayEventView.this.getActivity());
+        lv_day.setAdapter(dayEventListViewAdapter);
+    }
+
+    public void setView(String date){
+        dayEventListViewAdapter.setDate(date);
     }
 
 }
