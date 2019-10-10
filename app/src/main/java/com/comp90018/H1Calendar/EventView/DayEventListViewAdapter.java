@@ -7,13 +7,20 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.comp90018.H1Calendar.DBHelper.sqliteHelper;
 import com.comp90018.H1Calendar.R;
+import com.comp90018.H1Calendar.utils.CalenderEvent;
+
+import java.util.List;
 
 public class DayEventListViewAdapter extends BaseAdapter {
 
     private Context myContext;
     private LayoutInflater myLayoutInflater;
     private String mDate;
+    private sqliteHelper dbhelper;
+    private List<CalenderEvent> dayEvents;
+    private CalenderEvent mEvent;
 
     public DayEventListViewAdapter(Context context) {
         myContext = context;
@@ -22,7 +29,13 @@ public class DayEventListViewAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 10;
+        if(dayEvents == null){
+            return 0;
+        }else if(dayEvents.isEmpty()){
+            return 0;
+        }else{
+            return dayEvents.size();
+        }
     }
 
     @Override
@@ -37,6 +50,11 @@ public class DayEventListViewAdapter extends BaseAdapter {
 
     public void setDate(String date){
         mDate = date;
+        setEventList();
+    }
+    public void setEventList(){
+        dbhelper = new sqliteHelper(myContext.getApplicationContext());
+        dayEvents = dbhelper.getEventsByDay(mDate);
         notifyDataSetChanged();
     }
 
@@ -48,6 +66,7 @@ public class DayEventListViewAdapter extends BaseAdapter {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         ViewHolder holder = null;
+        mEvent = dayEvents.get(i);
         if (view == null) {
             view = myLayoutInflater.inflate(R.layout.day_event_list_layout, null);
             holder = new ViewHolder();
@@ -55,8 +74,8 @@ public class DayEventListViewAdapter extends BaseAdapter {
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
-            holder.tvDayEvent.setText(mDate);
         }
+        holder.tvDayEvent.setText(mEvent.getTitle());
         return view;
     }
 }
