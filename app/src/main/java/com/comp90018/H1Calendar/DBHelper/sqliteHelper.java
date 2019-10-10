@@ -21,7 +21,7 @@ import java.util.List;
 public class sqliteHelper extends SQLiteOpenHelper {
 
     // create a DB
-    public static final String DATABASENAME = "H1Calendar.db";
+    private static final String DATABASENAME = "H1Calendar.db";
 
     public sqliteHelper(@Nullable Context context) {
         super(context, DATABASENAME, null, 1);
@@ -42,7 +42,7 @@ public class sqliteHelper extends SQLiteOpenHelper {
         String createEventTable = "CREATE TABLE EVENT(eventId char(36) PRIMARY KEY, title char(20), isAllday int(20), " +
                 "isNeedNotify int(20), date char(20), startTimeHour int(20),startTimeMinute int(20), endTimeHour int(20),endTimeMinute int(20), " +
                 "eventColor char(20), local char(20), description char(500),updateTime datetime)";
-        // , FOREIGN KEY (userId) REFERENCES USER (userId)
+        // , userId char(36) , FOREIGN KEY (userId) REFERENCES USER (userId)
         sqLiteDatabase.execSQL(createEventTable);
 
         // print log msg
@@ -145,7 +145,7 @@ public class sqliteHelper extends SQLiteOpenHelper {
 
         }
 
-
+        cursor.close();
 
         return calenderEvent;
 
@@ -159,6 +159,7 @@ public class sqliteHelper extends SQLiteOpenHelper {
 
         List<CalenderEvent> calenderEventList = new ArrayList<CalenderEvent>();
 
+        // 添加where语句 -- userid String[] {userid}
         Cursor cursor = sqlitedb.rawQuery("SELECT * FROM EVENT", null);
 
         while (cursor.moveToNext()){
@@ -187,7 +188,7 @@ public class sqliteHelper extends SQLiteOpenHelper {
 
         }
 
-
+        cursor.close();
 
         return calenderEventList;
 
