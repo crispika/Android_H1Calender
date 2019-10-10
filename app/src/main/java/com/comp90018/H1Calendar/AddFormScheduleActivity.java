@@ -154,7 +154,7 @@ public class AddFormScheduleActivity extends Activity {
             } else {
                 cEvent.setIsAllday(false);
             }
-            if(cEvent.getEventId().equals(null)){
+            if(cEvent.getEventId() == null){
                 cEvent.setEventId(generateEventID());
             }
             //TODO: store event into DB
