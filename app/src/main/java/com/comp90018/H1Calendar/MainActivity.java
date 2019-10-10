@@ -1,35 +1,30 @@
 package com.comp90018.H1Calendar;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-//import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
-
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.comp90018.H1Calendar.EventView.DayEventView;
 import com.comp90018.H1Calendar.EventView.WeekEventView;
+import com.comp90018.H1Calendar.calendar.CalendarView;
 import com.comp90018.H1Calendar.utils.CalendarManager;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.comp90018.H1Calendar.utils.EventBus;
+import com.comp90018.H1Calendar.utils.Events;
 import com.google.android.material.navigation.NavigationView;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionHelper;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout;
 import com.wangjie.rapidfloatingactionbutton.contentimpl.labellist.RFACLabelItem;
 import com.wangjie.rapidfloatingactionbutton.contentimpl.labellist.RapidFloatingActionContentLabelList;
-
-import com.comp90018.H1Calendar.calendar.CalendarView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -40,6 +35,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+//import android.app.Activity;
+
 
 public class MainActivity extends AppCompatActivity implements RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener {
 
@@ -48,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
     private Button btnDWswitch;
     private ListView leftList;
     private NavigationView myNavigationView;
+
 
     //Region for basic UI
     //侧栏开关
@@ -76,6 +74,17 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         }
     }
 
+    //Title_bar上的月份标签
+    @BindView(R.id.title_month_label)
+    TextView title_month_label;
+
+    //Btn for back to today
+    @OnClick(R.id.back_to_today)
+    public void back_to_today(){
+        EventBus.getInstance().send(new Events.BackToToday());
+        calendar_view.scrollToDate(CalendarManager.getInstance().getToday(), CalendarManager.getInstance().getWeekList());
+    }
+
     //CalendarView自定义控件的属性
     private int calendar_CurrentDayTextColor, calendar_PastDayTextColor, calendar_HeaderTextColor;
 
@@ -97,7 +106,10 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
         setCalendarInfo();
         initCalendarView();
+        setMonthLabel();
         init_FAB();
+
+
         dayEventView = new DayEventView();
         weekEventView = new WeekEventView();
         myNavigationView = this.findViewById(R.id.navigation);
@@ -108,9 +120,11 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                     switch(menuItem.getItemId()){
                         case R.id.dayview:
                             getSupportFragmentManager().beginTransaction().replace(R.id.Event_container, dayEventView).commitAllowingStateLoss();
+                            drawer_layout.closeDrawers();
                             break;
                         case R.id.weeklyview:
                             getSupportFragmentManager().beginTransaction().replace(R.id.Event_container, weekEventView).commitAllowingStateLoss();
+                            drawer_layout.closeDrawers();
                             break;
                         default:
                             break;
@@ -121,13 +135,11 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         }
         getSupportFragmentManager().beginTransaction().add(R.id.Event_container, dayEventView).commitAllowingStateLoss();
 
-//        Menu menuNav = myNavigationView.getMenu();
-//        MenuItem dayEventItem = menuNav.findItem(R.id.dayview);
-//        dayEventItem.setOnMenuItemClickListener()
         //可以在这里创建数据库
 
     }
 
+    //region CalendarView Settings
     /**
      * set the data in the calendar
      */
@@ -159,6 +171,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
         calendar_view.init(calendar_HeaderTextColor,calendar_CurrentDayTextColor,calendar_PastDayTextColor);
     }
+    //endregion
 
     //region Fab Setting
     private void init_FAB() {
@@ -227,5 +240,13 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
     }
     //endregion
+
+    private void setMonthLabel(){
+        EventBus.getInstance().getSubject().subscribe(event -> {
+           if(event instanceof Events.MonthChangeEvent){
+               title_month_label.setText(((Events.MonthChangeEvent)event).getMonthFullName());
+           }
+        });
+    }
 }
 

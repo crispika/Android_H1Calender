@@ -7,17 +7,17 @@ import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.comp90018.H1Calendar.R;
+import com.comp90018.H1Calendar.model.DayItem;
 import com.comp90018.H1Calendar.model.WeekItem;
 import com.comp90018.H1Calendar.utils.CalendarManager;
 import com.comp90018.H1Calendar.utils.DateManager;
+import com.comp90018.H1Calendar.utils.EventBus;
+import com.comp90018.H1Calendar.utils.Events;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 /**
  * CalendarView is a customized widget for a section to display a scrollable calendar with click/scroll events.
@@ -26,12 +26,13 @@ public class CalendarView extends LinearLayout {
 
     private final String LOG_TAG = "CalendarView";
 
-    /**
-     * Calendar 组件内部显示每个星期日期的recycler view.
-     */
+    //Calendar 组件内部显示每个星期日期的recycler view.
     private WeekView weekView;
 
     private int hearderTextColor, currentDayTextColor, pastDayTextColor;
+
+    //Hold 被选中日期的实例dayitem
+    private DayItem daySelected;
 
     //region Constructors
     public CalendarView(Context context) {
@@ -74,8 +75,15 @@ public class CalendarView extends LinearLayout {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         MarginLayoutParams layoutParams = (MarginLayoutParams) getLayoutParams();
-        layoutParams.height  = (int) (getResources().getDimension(R.dimen.calendarview_header) + 5 * getResources().getDimension(R.dimen.calendarview_weekitem));
+        layoutParams.height = (int) (getResources().getDimension(R.dimen.calendarview_header) + 5 * getResources().getDimension(R.dimen.calendarview_weekitem));
         setLayoutParams(layoutParams);
+        //TODO 接收click事件，
+
+        EventBus.getInstance().getSubject().subscribe(event -> {
+            if (event instanceof Events.DayClickedEvent) {
+                updateSelectedDay(((Events.DayClickedEvent) event).getDayItem());
+            }
+        });
     }
     //endregion
 
@@ -97,7 +105,7 @@ public class CalendarView extends LinearLayout {
      * 将视图scroll到某个日期的那一周处.
      * e.g 在calendarView初始化的时候，从当天的日期开始显示.
      */
-    void scrollToDate(Date date, ArrayList<WeekItem> week_list) {
+    public void scrollToDate(Date date, ArrayList<WeekItem> week_list) {
 
         Integer position = null;
         for (int i = 0; i < week_list.size(); i++) {
@@ -108,15 +116,27 @@ public class CalendarView extends LinearLayout {
         }
 
         if (position != null) {
-            //post()方法run
+            //Example处用了post()方法run
             //weekView.post(() -> scrollToPosition(position));
             scrollToPosition(position);
         }
     }
 
-    void scrollToPosition(int position){
+    void scrollToPosition(int position) {
         LinearLayoutManager layoutManager = (LinearLayoutManager) weekView.getLayoutManager();
         layoutManager.scrollToPosition(position);
+    }
+
+    void updateSelectedDay(DayItem dayItem) {
+        dayItem.setSelected(true);
+        if (!dayItem.equals(daySelected)) {
+            weekView.getAdapter().notifyItemChanged(dayItem.getWeekListPosition());
+            if (daySelected != null){
+                daySelected.setSelected(false);
+                weekView.getAdapter().notifyItemChanged(daySelected.getWeekListPosition());
+            }
+        }
+        daySelected = dayItem;
     }
 
 }

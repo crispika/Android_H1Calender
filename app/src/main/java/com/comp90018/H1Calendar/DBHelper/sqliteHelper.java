@@ -194,7 +194,7 @@ public class sqliteHelper extends SQLiteOpenHelper {
     }
 
     // get events by day
-    // day format: dd/mm/yyyy
+    // day format: dd/MM/yyyy
     public List<CalenderEvent> getEventsByDay(String day){
         SQLiteDatabase sqlitedb = this.getWritableDatabase();
 

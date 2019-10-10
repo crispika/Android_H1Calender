@@ -13,6 +13,7 @@ public class DayEventListViewAdapter extends BaseAdapter {
 
     private Context myContext;
     private LayoutInflater myLayoutInflater;
+    private String mDate;
 
     public DayEventListViewAdapter(Context context) {
         myContext = context;
@@ -34,8 +35,14 @@ public class DayEventListViewAdapter extends BaseAdapter {
         return 0;
     }
 
+    public void setDate(String date){
+        mDate = date;
+        notifyDataSetChanged();
+    }
+
     static class ViewHolder {
         public TextView tvDayEvent;
+
     }
 
     @Override
@@ -48,8 +55,8 @@ public class DayEventListViewAdapter extends BaseAdapter {
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
+            holder.tvDayEvent.setText(mDate);
         }
-
         return view;
     }
 }
