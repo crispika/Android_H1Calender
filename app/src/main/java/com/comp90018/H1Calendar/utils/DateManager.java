@@ -25,4 +25,11 @@ public class DateManager {
                 && cal1.get(Calendar.WEEK_OF_YEAR) == cal2.get(Calendar.WEEK_OF_YEAR);
     }
 
+    public static String dateToStr(Date date){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        String dateString = dateFormat.format(date);
+
+        return dateString;
+    }
+
 }
