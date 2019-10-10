@@ -6,7 +6,6 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.DatePicker;
@@ -21,9 +20,7 @@ import android.widget.Toast;
 import androidx.core.content.ContextCompat;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.UUID;
 
 import butterknife.BindView;
@@ -157,12 +154,14 @@ public class AddFormScheduleActivity extends Activity {
             } else {
                 cEvent.setIsAllday(false);
             }
-            cEvent.setEventId(getEventID());
+            if(cEvent.getEventId().equals(null)){
+                cEvent.setEventId(generateEventID());
+            }
             //TODO: store event into DB
 
             boolean isSucceed = dbhelper.insert(cEvent);
             if(isSucceed){
-                Toast.makeText(this, "Save Sucessful!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Save Successful!", Toast.LENGTH_SHORT).show();
             }else {
                 Toast.makeText(this, "Save ERROR!", Toast.LENGTH_SHORT).show();
             }
@@ -228,17 +227,42 @@ public class AddFormScheduleActivity extends Activity {
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this,R.color.colorPrimary));
         cEvent = new CalenderEvent();
-        if (getIntent().getStringExtra("type").equals("addEvent")) {
+        String type = getIntent().getStringExtra("type");
+        if (type.equals("addEvent")) {
             edit_event_title.setText("New Event");
-        } else {
+        } else{
             Intent intent = getIntent();
-            CalenderEvent StoreEvent = (CalenderEvent) intent.getSerializableExtra("CalenderEvent");
-            eventId = StoreEvent.getEventId();
-            event_title.setText(StoreEvent.getTitle());
-            event_color.setText(StoreEvent.getEventColor());
-            event_detail.setText(StoreEvent.getDescription());
-            event_local.setText(StoreEvent.getLocal());
-            edit_event_title.setText("Edit Event");
+            CalenderEvent storeEvent;
+            if(type.equals("addFromQR")) {
+                storeEvent = (CalenderEvent) intent.getSerializableExtra("QR_event");
+                edit_event_title.setText("Event From QR");
+            } else {
+                storeEvent = (CalenderEvent) intent.getSerializableExtra("edit_event");
+                edit_event_title.setText("Edit Event");
+            }
+
+            cEvent = storeEvent;
+
+            //initialize the view on edit interface
+            event_title.setText(storeEvent.getTitle());
+            event_color.setText(storeEvent.getEventColor());
+            event_detail.setText(storeEvent.getDescription());
+            event_local.setText(storeEvent.getLocal());
+            event_date.setText(genDateStr(cEvent.getYear(),cEvent.getMonth(),cEvent.getDay()));
+            if(cEvent.getIsAllday()){
+                allDaySwitch.setChecked(true);
+                event_start_time.setVisibility(View.GONE);
+                event_end_time.setVisibility(View.GONE);
+            }else{
+                allDaySwitch.setChecked(false);
+                event_start_time.setText(genTimeStr(cEvent.getStartTimeHour(),cEvent.getStartTimeMinute()));
+                event_end_time.setText(genTimeStr(cEvent.getEndTimeHour(),cEvent.getEndTimeMinute()));
+            }
+
+            if(cEvent.getIsNeedNotify()){
+                notify_switch.setChecked(true);
+            }
+
 
         }
     }
@@ -248,11 +272,7 @@ public class AddFormScheduleActivity extends Activity {
         mDataPicker = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(year, monthOfYear, dayOfMonth);
-                SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd  EEE");
-                event_date.setText(df.format(calendar.getTime()));
+                event_date.setText(genDateStr(year,monthOfYear,dayOfMonth));
                 cEvent.setYear(year);
                 cEvent.setMonth(monthOfYear);
                 cEvent.setDay(dayOfMonth);
@@ -266,11 +286,9 @@ public class AddFormScheduleActivity extends Activity {
         mStartTimePicker = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 calendar.set(Calendar.MINUTE, minute);
-
                 SimpleDateFormat df = new SimpleDateFormat("HH:mm");
                 if(endTime == null || calendar.before(endTime)){
                     startTime = calendar;
@@ -294,7 +312,6 @@ public class AddFormScheduleActivity extends Activity {
         mEndTimePicker = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 calendar.set(Calendar.MINUTE, minute);
@@ -341,7 +358,22 @@ public class AddFormScheduleActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private String getEventID(){
+    String genDateStr(int year, int monthOfYear,int dayOfMonth){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, monthOfYear, dayOfMonth);
+        SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd  EEE");
+        return df.format(calendar.getTime());
+    }
+
+    String genTimeStr(int hourOfDay,int minute){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        calendar.set(Calendar.MINUTE, minute);
+        SimpleDateFormat df = new SimpleDateFormat("HH:mm");
+        return df.format(calendar.getTime());
+    }
+
+    private String generateEventID(){
         UUID uuid = UUID.randomUUID();
         String uniqueId = uuid.toString();
         System.out.println("eventID: "+uniqueId);
