@@ -2,13 +2,15 @@ package com.comp90018.H1Calendar.utils;
 
 import com.comp90018.H1Calendar.model.DayItem;
 
+import java.util.Date;
+
 /**
  * Events emitted by the EventBus
  */
 public class Events {
 
     public static class DayClickedEvent {
-        public DayItem dayItem;
+        private DayItem dayItem;
 
         public DayClickedEvent(DayItem dayItem) {
             this.dayItem = dayItem;
@@ -18,6 +20,20 @@ public class Events {
             return dayItem;
         }
     }
+
+    public static class MonthChangeEvent {
+        private String monthFullName;
+
+        public MonthChangeEvent(String monthFullName) {
+            this.monthFullName = monthFullName;
+        }
+
+        public String getMonthFullName() {
+            return monthFullName;
+        }
+    }
+
+    public static class BackToToday {}
 
 
 }

@@ -14,15 +14,18 @@ public class DayItem implements Serializable {
     private boolean isSelected;//是否选中
     private String mMonth; // 月份名的简称
     private int weekListPosition;
+    private String mMonthFullName; //月份全称
 
     // region Constructor
 
-    public DayItem(Date date, int dayOfTheMonth, boolean today, String month, int position) {
+    public DayItem(Date date, int dayOfTheMonth, boolean today, String month, String monthFullName,int position) {
         this.mDate = date;
         this.mDayOfTheMonth = dayOfTheMonth;
         this.mToday = today;
         this.mMonth = month;
+        this.mMonthFullName = monthFullName;
         this.weekListPosition = position;
+
 
         if (mDayOfTheMonth == 1) {
             mFirstDayOfTheMonth = true;
@@ -32,6 +35,10 @@ public class DayItem implements Serializable {
     // endregion
 
     //region getter/setter
+    public String getmMonthFullName() {
+        return mMonthFullName;
+    }
+
     public Date getDate() {
         return mDate;
     }

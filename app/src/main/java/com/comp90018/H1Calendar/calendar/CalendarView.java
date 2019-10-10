@@ -105,7 +105,7 @@ public class CalendarView extends LinearLayout {
      * 将视图scroll到某个日期的那一周处.
      * e.g 在calendarView初始化的时候，从当天的日期开始显示.
      */
-    void scrollToDate(Date date, ArrayList<WeekItem> week_list) {
+    public void scrollToDate(Date date, ArrayList<WeekItem> week_list) {
 
         Integer position = null;
         for (int i = 0; i < week_list.size(); i++) {

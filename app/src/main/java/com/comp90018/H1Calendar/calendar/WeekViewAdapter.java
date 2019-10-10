@@ -130,6 +130,7 @@ public class WeekViewAdapter extends RecyclerView.Adapter<WeekViewAdapter.WeekVi
                 if (dayItem.isSelected()) {
                     circle.setVisibility(View.VISIBLE);
                     circle.setBackgroundResource(R.drawable.dayview_circle_selected);
+                //如果是今天，显示蓝色特殊circle
                 } else if (dayItem.isToday()) {
                     circle.setVisibility(View.VISIBLE);
                     circle.setBackgroundResource(R.drawable.dayview_circle_current);
@@ -142,6 +143,12 @@ public class WeekViewAdapter extends RecyclerView.Adapter<WeekViewAdapter.WeekVi
                     month_label.setTypeface(null, Typeface.BOLD);
                     day_label.setTypeface(null, Typeface.BOLD);
                     //System.err.println("Month setted for" + dayItem.toString());
+                }
+
+                //当这个月第15号显示在屏幕中时，表明这个月的dayitem占据了CalendarView的大半部分
+                //∴设置Title栏的月份信息为15号的这个月
+                if(dayItem.getDayOfTheMonth() == 15){
+                    EventBus.getInstance().send(new Events.MonthChangeEvent(dayItem.getmMonthFullName()));
                 }
             }
         }

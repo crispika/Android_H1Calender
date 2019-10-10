@@ -6,6 +6,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +17,8 @@ import com.comp90018.H1Calendar.EventView.DayEventView;
 import com.comp90018.H1Calendar.EventView.WeekEventView;
 import com.comp90018.H1Calendar.calendar.CalendarView;
 import com.comp90018.H1Calendar.utils.CalendarManager;
+import com.comp90018.H1Calendar.utils.EventBus;
+import com.comp90018.H1Calendar.utils.Events;
 import com.google.android.material.navigation.NavigationView;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionHelper;
@@ -42,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
     private Button btnDWswitch;
     private ListView leftList;
     private NavigationView myNavigationView;
+
 
     //Region for basic UI
     //侧栏开关
@@ -70,6 +74,17 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         }
     }
 
+    //Title_bar上的月份标签
+    @BindView(R.id.title_month_label)
+    TextView title_month_label;
+
+    //Btn for back to today
+    @OnClick(R.id.back_to_today)
+    public void back_to_today(){
+        EventBus.getInstance().send(new Events.BackToToday());
+        calendar_view.scrollToDate(CalendarManager.getInstance().getToday(), CalendarManager.getInstance().getWeekList());
+    }
+
     //CalendarView自定义控件的属性
     private int calendar_CurrentDayTextColor, calendar_PastDayTextColor, calendar_HeaderTextColor;
 
@@ -91,7 +106,10 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
         setCalendarInfo();
         initCalendarView();
+        setMonthLabel();
         init_FAB();
+
+
         dayEventView = new DayEventView();
         weekEventView = new WeekEventView();
         myNavigationView = this.findViewById(R.id.navigation);
@@ -220,5 +238,13 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
     }
     //endregion
+
+    private void setMonthLabel(){
+        EventBus.getInstance().getSubject().subscribe(event -> {
+           if(event instanceof Events.MonthChangeEvent){
+               title_month_label.setText(((Events.MonthChangeEvent)event).getMonthFullName());
+           }
+        });
+    }
 }
 

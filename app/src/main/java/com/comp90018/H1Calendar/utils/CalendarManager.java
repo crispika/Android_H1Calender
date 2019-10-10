@@ -116,10 +116,12 @@ public class CalendarManager {
             Date date = temp_cal.getTime();
             int day_of_month = temp_cal.get(Calendar.DAY_OF_MONTH);
             SimpleDateFormat monthNameFormat = new SimpleDateFormat("MMM",locale);
+            SimpleDateFormat monthFullNameFormat = new SimpleDateFormat("MMMM",locale);
             String monthName = monthNameFormat.format(date);
+            String fullMonthName = monthFullNameFormat.format(date);
             boolean isToday = DateManager.isSameDay(temp_cal, today);
 
-            DayItem dayItem = new DayItem(date, day_of_month, isToday, monthName,week_list_postion);
+            DayItem dayItem = new DayItem(date, day_of_month, isToday, monthName,fullMonthName,week_list_postion);
             day_list.add(dayItem);
 
             //日期往后推一天
