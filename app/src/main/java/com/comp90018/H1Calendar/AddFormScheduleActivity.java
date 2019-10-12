@@ -4,8 +4,11 @@ package com.comp90018.H1Calendar;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.DatePicker;
@@ -20,7 +23,9 @@ import android.widget.Toast;
 import androidx.core.content.ContextCompat;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.UUID;
 
 import butterknife.BindView;
@@ -44,6 +49,15 @@ public class AddFormScheduleActivity extends Activity {
     private boolean isAllDay = false;
     private boolean isNeedNotify = false;
     private sqliteHelper dbhelper;
+
+    // Tao
+    // store user info into shared preferences
+    private static final String SHAREDPREFS  = "sharedPrefs";
+    private static final String USERID = "userid";
+    private static final String USEREMAIL = "useremail";
+    private static final String USERPWD = "userpwd";
+    // variable used to store user info that get from shared preferences
+    private String userId, userEmail, userPwd;
 
     @BindView(R.id.event_title)
     EditText event_title;
@@ -157,6 +171,14 @@ public class AddFormScheduleActivity extends Activity {
             if(cEvent.getEventId() == null){
                 cEvent.setEventId(generateEventID());
             }
+
+            // Tao
+            // add userId to calender event
+            loadUserInfo();
+            cEvent.setUserId(userId);
+
+
+
             //TODO: store event into DB
 
             boolean isSucceed = dbhelper.insert(cEvent);
@@ -380,6 +402,16 @@ public class AddFormScheduleActivity extends Activity {
         return uniqueId;
     }
 
+    // Tao
+    public void loadUserInfo(){
+        SharedPreferences sharedPreferences = getSharedPreferences(SHAREDPREFS, Context.MODE_PRIVATE);
+
+        // the default values of these three variables are ""
+        userId = sharedPreferences.getString(USERID, "");
+        userEmail = sharedPreferences.getString(USEREMAIL, "");
+        userPwd = sharedPreferences.getString(USERPWD, "");
+
+    }
 
 }
 
