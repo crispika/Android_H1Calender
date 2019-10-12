@@ -2,13 +2,13 @@ package com.comp90018.H1Calendar.DBHelper;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import androidx.annotation.Nullable;
-
+import com.comp90018.H1Calendar.MainActivity;
 import com.comp90018.H1Calendar.utils.CalenderEvent;
 
 import java.text.ParseException;
@@ -22,9 +22,13 @@ public class sqliteHelper extends SQLiteOpenHelper {
 
     // create a DB
     private static final String DATABASENAME = "H1Calendar.db";
+    private static final int DATABASEVERSION = 1;
 
-    public sqliteHelper(@Nullable Context context) {
-        super(context, DATABASENAME, null, 1);
+    // variable used to store user info that get from shared preferences
+    private String userId, userEmail, userPwd;
+
+    public sqliteHelper(Context context) {
+        super(context, DATABASENAME, null, DATABASEVERSION);
     }
 
 
@@ -34,14 +38,10 @@ public class sqliteHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
-        // create user table
-        String createUserTable = "CREATE TABLE USER(userId char(36) PRIMARY KEY, userName char(20), password char(20), email char(50))";
-        sqLiteDatabase.execSQL(createUserTable);
-
         // create event table
         String createEventTable = "CREATE TABLE EVENT(eventId char(36) PRIMARY KEY, title char(20), isAllday int(20), " +
                 "isNeedNotify int(20), date char(20), startTimeHour int(20),startTimeMinute int(20), endTimeHour int(20),endTimeMinute int(20), " +
-                "eventColor char(20), local char(20), description char(500),updateTime datetime)";
+                "eventColor char(20), local char(20), description char(500),updateTime datetime, userId char(36))";
         // , userId char(36) , FOREIGN KEY (userId) REFERENCES USER (userId)
         sqLiteDatabase.execSQL(createEventTable);
 
@@ -53,9 +53,6 @@ public class sqliteHelper extends SQLiteOpenHelper {
     // 在onUpgrade()方法中除了创建表、视图等组件外，还需要先删除这些相关的组件，因此，在调用onUpgrade()方法前，数据库是存在的，里面还原许多数据库组建。
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-
-        String dropUserTable = "DROP TABLE IF EXISTS USER";
-        sqLiteDatabase.execSQL(dropUserTable);
 
         String dropEventTable = "DROP TABLE IF EXISTS EVENT";
         sqLiteDatabase.execSQL(dropEventTable);
@@ -81,7 +78,8 @@ public class sqliteHelper extends SQLiteOpenHelper {
 
         // combine day, month, year into date
         int day = calenderEvent.getDay();
-        int month = calenderEvent.getMonth();
+        // month starts from 0 (0 == Jan.)
+        int month = calenderEvent.getMonth() + 1;
         int year = calenderEvent.getYear();
 
         String dateStr = day + "/" + month + "/" + year;
@@ -95,11 +93,14 @@ public class sqliteHelper extends SQLiteOpenHelper {
         contentValues.put("eventColor", calenderEvent.getEventColor());
         contentValues.put("local", calenderEvent.getLocal());
         contentValues.put("description", calenderEvent.getDescription());
+        contentValues.put("userId", calenderEvent.getUserId());
 
         // CalenderEvent中没有updateTime
         // contentValues.put("updateTime", calenderEvent.getUpdateTime());
 
         long result = sqlitedb.insert("EVENT", null, contentValues);
+
+        sqlitedb.close();
 
 
 
@@ -118,77 +119,79 @@ public class sqliteHelper extends SQLiteOpenHelper {
     public CalenderEvent getEventByEventId(String eventId){
         SQLiteDatabase sqlitedb = this.getWritableDatabase();
 
-        CalenderEvent calenderEvent = new CalenderEvent();
-
         Cursor cursor = sqlitedb.rawQuery("SELECT * FROM EVENT WHERE eventId = ?", new String[] {eventId});
 
-        while (cursor.moveToNext()){
+        CalenderEvent calenderEvent = new CalenderEvent();
 
-            calenderEvent.setEventId(cursor.getString(0));
-            calenderEvent.setTitle(cursor.getString(1));
-            calenderEvent.setIsAllday((cursor.getInt(2)==1)?true:false);
-            calenderEvent.setIsNeedNotify((cursor.getInt(3)==1)?true:false);
+        calenderEvent = returnCalenderEvent(cursor);
 
-            String date = cursor.getString(4);
-            String[] subStrings = date.split("/");
-            calenderEvent.setDay(Integer.parseInt(subStrings[0]));
-            calenderEvent.setMonth(Integer.parseInt(subStrings[1]));
-            calenderEvent.setYear(Integer.parseInt(subStrings[2]));
-
-            calenderEvent.setStartTimeHour(Integer.parseInt(cursor.getString(5)));
-            calenderEvent.setStartTimeMinute(Integer.parseInt(cursor.getString(6)));
-            calenderEvent.setEndTimeHour(Integer.parseInt(cursor.getString(7)));
-            calenderEvent.setEndTimeMinute(Integer.parseInt(cursor.getString(8)));
-            calenderEvent.setEventColor(cursor.getString(9));
-            calenderEvent.setLocal(cursor.getString(10));
-            calenderEvent.setDescription(cursor.getString(11));
-
-        }
+//        while (cursor.moveToNext()){
+//
+//            calenderEvent.setEventId(cursor.getString(0));
+//            calenderEvent.setTitle(cursor.getString(1));
+//            calenderEvent.setIsAllday((cursor.getInt(2)==1)?true:false);
+//            calenderEvent.setIsNeedNotify((cursor.getInt(3)==1)?true:false);
+//
+//            String date = cursor.getString(4);
+//            String[] subStrings = date.split("/");
+//            calenderEvent.setDay(Integer.parseInt(subStrings[0]));
+//            calenderEvent.setMonth(Integer.parseInt(subStrings[1]));
+//            calenderEvent.setYear(Integer.parseInt(subStrings[2]));
+//
+//            calenderEvent.setStartTimeHour(Integer.parseInt(cursor.getString(5)));
+//            calenderEvent.setStartTimeMinute(Integer.parseInt(cursor.getString(6)));
+//            calenderEvent.setEndTimeHour(Integer.parseInt(cursor.getString(7)));
+//            calenderEvent.setEndTimeMinute(Integer.parseInt(cursor.getString(8)));
+//            calenderEvent.setEventColor(cursor.getString(9));
+//            calenderEvent.setLocal(cursor.getString(10));
+//            calenderEvent.setDescription(cursor.getString(11));
+//
+//        }
 
         cursor.close();
+        sqlitedb.close();
 
         return calenderEvent;
 
     }
 
 
-    // get all events
-    // input: userId
-    public List<CalenderEvent> getAllEvents(){
+    // get all events by userId
+    public List<CalenderEvent> getAllEventsByUserId(String userId){
         SQLiteDatabase sqlitedb = this.getWritableDatabase();
 
         List<CalenderEvent> calenderEventList = new ArrayList<CalenderEvent>();
 
-        // 添加where语句 -- userid String[] {userid}
-        Cursor cursor = sqlitedb.rawQuery("SELECT * FROM EVENT", null);
+        Cursor cursor = sqlitedb.rawQuery("SELECT * FROM EVENT WHERE userId = ?", new String[] {userId});
 
         while (cursor.moveToNext()){
-            CalenderEvent calenderEvent = new CalenderEvent();
+//            CalenderEvent calenderEvent = new CalenderEvent();
+//
+//            calenderEvent.setEventId(cursor.getString(0));
+//            calenderEvent.setTitle(cursor.getString(1));
+//            calenderEvent.setIsAllday((cursor.getInt(2)==1)?true:false);
+//            calenderEvent.setIsNeedNotify((cursor.getInt(3)==1)?true:false);
+//
+//            String date = cursor.getString(4);
+//            String[] subStrings = date.split("/");
+//            calenderEvent.setDay(Integer.parseInt(subStrings[0]));
+//            calenderEvent.setMonth(Integer.parseInt(subStrings[1]));
+//            calenderEvent.setYear(Integer.parseInt(subStrings[2]));
+//
+//            calenderEvent.setStartTimeHour(Integer.parseInt(cursor.getString(5)));
+//            calenderEvent.setStartTimeMinute(Integer.parseInt(cursor.getString(6)));
+//            calenderEvent.setEndTimeHour(Integer.parseInt(cursor.getString(7)));
+//            calenderEvent.setEndTimeMinute(Integer.parseInt(cursor.getString(8)));
+//            calenderEvent.setEventColor(cursor.getString(9));
+//            calenderEvent.setLocal(cursor.getString(10));
+//            calenderEvent.setDescription(cursor.getString(11));
 
-            calenderEvent.setEventId(cursor.getString(0));
-            calenderEvent.setTitle(cursor.getString(1));
-            calenderEvent.setIsAllday((cursor.getInt(2)==1)?true:false);
-            calenderEvent.setIsNeedNotify((cursor.getInt(3)==1)?true:false);
-
-            String date = cursor.getString(4);
-            String[] subStrings = date.split("/");
-            calenderEvent.setDay(Integer.parseInt(subStrings[0]));
-            calenderEvent.setMonth(Integer.parseInt(subStrings[1]));
-            calenderEvent.setYear(Integer.parseInt(subStrings[2]));
-
-            calenderEvent.setStartTimeHour(Integer.parseInt(cursor.getString(5)));
-            calenderEvent.setStartTimeMinute(Integer.parseInt(cursor.getString(6)));
-            calenderEvent.setEndTimeHour(Integer.parseInt(cursor.getString(7)));
-            calenderEvent.setEndTimeMinute(Integer.parseInt(cursor.getString(8)));
-            calenderEvent.setEventColor(cursor.getString(9));
-            calenderEvent.setLocal(cursor.getString(10));
-            calenderEvent.setDescription(cursor.getString(11));
-
-            calenderEventList.add(calenderEvent);
+            calenderEventList.add(returnCalenderEvent(cursor));
 
         }
 
         cursor.close();
+        sqlitedb.close();
 
         return calenderEventList;
 
@@ -204,32 +207,33 @@ public class sqliteHelper extends SQLiteOpenHelper {
         Cursor cursor = sqlitedb.rawQuery("SELECT * FROM EVENT WHERE date = ?", new String[] {day});
 
         while (cursor.moveToNext()){
-            CalenderEvent calenderEvent = new CalenderEvent();
+//            CalenderEvent calenderEvent = new CalenderEvent();
+//
+//            calenderEvent.setEventId(cursor.getString(0));
+//            calenderEvent.setTitle(cursor.getString(1));
+//            calenderEvent.setIsAllday((cursor.getInt(2)==1)?true:false);
+//            calenderEvent.setIsNeedNotify((cursor.getInt(3)==1)?true:false);
+//
+//            String date = cursor.getString(4);
+//            String[] subStrings = date.split("/");
+//            calenderEvent.setDay(Integer.parseInt(subStrings[0]));
+//            calenderEvent.setMonth(Integer.parseInt(subStrings[1]));
+//            calenderEvent.setYear(Integer.parseInt(subStrings[2]));
+//
+//            calenderEvent.setStartTimeHour(Integer.parseInt(cursor.getString(5)));
+//            calenderEvent.setStartTimeMinute(Integer.parseInt(cursor.getString(6)));
+//            calenderEvent.setEndTimeHour(Integer.parseInt(cursor.getString(7)));
+//            calenderEvent.setEndTimeMinute(Integer.parseInt(cursor.getString(8)));
+//            calenderEvent.setEventColor(cursor.getString(9));
+//            calenderEvent.setLocal(cursor.getString(10));
+//            calenderEvent.setDescription(cursor.getString(11));
 
-            calenderEvent.setEventId(cursor.getString(0));
-            calenderEvent.setTitle(cursor.getString(1));
-            calenderEvent.setIsAllday((cursor.getInt(2)==1)?true:false);
-            calenderEvent.setIsNeedNotify((cursor.getInt(3)==1)?true:false);
-
-            String date = cursor.getString(4);
-            String[] subStrings = date.split("/");
-            calenderEvent.setDay(Integer.parseInt(subStrings[0]));
-            calenderEvent.setMonth(Integer.parseInt(subStrings[1]));
-            calenderEvent.setYear(Integer.parseInt(subStrings[2]));
-
-            calenderEvent.setStartTimeHour(Integer.parseInt(cursor.getString(5)));
-            calenderEvent.setStartTimeMinute(Integer.parseInt(cursor.getString(6)));
-            calenderEvent.setEndTimeHour(Integer.parseInt(cursor.getString(7)));
-            calenderEvent.setEndTimeMinute(Integer.parseInt(cursor.getString(8)));
-            calenderEvent.setEventColor(cursor.getString(9));
-            calenderEvent.setLocal(cursor.getString(10));
-            calenderEvent.setDescription(cursor.getString(11));
-
-            calenderEventList.add(calenderEvent);
+            calenderEventList.add(returnCalenderEvent(cursor));
 
         }
 
-
+        cursor.close();
+        sqlitedb.close();
 
         return calenderEventList;
 
@@ -246,32 +250,33 @@ public class sqliteHelper extends SQLiteOpenHelper {
         Cursor cursor = sqlitedb.rawQuery("SELECT * FROM EVENT WHERE date BETWEEN ? AND ?", new String[] {startDay, endDay});
 
         while (cursor.moveToNext()){
-            CalenderEvent calenderEvent = new CalenderEvent();
+//            CalenderEvent calenderEvent = new CalenderEvent();
+//
+//            calenderEvent.setEventId(cursor.getString(0));
+//            calenderEvent.setTitle(cursor.getString(1));
+//            calenderEvent.setIsAllday((cursor.getInt(2)==1)?true:false);
+//            calenderEvent.setIsNeedNotify((cursor.getInt(3)==1)?true:false);
+//
+//            String date = cursor.getString(4);
+//            String[] subStrings = date.split("/");
+//            calenderEvent.setDay(Integer.parseInt(subStrings[0]));
+//            calenderEvent.setMonth(Integer.parseInt(subStrings[1]));
+//            calenderEvent.setYear(Integer.parseInt(subStrings[2]));
+//
+//            calenderEvent.setStartTimeHour(Integer.parseInt(cursor.getString(5)));
+//            calenderEvent.setStartTimeMinute(Integer.parseInt(cursor.getString(6)));
+//            calenderEvent.setEndTimeHour(Integer.parseInt(cursor.getString(7)));
+//            calenderEvent.setEndTimeMinute(Integer.parseInt(cursor.getString(8)));
+//            calenderEvent.setEventColor(cursor.getString(9));
+//            calenderEvent.setLocal(cursor.getString(10));
+//            calenderEvent.setDescription(cursor.getString(11));
 
-            calenderEvent.setEventId(cursor.getString(0));
-            calenderEvent.setTitle(cursor.getString(1));
-            calenderEvent.setIsAllday((cursor.getInt(2)==1)?true:false);
-            calenderEvent.setIsNeedNotify((cursor.getInt(3)==1)?true:false);
-
-            String date = cursor.getString(4);
-            String[] subStrings = date.split("/");
-            calenderEvent.setDay(Integer.parseInt(subStrings[0]));
-            calenderEvent.setMonth(Integer.parseInt(subStrings[1]));
-            calenderEvent.setYear(Integer.parseInt(subStrings[2]));
-
-            calenderEvent.setStartTimeHour(Integer.parseInt(cursor.getString(5)));
-            calenderEvent.setStartTimeMinute(Integer.parseInt(cursor.getString(6)));
-            calenderEvent.setEndTimeHour(Integer.parseInt(cursor.getString(7)));
-            calenderEvent.setEndTimeMinute(Integer.parseInt(cursor.getString(8)));
-            calenderEvent.setEventColor(cursor.getString(9));
-            calenderEvent.setLocal(cursor.getString(10));
-            calenderEvent.setDescription(cursor.getString(11));
-
-            calenderEventList.add(calenderEvent);
+            calenderEventList.add(returnCalenderEvent(cursor));
 
         }
 
-
+        cursor.close();
+        sqlitedb.close();
 
         return calenderEventList;
 
@@ -280,23 +285,141 @@ public class sqliteHelper extends SQLiteOpenHelper {
 
 
 
-    // 删除
-    public int deleteDataById(String id){
+    // delete
+    public boolean deleteEventByEventId(String eventId){
         SQLiteDatabase sqlitedb = this.getWritableDatabase();
-        return sqlitedb.delete("EVENT", "id = ?", new String[] {id});
+
+        // number of rows affected
+        int result = sqlitedb.delete("EVENT", "eventId = ?", new String[] {eventId});
+
+        sqlitedb.close();
+
+        if(result > 0){
+            return true;
+        }
+        else{
+            return false;
+        }
+
+    }
+
+    public boolean deleteEventsByUserId(String userId){
+        SQLiteDatabase sqlitedb = this.getWritableDatabase();
+
+        // number of rows affected
+        int result = sqlitedb.delete("EVENT", "userId = ?", new String[] {userId});
+
+        sqlitedb.close();
+
+        if(result > 0){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
 
 
-    // 更新
-    public boolean updateData(String id){
 
+    // update
+    public boolean updateEventByEventId(String eventId, CalenderEvent calenderEvent){
         SQLiteDatabase sqlitedb = this.getWritableDatabase();
+
         ContentValues contentValues = new ContentValues();
-        contentValues.put("col2", id);
 
-        sqlitedb.update("EVENT", contentValues, "ID = ?", new String[] {id});
-        return true;
+        contentValues.put("eventId", calenderEvent.getEventId());
+        contentValues.put("title", calenderEvent.getTitle());
+        contentValues.put("isAllday", calenderEvent.getIsAllday());
+        contentValues.put("isNeedNotify", calenderEvent.getIsNeedNotify());
+
+        // combine day, month, year into date
+        int day = calenderEvent.getDay();
+        // month starts from 0 (0 == Jan.)
+        int month = calenderEvent.getMonth() + 1;
+        int year = calenderEvent.getYear();
+
+        String dateStr = day + "/" + month + "/" + year;
+        Log.d("dateeee1", String.valueOf(day) + String.valueOf(month) + String.valueOf(year));
+
+        contentValues.put("date", dateStr);
+        contentValues.put("startTimeHour", calenderEvent.getStartTimeHour());
+        contentValues.put("startTimeMinute", calenderEvent.getStartTimeMinute());
+        contentValues.put("endTimeHour", calenderEvent.getEndTimeHour());
+        contentValues.put("endTimeMinute", calenderEvent.getEndTimeMinute());
+        contentValues.put("eventColor", calenderEvent.getEventColor());
+        contentValues.put("local", calenderEvent.getLocal());
+        contentValues.put("description", calenderEvent.getDescription());
+        contentValues.put("userId", calenderEvent.getUserId());
+
+        // CalenderEvent中没有updateTime
+        // contentValues.put("updateTime", calenderEvent.getUpdateTime());
+
+
+        // number of rows affected
+        int result = sqlitedb.update("EVENT", contentValues, "eventId = ?", new String[] {eventId});
+
+        sqlitedb.close();
+
+        if(result > 0){
+            return true;
+        }
+        else{
+            return false;
+        }
 
     }
+
+// 把default userID 更新到 current userid
+    public boolean updateEventsByUserId(String defaultUserId, String currentUserId){
+        SQLiteDatabase sqlitedb = this.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("userId", currentUserId);
+
+        // number of rows affected
+        int result = sqlitedb.update("EVENT", contentValues, "userId = ?", new String[] {defaultUserId});
+
+        sqlitedb.close();
+
+        if(result > 0){
+            return true;
+        }
+        else{
+            return false;
+        }
+
+    }
+
+
+    // assign values getting from db to the object
+    public CalenderEvent returnCalenderEvent(Cursor cursor){
+
+        CalenderEvent calenderEvent = new CalenderEvent();
+
+        calenderEvent.setEventId(cursor.getString(0));
+        calenderEvent.setTitle(cursor.getString(1));
+        calenderEvent.setIsAllday((cursor.getInt(2)==1)?true:false);
+        calenderEvent.setIsNeedNotify((cursor.getInt(3)==1)?true:false);
+
+        String date = cursor.getString(4);
+        String[] subStrings = date.split("/");
+        calenderEvent.setDay(Integer.parseInt(subStrings[0]));
+        calenderEvent.setMonth(Integer.parseInt(subStrings[1]));
+        calenderEvent.setYear(Integer.parseInt(subStrings[2]));
+
+        calenderEvent.setStartTimeHour(Integer.parseInt(cursor.getString(5)));
+        calenderEvent.setStartTimeMinute(Integer.parseInt(cursor.getString(6)));
+        calenderEvent.setEndTimeHour(Integer.parseInt(cursor.getString(7)));
+        calenderEvent.setEndTimeMinute(Integer.parseInt(cursor.getString(8)));
+        calenderEvent.setEventColor(cursor.getString(9));
+        calenderEvent.setLocal(cursor.getString(10));
+        calenderEvent.setDescription(cursor.getString(11));
+
+        return calenderEvent;
+
+    }
+
+
+
 }

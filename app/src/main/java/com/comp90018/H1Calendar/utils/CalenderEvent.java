@@ -22,6 +22,9 @@ public class CalenderEvent implements Serializable {
     private String local;
     private String description;
 
+    // Tao
+    private String userId;
+
     public CalenderEvent() {
 
     }
@@ -150,6 +153,15 @@ public class CalenderEvent implements Serializable {
         Gson gson = new Gson();
         String json = gson.toJson(this);
         return json;
+    }
+
+    // Tao
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userid) {
+        this.userId = userid;
     }
 
 
