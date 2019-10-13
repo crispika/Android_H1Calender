@@ -12,8 +12,9 @@ import androidx.annotation.Nullable;
 import com.comp90018.H1Calendar.R;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
+
 import butterknife.OnClick;
+import butterknife.ButterKnife;
 
 public class EventLocalSet extends Activity {
 

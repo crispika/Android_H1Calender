@@ -21,7 +21,7 @@
         <activity android:name=".AddQRCodeScheduleActivity" />
         <activity android:name=".EventSettingActivity.EventColorSet" />
         <activity android:name=".EventSettingActivity.EventLocalSet"/>
-
+        <activity android:name=".AddGPSLocationActivity"/>
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="portrait"
@@ -35,4 +35,8 @@
     <!--read and write-->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.PERMISSIONS_STORAGE"/>
+    <!--allow location access    -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>

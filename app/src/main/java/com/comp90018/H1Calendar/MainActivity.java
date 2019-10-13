@@ -145,7 +145,6 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         setMonthLabel();
         init_FAB();
 
-
         dayEventView = new DayEventView();
         weekEventView = new WeekEventView();
         myNavigationView = this.findViewById(R.id.navigation);
@@ -504,6 +503,15 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                 .setLabelColor(0xff056f00)
                 .setWrapper(1)
         );
+        items.add(new RFACLabelItem<Integer>()
+                .setLabel("Bookmark Current Location")
+                .setResId(R.drawable.ic_location_on_grey_600_24dp)
+                .setIconNormalColor(0xff056f00)
+                .setIconPressedColor(0xff0d5302)
+                .setLabelColor(0xff056f00)
+                .setWrapper(1)
+        );
+
         rfaContent
                 .setItems(items)
                 .setIconShadowRadius(5)
@@ -542,6 +550,11 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                 Intent intent_to_qrcode = new Intent();
                 intent_to_qrcode.setClass(this, AddQRCodeScheduleActivity.class);
                 startActivity(intent_to_qrcode);
+                break;
+            case 2:
+                Intent intent_to_location = new Intent();
+                intent_to_location.setClass(this,AddGPSLocationActivity.class);
+                startActivity(intent_to_location);
                 break;
             default:
                 break;
