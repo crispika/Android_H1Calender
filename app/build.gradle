@@ -51,4 +51,5 @@ dependencies {
 
     // Gson for json parsing
     implementation 'com.google.code.gson:gson:2.8.0'
+
 }
