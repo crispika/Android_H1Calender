@@ -56,6 +56,7 @@ public class DayEventListViewAdapter extends BaseAdapter {
         dbhelper = new sqliteHelper(myContext.getApplicationContext());
         dayEvents = dbhelper.getEventsByDay(mDate);
         notifyDataSetChanged();
+        //System.out.println(dayEvents.size());
     }
 
     static class ViewHolder {
