@@ -1,7 +1,9 @@
 package com.comp90018.H1Calendar;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -10,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -80,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
     //Btn for back to today
     @OnClick(R.id.back_to_today)
-    public void back_to_today(){
+    public void back_to_today() {
         EventBus.getInstance().send(new Events.BackToToday());
         calendar_view.scrollToDate(CalendarManager.getInstance().getToday(), CalendarManager.getInstance().getWeekList());
     }
@@ -103,7 +106,6 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_drawerlayout);
         ButterKnife.bind(this);
-
         setCalendarInfo();
         initCalendarView();
         setMonthLabel();
@@ -117,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
             myNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                    switch(menuItem.getItemId()){
+                    switch (menuItem.getItemId()) {
                         case R.id.dayview:
                             getSupportFragmentManager().beginTransaction().replace(R.id.Event_container, dayEventView).commitAllowingStateLoss();
                             drawer_layout.closeDrawers();
@@ -125,6 +127,19 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                         case R.id.weeklyview:
                             getSupportFragmentManager().beginTransaction().replace(R.id.Event_container, weekEventView).commitAllowingStateLoss();
                             drawer_layout.closeDrawers();
+                            break;
+                        case R.id.day_night_swicth:
+                            //TODO: To implement auto-mode-change with light-sensor
+                            if ((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO){
+                                getDelegate().setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                                Log.d("NightMode", getResources().getConfiguration().uiMode+" - messageeeeeeeeeeeee");
+                            }
+                            else{
+                                getDelegate().setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                                Log.d("DayMode", "Switch to light");
+                                recreate();
+                            }
+                            recreate();
                             break;
                         default:
                             break;
@@ -139,7 +154,9 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
     }
 
+
     //region CalendarView Settings
+
     /**
      * set the data in the calendar
      */
@@ -164,12 +181,12 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
     /**
      * init the style, color, theme of the calendar
      */
-    private void initCalendarView(){
+    private void initCalendarView() {
         calendar_HeaderTextColor = getColor(R.color.calendar_text_header);
         calendar_CurrentDayTextColor = getColor(R.color.calendar_text_current_day);
         calendar_PastDayTextColor = getColor(R.color.calendar_text_past_day);
 
-        calendar_view.init(calendar_HeaderTextColor,calendar_CurrentDayTextColor,calendar_PastDayTextColor);
+        calendar_view.init(calendar_HeaderTextColor, calendar_CurrentDayTextColor, calendar_PastDayTextColor);
     }
     //endregion
 
@@ -225,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
             case 0:
                 Intent intent_to_form = new Intent();
                 intent_to_form.setClass(this, AddFormScheduleActivity.class);
-                intent_to_form.putExtra("type","addEvent");
+                intent_to_form.putExtra("type", "addEvent");
                 startActivity(intent_to_form);
                 break;
             case 1:
@@ -241,11 +258,11 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
     }
     //endregion
 
-    private void setMonthLabel(){
+    private void setMonthLabel() {
         EventBus.getInstance().getSubject().subscribe(event -> {
-           if(event instanceof Events.MonthChangeEvent){
-               title_month_label.setText(((Events.MonthChangeEvent)event).getMonthFullName());
-           }
+            if (event instanceof Events.MonthChangeEvent) {
+                title_month_label.setText(((Events.MonthChangeEvent) event).getMonthFullName());
+            }
         });
     }
 }

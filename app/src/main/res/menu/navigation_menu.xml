@@ -28,6 +28,11 @@
             android:title="contact us"
             android:icon="@drawable/ic_contactus"/>
 
+        <item android:id="@+id/day_night_swicth"
+            android:checkable="true"
+            android:title="Dark Mode"
+            />
+
     </group>
 
 </menu>
