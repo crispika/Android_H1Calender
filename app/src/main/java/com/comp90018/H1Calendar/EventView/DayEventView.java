@@ -1,6 +1,7 @@
 package com.comp90018.H1Calendar.EventView;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -10,9 +11,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.comp90018.H1Calendar.EventDetailActivity;
 import com.comp90018.H1Calendar.R;
 import com.comp90018.H1Calendar.utils.CalendarManager;
 import com.comp90018.H1Calendar.utils.DateManager;
@@ -50,6 +53,17 @@ public class DayEventView extends Fragment {
         lv_day = view.findViewById(R.id.lv_day_event);
         dayEventListViewAdapter = new DayEventListViewAdapter(DayEventView.this.getActivity());
         lv_day.setAdapter(dayEventListViewAdapter);
+        lv_day.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(DayEventView.this.getActivity(), EventDetailActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("title",dayEventListViewAdapter.getEvent(i).getTitle());
+                intent.putExtras(bundle);
+                startActivity(intent);
+                System.out.println(dayEventListViewAdapter.getEvent(i).getTitle());
+            }
+        });
 
     }
 

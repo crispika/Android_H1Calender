@@ -59,6 +59,10 @@ public class DayEventListViewAdapter extends BaseAdapter {
         //System.out.println(dayEvents.size());
     }
 
+    public CalenderEvent getEvent(int position){
+        return dayEvents.get(position);
+    }
+
     static class ViewHolder {
         public TextView tvDayEvent;
 
