@@ -1,9 +1,175 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <TextView
-        android:id="@+id/tv_event_title_detail"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/event_detail_header"
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:background="@color/colorPrimaryDark">
+
+        <ImageButton
+            android:id="@+id/event_detail_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/icon_bg"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/ic_keyboard_backspace_white_24dp" />
+        <TextView
+            android:id="@+id/event_detail_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="60dp"
+            android:layout_marginTop="70dp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:text="Title"
+            android:textColor="#fff"
+            android:textSize="22sp"/>
+        <ImageButton
+            android:id="@+id/event_detail_delete"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/icon_bg"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="5dp"
+            android:src="@drawable/ic_delete_white_24dp" />
+    </RelativeLayout>
+    <com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton xmlns:rfab="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/event_detail_update_rfab"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="-30dp"
+        android:padding="5dp"
+        rfab:rfab_color_normal="@color/fab"
+        rfab:rfab_color_pressed="@color/fab_pressed"
+        rfab:rfab_drawable="@drawable/edit_white_24dp"
+        rfab:rfab_shadow_color="@color/fab_shadow"
+        rfab:rfab_shadow_dx="0dp"
+        rfab:rfab_shadow_dy="5dp"
+        rfab:rfab_size="normal"
+        />
+    <LinearLayout
+        android:id="@+id/detail_alarm_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/ic_access_time_grey_600_24dp" />
+
+            <TextView
+                android:id="@+id/event_detail_date"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="40dp"
+                android:text="16th OCT"
+                android:textColor="#000" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/ic_alarm_grey_600_24dp" />
+
+            <TextView
+                android:id="@+id/event_detail_start_end_time"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="40dp"
+                android:text="15:00 - 19:00"
+                android:textColor="#000" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/ic_notifications_grey_600_24dp" />
+
+            <TextView
+                android:id="@+id/event_detail_alarm_time"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="40dp"
+                android:text="Please Set Alarm time"
+                android:textColor="#000" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/ic_location_on_grey_600_24dp" />
+
+            <TextView
+                android:id="@+id/event_detail_location"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="40dp"
+                android:text="Melbourne"
+                android:textColor="#000" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/ic_menu_grey_600_24dp" />
+
+            <TextView
+                android:id="@+id/event_detail_description"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="40dp"
+                android:text="Event Description"
+                android:textColor="#000" />
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>

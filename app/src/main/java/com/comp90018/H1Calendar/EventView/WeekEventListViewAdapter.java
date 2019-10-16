@@ -8,11 +8,19 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.comp90018.H1Calendar.R;
+import com.comp90018.H1Calendar.DBHelper.sqliteHelper;
+import com.comp90018.H1Calendar.utils.CalenderEvent;
+
+import java.util.List;
 
 public class WeekEventListViewAdapter extends BaseAdapter {
 
     private Context myContext;
     private LayoutInflater myLayoutInflater;
+    private String mDate;
+    private sqliteHelper dbhelper;
+    private List<CalenderEvent> weekEvents;
+    private CalenderEvent mEvent;
 
     public WeekEventListViewAdapter(Context context) {
         myContext = context;
@@ -34,6 +42,23 @@ public class WeekEventListViewAdapter extends BaseAdapter {
         return 0;
     }
 
+    public void setDate(String date){
+        mDate = date;
+        setEventList();
+    }
+    public void setEventList(){
+        dbhelper = new sqliteHelper(myContext.getApplicationContext());
+        weekEvents = dbhelper.getEventsByDay(mDate);
+        notifyDataSetChanged();
+        //System.out.println(dayEvents.size());
+    }
+
+    public CalenderEvent getEvent(int position){
+        return weekEvents.get(position);
+    }
+
+
+
     static class ViewHolder {
         public TextView tvWeekEvent;
     }
@@ -49,6 +74,7 @@ public class WeekEventListViewAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) view.getTag();
         }
+        holder.tvWeekEvent.setText(mEvent.getTitle());
         return view;
     }
 }

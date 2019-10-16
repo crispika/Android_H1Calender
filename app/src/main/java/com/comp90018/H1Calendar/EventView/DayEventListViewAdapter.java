@@ -1,10 +1,12 @@
 package com.comp90018.H1Calendar.EventView;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.comp90018.H1Calendar.DBHelper.sqliteHelper;
@@ -21,6 +23,7 @@ public class DayEventListViewAdapter extends BaseAdapter {
     private sqliteHelper dbhelper;
     private List<CalenderEvent> dayEvents;
     private CalenderEvent mEvent;
+
 
     public DayEventListViewAdapter(Context context) {
         myContext = context;
@@ -63,8 +66,13 @@ public class DayEventListViewAdapter extends BaseAdapter {
         return dayEvents.get(position);
     }
 
+    public List<CalenderEvent> getEvantList(){
+        return dayEvents;
+    }
+
     static class ViewHolder {
-        public TextView tvDayEvent;
+        public TextView tvDayEventTitle;
+        public LinearLayout llEventBackground;
 
     }
 
@@ -75,12 +83,16 @@ public class DayEventListViewAdapter extends BaseAdapter {
         if (view == null) {
             view = myLayoutInflater.inflate(R.layout.day_event_list_layout, null);
             holder = new ViewHolder();
-            holder.tvDayEvent = view.findViewById(R.id.tv_day_event);
+            holder.tvDayEventTitle = view.findViewById(R.id.day_event_title);
+            holder.llEventBackground = view.findViewById(R.id.day_event_background);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
         }
-        holder.tvDayEvent.setText(mEvent.getTitle());
+
+
+        holder.tvDayEventTitle.setText(mEvent.getTitle());
+        holder.llEventBackground.setBackgroundColor(Color.BLUE);
         return view;
     }
 }

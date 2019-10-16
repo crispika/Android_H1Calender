@@ -33,6 +33,7 @@ public class DayEventView extends Fragment {
 
     private TextView tv_day;
     private ListView lv_day;
+    public TextView tvDayEventTextHeader;
     private DayEventListViewAdapter dayEventListViewAdapter;
 
     public DayEventView() {
@@ -49,9 +50,18 @@ public class DayEventView extends Fragment {
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        tv_day = view.findViewById(R.id.tv_day_event);
+        tv_day = view.findViewById(R.id.day_event_title);
         lv_day = view.findViewById(R.id.lv_day_event);
+        tvDayEventTextHeader = view.findViewById(R.id.day_event_textHeader);
         dayEventListViewAdapter = new DayEventListViewAdapter(DayEventView.this.getActivity());
+        //set Day Event View Header Text
+        if(dayEventListViewAdapter.getEvantList() == null){
+            tvDayEventTextHeader.setText("There are no event for today, please add one");
+        }else if(dayEventListViewAdapter.getEvantList() .isEmpty()){
+            tvDayEventTextHeader.setText("There are no event for today, please add one");
+        }else{
+            tvDayEventTextHeader.setText("These are events for today");
+        }
         lv_day.setAdapter(dayEventListViewAdapter);
         lv_day.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
