@@ -13,15 +13,22 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AddFormScheduleActivity" />
+        <activity android:name=".AddFormScheduleActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <activity android:name=".AddQRCodeScheduleActivity" />
         <activity android:name=".EventSettingActivity.EventColorSet" />
         <activity android:name=".EventSettingActivity.EventLocalSet"/>
+        <activity android:name=".EventSettingActivity.EventQRShare"/>
         <activity android:name=".AddGPSLocationActivity"/>
+
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="portrait"
