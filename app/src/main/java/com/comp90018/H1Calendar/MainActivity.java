@@ -1,14 +1,20 @@
 package com.comp90018.H1Calendar;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,10 +22,12 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.comp90018.H1Calendar.DBHelper.sqliteHelper;
 import com.comp90018.H1Calendar.EventView.DayEventView;
 import com.comp90018.H1Calendar.EventView.WeekEventView;
 import com.comp90018.H1Calendar.calendar.CalendarView;
 import com.comp90018.H1Calendar.utils.CalendarManager;
+import com.comp90018.H1Calendar.utils.CalenderEvent;
 import com.comp90018.H1Calendar.utils.EventBus;
 import com.comp90018.H1Calendar.utils.Events;
 import com.google.android.material.navigation.NavigationView;
@@ -38,6 +46,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import com.google.gson.Gson;
+
 //import android.app.Activity;
 
 
@@ -48,6 +58,31 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
     private Button btnDWswitch;
     private ListView leftList;
     private NavigationView myNavigationView;
+
+    // Tao: start here
+
+    private NavigationView navigationView;
+    private View loginView, logoutView, registerView;
+    private EditText loginuseremail, loginpwd, registeruseremail, registerpwd, registerpwdagain;
+    private TextView logoutuseremail, logoutuserid;
+    private Button loginlogin, loginregister, logoutlogout, logoutsync, registerregister, registercancel;
+
+    // store user info into shared preferences
+    private static final String SHAREDPREFS  = "sharedPrefs";
+    private static final String USERID = "userid";
+    private static final String USEREMAIL = "useremail";
+    private static final String USERPWD = "userpwd";
+
+    // variable used to store user info that get from shared preferences
+    private String userId, userEmail, userPwd;
+
+    // db helper
+    sqliteHelper dbhelper;
+    // default userId to current userId
+    String defaultUserId = "";
+
+
+    // Tao: end here
 
 
     //Region for basic UI
@@ -150,7 +185,281 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         }
         getSupportFragmentManager().beginTransaction().add(R.id.Event_container, dayEventView).commitAllowingStateLoss();
 
-        //可以在这里创建数据库
+
+        // Tao: start here
+
+        navigationView = findViewById(R.id.navigation);
+
+        // add three header layouts to navigation view
+        loginView = navigationView.inflateHeaderView(R.layout.navigation_header_login);
+        logoutView = navigationView.inflateHeaderView(R.layout.navigation_header_logout);
+        registerView = navigationView.inflateHeaderView(R.layout.navigation_header_register);
+
+        // widgets
+        // login
+        loginuseremail = loginView.findViewById(R.id.et_useremail);
+        loginpwd = loginView.findViewById(R.id.et_pwd);
+        loginlogin = loginView.findViewById(R.id.btn_login);
+        loginregister = loginView.findViewById(R.id.btn_register);
+
+        // logout
+        logoutuseremail = logoutView.findViewById(R.id.tv_useremail);
+        logoutuserid = logoutView.findViewById(R.id.tv_userId);
+        logoutlogout = logoutView.findViewById(R.id.btn_logout);
+        logoutsync = logoutView.findViewById(R.id.btn_sync);
+
+        // register
+        registeruseremail = registerView.findViewById(R.id.et_useremail);
+        registerpwd = registerView.findViewById(R.id.et_pwd);
+        registerpwdagain = registerView.findViewById(R.id.et_pwdConfirm);
+        registerregister = registerView.findViewById(R.id.btn_register);
+        registercancel = registerView.findViewById(R.id.btn_cancel);
+
+        // db helper
+        dbhelper = new sqliteHelper(getApplicationContext());
+
+        // load user info from shared preferences
+        // assign the values to userId, userName, userPwd, the default values are ""
+        loadUserInfo();
+
+        // user info is available
+        if(!userId.equals("") && !userEmail.equals("") && !userPwd.equals("")){
+
+            // return something
+            userValidation(userEmail, userPwd);
+
+            // processing bar
+
+            String returnUserId, returnUserEmail, returnUserPwd;
+
+
+            // successful
+            if(true){
+
+                // save user info (update user info)
+                // saveUserInfo(returnUserId, returnUserEmail, returnUserPwd);
+                // loadUserInfo();
+
+                // jump to navigation_header_logout
+                jumpToNavigationHeaderLogout();
+
+                Toast.makeText(getApplicationContext(), "login successfully",
+                        Toast.LENGTH_SHORT).show();
+
+            }
+            // failed
+            else{
+
+                // jump to navigation_header_login
+                jumpToNavigationHeaderLogin();
+
+                Toast.makeText(getApplicationContext(), "login failed, try again please",
+                        Toast.LENGTH_SHORT).show();
+
+            }
+        }
+        // user info is not available
+        else{
+
+            jumpToNavigationHeaderLogin();
+
+        }
+
+        // login: login button
+        loginlogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String loginUseremail = loginuseremail.getText().toString();
+                String loginPwd = loginpwd.getText().toString();
+
+                if(loginUseremail.equals("") || loginPwd.equals("")){
+
+                    Toast.makeText(getApplicationContext(), "username or pwd is missing",
+                            Toast.LENGTH_SHORT).show();
+
+                }
+                else{
+
+                    // return something
+                    userValidation(loginUseremail, loginPwd);
+
+                    // processing bar
+
+                    String returnUserId, returnUserEmail, returnUserPwd;
+
+                    // successful
+                    if(true){
+
+                        // save user info (update user info)
+                        // saveUserInfo(returnUserId, returnUserEmail, returnUserPwd);
+                        // loadUserInfo();
+
+                        // for test
+                        saveUserInfo("userid", loginUseremail, loginPwd);
+                        loadUserInfo();
+
+                        jumpToNavigationHeaderLogout();
+
+                        Toast.makeText(getApplicationContext(), "login successfully",
+                                Toast.LENGTH_SHORT).show();
+
+
+                    }
+                    // failed
+                    else{
+
+                        Toast.makeText(getApplicationContext(), "login failed, try again please",
+                                Toast.LENGTH_SHORT).show();
+
+                    }
+                }
+
+            }
+        });
+
+        // login: register button
+        loginregister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                jumpToNavigationHeaderRegister();
+
+            }
+        });
+
+        // logout: logout button
+        logoutlogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                saveUserInfo("","","");
+                loadUserInfo();
+
+                jumpToNavigationHeaderLogin();
+
+            }
+        });
+
+        // logout: sync button
+        logoutsync.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                // getAllEventsByUserId
+
+                List<CalenderEvent> allCurrentCalenderEventList = new ArrayList<CalenderEvent>();
+                allCurrentCalenderEventList = dbhelper.getAllEventsByUserId(userId);
+
+                // 生成json传递 {userId : [events]}
+                Gson gson = new Gson();
+                String jsonString = gson.toJson(allCurrentCalenderEventList);
+
+                jsonString = "{" + '"' + userId + '"' + ":" + jsonString + "}";
+
+                // Http request
+
+                Log.d("json", jsonString);
+//                [{"day":10,"description":"None","endTimeHour":0,"endTimeMinute":0,"eventId":"509b23f6-a73a-4121-8b80-403681c258e6","isAllday":false,"isNeedNotify":false,"local":"None","month":10,"startTimeHour":0,"startTimeMinute":0,"title":"default1","year":2019},
+//                {"day":11,"description":"None","endTimeHour":0,"endTimeMinute":0,"eventId":"e93e3d36-8836-434d-bba7-352846a28eae","isAllday":false,"isNeedNotify":false,"local":"None","month":10,"startTimeHour":0,"startTimeMinute":0,"title":"default2","year":2019},
+//                {"day":13,"description":"None","endTimeHour":0,"endTimeMinute":0,"eventId":"9d01331f-ac2a-4e0a-9b8b-04069d1acd90","isAllday":false,"isNeedNotify":false,"local":"None","month":10,"startTimeHour":0,"startTimeMinute":0,"title":"default3","year":2019}]
+
+
+                // processing bar
+
+                // 收到反馈
+
+                // sync successfully
+                if(true){
+                    Toast.makeText(getApplicationContext(), "sync successfully",
+                            Toast.LENGTH_SHORT).show();
+                }
+                // sync failed
+                else{
+                    Toast.makeText(getApplicationContext(), "sync failed",
+                            Toast.LENGTH_SHORT).show();
+
+                }
+
+            }
+        });
+
+        // register: register buttion
+        registerregister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                String registerUseremail = registeruseremail.getText().toString();
+                String registerPwd = registerpwd.getText().toString();
+                String registerPwdAgain = registerpwdagain.getText().toString();
+
+                if (registerUseremail.equals("") || registerPwd.equals("") || registerPwdAgain.equals("")) {
+
+                    Toast.makeText(getApplicationContext(), "username or pwd is missing",
+                            Toast.LENGTH_SHORT).show();
+
+                } else if (!registerPwd.equals(registerPwdAgain)) {
+
+                    Toast.makeText(getApplicationContext(), "passwords are not same",
+                            Toast.LENGTH_SHORT).show();
+
+                } else {
+
+                    // 用户注册 -- 云端验证
+                    // processing bar
+                    // 登录成功：返回 true 用户ID，用户名（email），密码），存到本地DB中，跳转到logout页面
+                    // 全局的current user ID 设为此用户ID
+                    // 登录失败：返回 false，显示信息
+
+                    // return something
+                    userValidation(registerUseremail, registerPwd);
+
+                    // processing bar
+
+                    String returnUserId, returnUserEmail, returnUserPwd;
+
+                    // successful
+                    if(true){
+
+                        // save user info (update user info)
+                        // saveUserInfo(returnUserId, returnUserEmail, returnUserPwd);
+                        // loadUserInfo();
+
+                        // for test
+                        saveUserInfo("returnUserId", registerUseremail, registerPwd);
+                        loadUserInfo();
+
+                        jumpToNavigationHeaderLogout();
+
+                        Toast.makeText(getApplicationContext(), "register successfully",
+                                Toast.LENGTH_SHORT).show();
+
+                    }
+                    // failed
+                    else{
+
+                        Toast.makeText(getApplicationContext(), "register failed, try again please",
+                                Toast.LENGTH_SHORT).show();
+
+                    }
+
+                }
+
+            }
+        });
+
+        // register: cancel buttion
+        registercancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                jumpToNavigationHeaderLogin();
+
+            }
+        });
+
+
+
+        // Tao: end here
 
     }
 
@@ -265,5 +574,152 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
             }
         });
     }
+
+
+    // Tao: start here
+
+    public void saveUserInfo(String userid, String useremail, String userpwd){
+        SharedPreferences sharedPreferences = getSharedPreferences(SHAREDPREFS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putString(USERID, userid);
+        editor.putString(USEREMAIL, useremail);
+        editor.putString(USERPWD, userpwd);
+
+        // apply(): apply会把数据同步写入内存缓存，然后异步保存到磁盘，可能会执行失败，失败不会收到错误回调
+        // commit(): commit将同步的把数据写入磁盘和内存缓存
+        editor.apply();
+        Toast.makeText(this, "data saved", Toast.LENGTH_SHORT).show();
+    }
+
+    public void loadUserInfo(){
+        SharedPreferences sharedPreferences = getSharedPreferences(SHAREDPREFS, Context.MODE_PRIVATE);
+
+        // the default values of these three variables are ""
+        userId = sharedPreferences.getString(USERID, "");
+        userEmail = sharedPreferences.getString(USEREMAIL, "");
+        userPwd = sharedPreferences.getString(USERPWD, "");
+
+    }
+
+    // return user info and validation state
+    public void userValidation(String useremail, String password){
+
+
+    }
+
+    public void jumpToNavigationHeaderLogin(){
+
+        // setting of login
+        loginuseremail.setText("");
+        loginpwd.setText("");
+
+        // setting of logout
+        logoutuserid.setText("");
+        logoutuseremail.setText("");
+
+        // setting of register
+        registeruseremail.setText("");
+        registerpwd.setText("");
+        registerpwdagain.setText("");
+
+        // View.INVISIBLE -- 看不见，但占位
+        // View.GONE -- 看不见，不占位
+        loginView.setVisibility(View.VISIBLE);
+        logoutView.setVisibility(View.GONE);
+        registerView.setVisibility(View.GONE);
+
+    }
+
+    public void jumpToNavigationHeaderLogout(){
+
+        List<CalenderEvent> allDefaultCalenderEventList = new ArrayList<CalenderEvent>();
+        allDefaultCalenderEventList = dbhelper.getAllEventsByUserId(defaultUserId);
+
+        int numberOfDefaultEvents = allDefaultCalenderEventList.size();
+
+        if(numberOfDefaultEvents > 0){
+            // popup window
+            changeDefaultEvents(numberOfDefaultEvents);
+
+        }
+
+
+        // setting of login
+        loginuseremail.setText("");
+        loginpwd.setText("");
+
+        // setting of logout
+        logoutuserid.setText(userId);
+        logoutuseremail.setText(userEmail);
+
+        // setting of register
+        registeruseremail.setText("");
+        registerpwd.setText("");
+        registerpwdagain.setText("");
+
+
+        loginView.setVisibility(View.GONE);
+        logoutView.setVisibility(View.VISIBLE);
+        registerView.setVisibility(View.GONE);
+
+    }
+
+    public void jumpToNavigationHeaderRegister(){
+
+        // setting of login
+        loginuseremail.setText("");
+        loginpwd.setText("");
+
+        // setting of logout
+        logoutuserid.setText("");
+        logoutuseremail.setText("");
+
+        // setting of register
+        registeruseremail.setText("");
+        registerpwd.setText("");
+        registerpwdagain.setText("");
+
+
+        loginView.setVisibility(View.GONE);
+        logoutView.setVisibility(View.GONE);
+        registerView.setVisibility(View.VISIBLE);
+
+    }
+
+    // popup dialog
+    public void changeDefaultEvents(int numberOfDefaultEvents){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("changeDefaultEvents");
+        builder.setMessage("There are " + numberOfDefaultEvents + " default events. Do you want to move them into your account?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                boolean isSucceed = dbhelper.updateEventsByUserId(defaultUserId, userId);
+
+                if(isSucceed){
+                    Toast.makeText(MainActivity.this, "successful",Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(MainActivity.this, "failed",Toast.LENGTH_SHORT).show();
+                }
+
+
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Toast.makeText(MainActivity.this, "no",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.show();
+    }
+
+
+    // Tao: end here
+
 }
 
