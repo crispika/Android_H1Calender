@@ -28,6 +28,8 @@
             tools:replace="screenOrientation" />
 
     </application>
+    <!--network state-->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!--taking phone-->
     <uses-feature android:name="android.hardware.camera"
         android:required="true" />
