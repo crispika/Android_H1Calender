@@ -9,7 +9,6 @@
     import android.widget.Toast;
 
     import androidx.annotation.Nullable;
-
     import java.io.IOException;
 
     import butterknife.BindView;
@@ -17,12 +16,14 @@
     import butterknife.OnClick;
 
     import com.comp90018.H1Calendar.utils.CalenderEvent;
+    import com.comp90018.H1Calendar.utils.ShakeUtils;
     import com.google.gson.Gson;
     import com.google.zxing.integration.android.IntentIntegrator;
     import com.google.zxing.integration.android.IntentResult;
 
 
     public class AddQRCodeScheduleActivity extends Activity {
+
         public static final int PHOTO_REQUEST_CAMERA = 0x0000c0de;// QR scan intent code
         public static final int PHOTO_REQUEST_GALLERY = 101;// gallery intent code
         @BindView(R.id.QR_photo) ImageView image;
@@ -35,6 +36,8 @@
             toGallery();
         }
 
+        private ShakeUtils shakeItOff;
+
 
         @Override
         protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,9 +45,21 @@
             super.onCreate(savedInstanceState);
             setContentView(R.layout.add_qrcode_schedule);
             ButterKnife.bind(this);
+            initAccelormeter();
 
         }
 
+        @Override
+        protected void onResume() {
+            super.onResume();
+            shakeItOff.register();
+        }
+
+        @Override
+        protected void onPause() {
+            super.onPause();
+            shakeItOff.unRegister();
+        }
 
         @Override
         protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -106,9 +121,17 @@
             return event;
         }
 
-
-
-
+        private void initAccelormeter(){
+            shakeItOff = new ShakeUtils(this);
+            shakeItOff.setOnShakeListener(new ShakeUtils.OnShakeListener() {
+                @Override
+                public void onShake() {
+                    Intent intent = new Intent(AddQRCodeScheduleActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            });
+        }
 
     }
 
