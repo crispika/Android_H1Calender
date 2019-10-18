@@ -163,23 +163,11 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                         case R.id.dayview:
                             getSupportFragmentManager().beginTransaction().replace(R.id.Event_container, dayEventView).commitAllowingStateLoss();
                             drawer_layout.closeDrawers();
+                            //EventBus.getInstance().send();
                             break;
                         case R.id.weeklyview:
                             getSupportFragmentManager().beginTransaction().replace(R.id.Event_container, weekEventView).commitAllowingStateLoss();
                             drawer_layout.closeDrawers();
-                            break;
-                        case R.id.day_night_swicth:
-                            //TODO: To implement auto-mode-change with light-sensor
-                            if ((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO) {
-                                //default对整个app生效，如果只需对这个activity生效，setLocalNightMode(..)
-                                getDelegate().setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                                Log.d("Theme_nav", "Switch to Dark");
-                            } else {
-                                getDelegate().setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                                Log.d("Theme_nav", "Switch to Light");
-                                recreate();
-                            }
-                            recreate();
                             break;
                         default:
                             break;
