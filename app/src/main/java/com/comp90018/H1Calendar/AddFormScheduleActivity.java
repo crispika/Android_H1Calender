@@ -369,8 +369,13 @@ public class AddFormScheduleActivity extends Activity {
          if (requestCode == 1) {
             if (resultCode == 1) {
                 if (data != null) {
-                    event_local.setText(data.getStringExtra("location"));
+                    if(data.getBooleanExtra("has_coor",false)){
+
+                        cEvent.setCoordinate(data.getStringExtra("coordinate"));
+                    }
                     cEvent.setLocal(data.getStringExtra("location"));
+                    event_local.setText(data.getStringExtra("location"));
+
                 }
             }
         } else if (requestCode == 2) {

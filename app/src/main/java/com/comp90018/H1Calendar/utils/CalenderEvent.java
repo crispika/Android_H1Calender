@@ -17,10 +17,11 @@ public class CalenderEvent implements Serializable {
     private int startTimeMinute;
     private int endTimeHour;
     private int endTimeMinute;
-    private String eventTime;
     private String eventColor;
     private String local;
     private String description;
+
+    private String coordinate;
 
     // Tao
     private String userId;
@@ -117,14 +118,6 @@ public class CalenderEvent implements Serializable {
         this.endTimeMinute = endTimeMinute;
     }
 
-    public String getEventTime() {
-        return eventTime;
-    }
-
-    public void setEventTime(String eventTime) {
-        this.eventTime = eventTime;
-    }
-
     public String getEventColor() {
         return eventColor;
     }
@@ -149,6 +142,14 @@ public class CalenderEvent implements Serializable {
         this.description = description;
     }
 
+    public String getCoordinate() {
+        return coordinate;
+    }
+
+    public void setCoordinate(String coordinate) {
+        this.coordinate = coordinate;
+    }
+
     public String toJsonStr(){
         Gson gson = new Gson();
         String json = gson.toJson(this);
@@ -163,6 +164,7 @@ public class CalenderEvent implements Serializable {
     public void setUserId(String userid) {
         this.userId = userid;
     }
+
 
 
 }
