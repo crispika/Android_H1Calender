@@ -51,6 +51,32 @@ public class DayEventListViewAdapter extends BaseAdapter {
         return 0;
     }
 
+    @Override
+    public View getView(int i, View view, ViewGroup viewGroup) {
+        ViewHolder holder = null;
+        mEvent = dayEvents.get(i);
+        if (view == null) {
+            view = myLayoutInflater.inflate(R.layout.day_event_list_layout, null);
+            holder = new ViewHolder();
+            holder.tvDayEventTitle = view.findViewById(R.id.day_event_title);
+            holder.llEventBackground = view.findViewById(R.id.day_event_background);
+            holder.tvDayEventLocation = view.findViewById(R.id.day_event_location);
+            holder.tvDayEventTimeDuration = view.findViewById(R.id.day_event_start_End_Time);
+            holder.tvDayEventDescription = view.findViewById(R.id.day_event_description);
+            view.setTag(holder);
+        } else {
+            holder = (ViewHolder) view.getTag();
+        }
+
+
+        holder.tvDayEventTitle.setText(mEvent.getTitle());
+        holder.tvDayEventLocation.setText(mEvent.getLocal());
+        holder.tvDayEventTimeDuration.setText(mEvent.getEventTime());
+        holder.tvDayEventDescription.setText(mEvent.getDescription());
+        holder.llEventBackground.setBackgroundColor(Color.BLUE);
+        return view;
+    }
+
     public void setDate(String date){
         mDate = date;
         setEventList();
@@ -79,29 +105,4 @@ public class DayEventListViewAdapter extends BaseAdapter {
 
     }
 
-    @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
-        ViewHolder holder = null;
-        mEvent = dayEvents.get(i);
-        if (view == null) {
-            view = myLayoutInflater.inflate(R.layout.day_event_list_layout, null);
-            holder = new ViewHolder();
-            holder.tvDayEventTitle = view.findViewById(R.id.day_event_title);
-            holder.llEventBackground = view.findViewById(R.id.day_event_background);
-            holder.tvDayEventLocation = view.findViewById(R.id.day_event_location);
-            holder.tvDayEventTimeDuration = view.findViewById(R.id.day_event_start_End_Time);
-            holder.tvDayEventDescription = view.findViewById(R.id.day_event_description);
-            view.setTag(holder);
-        } else {
-            holder = (ViewHolder) view.getTag();
-        }
-
-
-        holder.tvDayEventTitle.setText(mEvent.getTitle());
-        holder.tvDayEventLocation.setText(mEvent.getLocal());
-        holder.tvDayEventTimeDuration.setText(mEvent.getEventTime());
-        holder.tvDayEventDescription.setText(mEvent.getDescription());
-        holder.llEventBackground.setBackgroundColor(Color.BLUE);
-        return view;
-    }
 }

@@ -35,6 +35,7 @@ public class DayEventView extends Fragment {
     private ListView lv_day;
     public TextView tvDayEventTextHeader;
     private DayEventListViewAdapter dayEventListViewAdapter;
+    private String daySelected = DateManager.dateToStr(CalendarManager.getInstance().getToday());
 
     public DayEventView() {
         // Required empty public constructor
@@ -54,14 +55,10 @@ public class DayEventView extends Fragment {
         lv_day = view.findViewById(R.id.lv_day_event);
         tvDayEventTextHeader = view.findViewById(R.id.day_event_textHeader);
         dayEventListViewAdapter = new DayEventListViewAdapter(DayEventView.this.getActivity());
+
+        dayEventListViewAdapter.setDate(daySelected);
         //set Day Event View Header Text
-        if(dayEventListViewAdapter.getEvantList() == null){
-            tvDayEventTextHeader.setText("There are no event for today, please add one");
-        }else if(dayEventListViewAdapter.getEvantList() .isEmpty()){
-            tvDayEventTextHeader.setText("There are no event for today, please add one");
-        }else{
-            tvDayEventTextHeader.setText("These are events for today");
-        }
+        setTitle();
         lv_day.setAdapter(dayEventListViewAdapter);
         lv_day.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -79,6 +76,7 @@ public class DayEventView extends Fragment {
 
     }
 
+
     public void setView(String date){
         dayEventListViewAdapter.setDate(date);
     }
@@ -93,12 +91,25 @@ public class DayEventView extends Fragment {
                 dayEventListViewAdapter.setDate(dateStr);
                 //((DayEventListViewAdapter)lv_day.getAdapter()).setDate(dateStr);
                 //Log.d(LOG_TAG, "Date Setted!");
+                setTitle();
+                daySelected = dateStr;
             }
             else if (event instanceof Events.BackToToday){
                 String dateStr = DateManager.dateToStr(CalendarManager.getInstance().getToday());
                 dayEventListViewAdapter.setDate(dateStr);
+                //daySelected = dateStr;
             }
         });
+    }
+
+    private void setTitle(){
+        if(dayEventListViewAdapter.getEvantList() == null){
+            tvDayEventTextHeader.setText("There are no event for today, please add one");
+        }else if(dayEventListViewAdapter.getEvantList() .isEmpty()){
+            tvDayEventTextHeader.setText("There are no event for today, please add one");
+        }else{
+            tvDayEventTextHeader.setText("These are events for today");
+        }
     }
 
 }
