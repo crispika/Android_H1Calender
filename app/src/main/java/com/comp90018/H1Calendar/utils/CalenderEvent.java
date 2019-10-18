@@ -18,6 +18,7 @@ public class CalenderEvent implements Serializable {
     private int endTimeHour;
     private int endTimeMinute;
     private String eventColor;
+    private String eventTime;
     private String local;
     private String description;
 
@@ -116,6 +117,14 @@ public class CalenderEvent implements Serializable {
 
     public void setEndTimeMinute(int endTimeMinute) {
         this.endTimeMinute = endTimeMinute;
+    }
+
+    public String getEventTime() {
+        return eventTime;
+    }
+
+    public void setEventTime(String eventTime) {
+        this.eventTime = eventTime;
     }
 
     public String getEventColor() {
