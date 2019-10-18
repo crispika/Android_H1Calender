@@ -42,15 +42,12 @@
         <activity android:name=".EventSettingActivity.EventLocalSet"/>
         <activity android:name=".EventSettingActivity.EventQRShare"/>
         <activity android:name=".AddGPSLocationActivity"/>
-
-        <activity android:name=".EventSettingActivity.EventLocalSet" />
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="portrait"
             tools:replace="screenOrientation" />
     </application>
 
-    </application>
     <!--taking phone-->
     <uses-feature android:name="android.hardware.camera"
         android:required="true" />
