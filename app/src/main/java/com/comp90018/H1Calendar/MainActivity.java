@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -35,6 +37,12 @@ import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout;
 import com.wangjie.rapidfloatingactionbutton.contentimpl.labellist.RFACLabelItem;
 import com.wangjie.rapidfloatingactionbutton.contentimpl.labellist.RapidFloatingActionContentLabelList;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -211,38 +219,8 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         // user info is available
         if(!userId.equals("") && !userEmail.equals("") && !userPwd.equals("")){
 
-            // return something
             userValidation(userEmail, userPwd);
 
-            // processing bar
-
-            String returnUserId, returnUserEmail, returnUserPwd;
-
-
-            // successful
-            if(true){
-
-                // save user info (update user info)
-                // saveUserInfo(returnUserId, returnUserEmail, returnUserPwd);
-                // loadUserInfo();
-
-                // jump to navigation_header_logout
-                jumpToNavigationHeaderLogout();
-
-                Toast.makeText(getApplicationContext(), "login successfully",
-                        Toast.LENGTH_SHORT).show();
-
-            }
-            // failed
-            else{
-
-                // jump to navigation_header_login
-                jumpToNavigationHeaderLogin();
-
-                Toast.makeText(getApplicationContext(), "login failed, try again please",
-                        Toast.LENGTH_SHORT).show();
-
-            }
         }
         // user info is not available
         else{
@@ -255,51 +233,32 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         loginlogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String loginUseremail = loginuseremail.getText().toString();
-                String loginPwd = loginpwd.getText().toString();
 
-                if(loginUseremail.equals("") || loginPwd.equals("")){
+                // network is working
+                if(isNetworkConnected(getApplicationContext())){
 
-                    Toast.makeText(getApplicationContext(), "username or pwd is missing",
-                            Toast.LENGTH_SHORT).show();
+                    String loginUseremail = loginuseremail.getText().toString();
+                    String loginPwd = loginpwd.getText().toString();
+
+                    if(loginUseremail.equals("") || loginPwd.equals("")){
+
+                        Toast.makeText(getApplicationContext(), "username or pwd is missing",
+                                Toast.LENGTH_SHORT).show();
+
+                    }
+                    else{
+
+                        userValidation(loginUseremail, loginPwd);
+
+                    }
 
                 }
                 else{
 
-                    // return something
-                    userValidation(loginUseremail, loginPwd);
+                    Toast.makeText(getApplicationContext(), "network is not available",
+                            Toast.LENGTH_SHORT).show();
 
-                    // processing bar
-
-                    String returnUserId, returnUserEmail, returnUserPwd;
-
-                    // successful
-                    if(true){
-
-                        // save user info (update user info)
-                        // saveUserInfo(returnUserId, returnUserEmail, returnUserPwd);
-                        // loadUserInfo();
-
-                        // for test
-                        saveUserInfo("userid", loginUseremail, loginPwd);
-                        loadUserInfo();
-
-                        jumpToNavigationHeaderLogout();
-
-                        Toast.makeText(getApplicationContext(), "login successfully",
-                                Toast.LENGTH_SHORT).show();
-
-
-                    }
-                    // failed
-                    else{
-
-                        Toast.makeText(getApplicationContext(), "login failed, try again please",
-                                Toast.LENGTH_SHORT).show();
-
-                    }
                 }
-
             }
         });
 
@@ -331,41 +290,24 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
             @Override
             public void onClick(View view) {
 
-                // getAllEventsByUserId
+                // check wifi
+                if(isWifiConnected(getApplicationContext())){
+                    System.out.println("wifi");
+                    // sync
+                    syncToCloud();
 
-                List<CalenderEvent> allCurrentCalenderEventList = new ArrayList<CalenderEvent>();
-                allCurrentCalenderEventList = dbhelper.getAllEventsByUserId(userId);
-
-                // 生成json传递 {userId : [events]}
-                Gson gson = new Gson();
-                String jsonString = gson.toJson(allCurrentCalenderEventList);
-
-                jsonString = "{" + '"' + userId + '"' + ":" + jsonString + "}";
-
-                // Http request
-
-                Log.d("json", jsonString);
-//                [{"day":10,"description":"None","endTimeHour":0,"endTimeMinute":0,"eventId":"509b23f6-a73a-4121-8b80-403681c258e6","isAllday":false,"isNeedNotify":false,"local":"None","month":10,"startTimeHour":0,"startTimeMinute":0,"title":"default1","year":2019},
-//                {"day":11,"description":"None","endTimeHour":0,"endTimeMinute":0,"eventId":"e93e3d36-8836-434d-bba7-352846a28eae","isAllday":false,"isNeedNotify":false,"local":"None","month":10,"startTimeHour":0,"startTimeMinute":0,"title":"default2","year":2019},
-//                {"day":13,"description":"None","endTimeHour":0,"endTimeMinute":0,"eventId":"9d01331f-ac2a-4e0a-9b8b-04069d1acd90","isAllday":false,"isNeedNotify":false,"local":"None","month":10,"startTimeHour":0,"startTimeMinute":0,"title":"default3","year":2019}]
-
-
-                // processing bar
-
-                // 收到反馈
-
-                // sync successfully
-                if(true){
-                    Toast.makeText(getApplicationContext(), "sync successfully",
-                            Toast.LENGTH_SHORT).show();
                 }
-                // sync failed
+                else if(isMobileConnected(getApplicationContext())){
+                    System.out.println("mobile");
+                    //popup dialog
+                    syncUnderMobileNetwork();
+                }
                 else{
-                    Toast.makeText(getApplicationContext(), "sync failed",
+
+                    Toast.makeText(getApplicationContext(), "network is not available",
                             Toast.LENGTH_SHORT).show();
 
                 }
-
             }
         });
 
@@ -374,62 +316,46 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
             @Override
             public void onClick(View view) {
 
-                String registerUseremail = registeruseremail.getText().toString();
-                String registerPwd = registerpwd.getText().toString();
-                String registerPwdAgain = registerpwdagain.getText().toString();
+                // network is working
+                if(isNetworkConnected(getApplicationContext())){
 
-                if (registerUseremail.equals("") || registerPwd.equals("") || registerPwdAgain.equals("")) {
+                    String registerUseremail = registeruseremail.getText().toString();
+                    String registerPwd = registerpwd.getText().toString();
+                    String registerPwdAgain = registerpwdagain.getText().toString();
 
-                    Toast.makeText(getApplicationContext(), "username or pwd is missing",
-                            Toast.LENGTH_SHORT).show();
+                    if (registerUseremail.equals("") || registerPwd.equals("") || registerPwdAgain.equals("")) {
 
-                } else if (!registerPwd.equals(registerPwdAgain)) {
-
-                    Toast.makeText(getApplicationContext(), "passwords are not same",
-                            Toast.LENGTH_SHORT).show();
-
-                } else {
-
-                    // 用户注册 -- 云端验证
-                    // processing bar
-                    // 登录成功：返回 true 用户ID，用户名（email），密码），存到本地DB中，跳转到logout页面
-                    // 全局的current user ID 设为此用户ID
-                    // 登录失败：返回 false，显示信息
-
-                    // return something
-                    userValidation(registerUseremail, registerPwd);
-
-                    // processing bar
-
-                    String returnUserId, returnUserEmail, returnUserPwd;
-
-                    // successful
-                    if(true){
-
-                        // save user info (update user info)
-                        // saveUserInfo(returnUserId, returnUserEmail, returnUserPwd);
-                        // loadUserInfo();
-
-                        // for test
-                        saveUserInfo("returnUserId", registerUseremail, registerPwd);
-                        loadUserInfo();
-
-                        jumpToNavigationHeaderLogout();
-
-                        Toast.makeText(getApplicationContext(), "register successfully",
+                        Toast.makeText(getApplicationContext(), "username or pwd is missing",
                                 Toast.LENGTH_SHORT).show();
 
-                    }
-                    // failed
-                    else{
+                    } else if (!registerPwd.equals(registerPwdAgain)) {
 
-                        Toast.makeText(getApplicationContext(), "register failed, try again please",
+                        Toast.makeText(getApplicationContext(), "passwords are not same",
                                 Toast.LENGTH_SHORT).show();
+
+                    } else {
+
+                        if(userRegister(registerUseremail, registerPwd)){
+
+                            userValidation(userEmail, userPwd);
+
+                        }
+                        else{
+
+                            Toast.makeText(getApplicationContext(), "register is failed",
+                                    Toast.LENGTH_SHORT).show();
+
+                        }
 
                     }
 
                 }
+                else{
 
+                    Toast.makeText(getApplicationContext(), "network is not available",
+                            Toast.LENGTH_SHORT).show();
+
+                }
             }
         });
 
@@ -586,8 +512,124 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
     }
 
+    // http post
+    public String sendPost(String urlAddress, String paramValue){
+
+        try {
+            URL url = new URL(urlAddress);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoOutput(true);
+            connection.setDoInput(true);
+            connection.setUseCaches(false);
+            connection.setInstanceFollowRedirects(true);
+            connection.setRequestMethod("POST");
+            // 设置接收数据的格式
+            // connection.setRequestProperty("Accept", "application/json");
+            // 设置发送数据的格式
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.connect();
+
+            OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
+            out.append(paramValue);
+            out.flush();
+            out.close();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+            String line;
+            String res = "";
+            while ((line = reader.readLine()) != null) {
+                res += line;
+            }
+            reader.close();
+
+            return res;
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        // 自定义错误信息
+        return "error";
+
+    }
+
+
+    // TODO: user register
+    public boolean userRegister(String registerUseremail, String registerPwd){
+        // successful
+        // save id, email, pwd
+        // load user info
+        // saveUserInfo(returnUserId, returnUserEmail, returnUserPwd);
+        // loadUserInfo();
+        // variables used to store user info that returned by cloud
+        String returnUserId, returnUserEmail, returnUserPwd;
+        String result, urlAddress, paramValue;
+        urlAddress = "";
+        paramValue = "{" + '"' + "userEmail" + '"' + ":" + registerUseremail + ", " + '"' + "userPwd" + '"' + ":" + registerPwd + "}";
+
+        result = sendPost(urlAddress, paramValue);
+
+        // split result or read json
+
+
+        // register is successful
+        if(true){
+            // saveUserInfo(returnUserId, returnUserEmail, returnUserPwd);
+            // loadUserInfo();
+            return true;
+        }
+        // failed
+        else{
+            return false;
+        }
+
+    }
+
+    // TODO: user validation
     // return user info and validation state
     public void userValidation(String useremail, String password){
+
+        // code: 200 / 401
+        // token:
+        // userinfo: email, id, username
+
+
+
+
+
+        // variables used to store user info that returned by cloud
+        String returnUserId, returnUserEmail, returnUserPwd;
+        String result, urlAddress, paramValue;
+        urlAddress = "";
+        paramValue = "{" + '"' + "userEmail" + '"' + ":" + useremail + ", " + '"' + "userPwd" + '"' + ":" + password + "}";
+
+        result = sendPost(urlAddress, paramValue);
+
+        // split result or read json
+
+        // validation is successful
+        if(true){
+
+            // save user info (update user info)
+            // saveUserInfo(returnUserId, returnUserEmail, returnUserPwd);
+            // loadUserInfo();
+
+            // jump to navigation_header_logout
+            jumpToNavigationHeaderLogout();
+
+            Toast.makeText(getApplicationContext(), "login successfully",
+                    Toast.LENGTH_SHORT).show();
+
+        }
+        // validation is failed
+        else{
+
+            // jump to navigation_header_login
+            jumpToNavigationHeaderLogin();
+
+            Toast.makeText(getApplicationContext(), "login failed, try again please",
+                    Toast.LENGTH_SHORT).show();
+
+        }
 
 
     }
@@ -671,7 +713,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
     }
 
-    // popup dialog
+    // popup dialog: move default events to a user account
     public void changeDefaultEvents(int numberOfDefaultEvents){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("changeDefaultEvents");
@@ -700,6 +742,116 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         });
 
         builder.show();
+    }
+
+    // check for network availability
+    public boolean isNetworkConnected(Context context) {
+        if (context != null) {
+            ConnectivityManager mConnectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
+            if (mNetworkInfo != null) {
+                return mNetworkInfo.isAvailable();
+            }
+        }
+        return false;
+    }
+
+    // check for wifi
+    public boolean isWifiConnected(Context context) {
+        if (context != null) {
+            ConnectivityManager mConnectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo mWiFiNetworkInfo = mConnectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+            if (mWiFiNetworkInfo != null && mWiFiNetworkInfo.isConnected()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // check for mobile
+    public boolean isMobileConnected(Context context) {
+        if (context != null) {
+            ConnectivityManager mConnectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo mMobileNetworkInfo = mConnectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            if (mMobileNetworkInfo != null && mMobileNetworkInfo.isConnected()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // popup dialog: sync under mobile network
+    public void syncUnderMobileNetwork(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("syncUnderMobileNetwork");
+        builder.setMessage("Do you want to use Mobile Network to do synchronization?");
+
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                syncToCloud();
+
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                Toast.makeText(MainActivity.this, "no sync",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.show();
+    }
+
+    // TODO: http
+    // sync
+    public void syncToCloud(){
+
+        // token
+        // userinfo
+        // events
+        // code 201 /
+
+        // getAllEventsByUserId
+
+        List<CalenderEvent> allCurrentCalenderEventList = new ArrayList<CalenderEvent>();
+        allCurrentCalenderEventList = dbhelper.getAllEventsByUserId(userId);
+
+        // 生成json传递 {userId : [events]}
+        Gson gson = new Gson();
+        String jsonString = gson.toJson(allCurrentCalenderEventList);
+
+        jsonString = "{" + '"' + userId + '"' + ":" + jsonString + "}";
+
+        // Http request
+
+        Log.d("json", jsonString);
+//                [{"day":10,"description":"None","endTimeHour":0,"endTimeMinute":0,"eventId":"509b23f6-a73a-4121-8b80-403681c258e6","isAllday":false,"isNeedNotify":false,"local":"None","month":10,"startTimeHour":0,"startTimeMinute":0,"title":"default1","year":2019},
+//                {"day":11,"description":"None","endTimeHour":0,"endTimeMinute":0,"eventId":"e93e3d36-8836-434d-bba7-352846a28eae","isAllday":false,"isNeedNotify":false,"local":"None","month":10,"startTimeHour":0,"startTimeMinute":0,"title":"default2","year":2019},
+//                {"day":13,"description":"None","endTimeHour":0,"endTimeMinute":0,"eventId":"9d01331f-ac2a-4e0a-9b8b-04069d1acd90","isAllday":false,"isNeedNotify":false,"local":"None","month":10,"startTimeHour":0,"startTimeMinute":0,"title":"default3","year":2019}]
+
+
+        // send http
+
+
+        // 收到反馈
+
+        // sync successfully
+        if(true){
+            Toast.makeText(getApplicationContext(), "sync successfully",
+                    Toast.LENGTH_SHORT).show();
+        }
+        // sync failed
+        else{
+            Toast.makeText(getApplicationContext(), "sync failed",
+                    Toast.LENGTH_SHORT).show();
+
+        }
+
+
     }
 
 
