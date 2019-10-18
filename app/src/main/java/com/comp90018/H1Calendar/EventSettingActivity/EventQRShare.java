@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import com.comp90018.H1Calendar.R;
 import com.comp90018.H1Calendar.utils.CalenderEvent;
 import com.comp90018.H1Calendar.utils.QRShareUtils;
+import com.comp90018.H1Calendar.DBHelper.sqliteHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,7 +29,8 @@ public class EventQRShare extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.qr_event_share);
         ButterKnife.bind(this);
-        CalenderEvent event = (CalenderEvent) getIntent().getSerializableExtra("event");
+        String event_id = getIntent().getStringExtra("event_id");
+        CalenderEvent event = (CalenderEvent) new sqliteHelper(getApplicationContext()).getEventByEventId(event_id);
         String jsonContent = event.toJsonStr();
         Bitmap qrcode = QRShareUtils.createQRCodeBitmap(jsonContent,500,500);
 
