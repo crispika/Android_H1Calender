@@ -256,17 +256,36 @@ public class AddFormScheduleActivity extends Activity {
         String type = getIntent().getStringExtra("type");
         if (type.equals("addEvent")) {
             edit_event_title.setText("New Event");
-        } else{
+        } else if(type.equals("editEvent")){
             Intent intent = getIntent();
-            CalenderEvent storeEvent;
-            if(type.equals("addFromQR")) {
-                storeEvent = (CalenderEvent) intent.getSerializableExtra("QR_event");
-                edit_event_title.setText("Event From QR");
-            } else {
-                storeEvent = (CalenderEvent) intent.getSerializableExtra("edit_event");
-                edit_event_title.setText("Edit Event");
+            String event_id = intent.getStringExtra("id");
+            cEvent = dbhelper.getEventByEventId(event_id);
+
+            //initialize the view on edit interface
+            event_title.setText(cEvent.getTitle());
+            event_color.setText(cEvent.getEventColor());
+            event_detail.setText(cEvent.getDescription());
+            event_local.setText(cEvent.getLocal());
+            event_date.setText(genDateStr(cEvent.getYear(),cEvent.getMonth(),cEvent.getDay()));
+            if(cEvent.getIsAllday()){
+                allDaySwitch.setChecked(true);
+                event_start_time.setVisibility(View.GONE);
+                event_end_time.setVisibility(View.GONE);
+            }else{
+                allDaySwitch.setChecked(false);
+                event_start_time.setText(genTimeStr(cEvent.getStartTimeHour(),cEvent.getStartTimeMinute()));
+                event_end_time.setText(genTimeStr(cEvent.getEndTimeHour(),cEvent.getEndTimeMinute()));
             }
 
+            if(cEvent.getIsNeedNotify()){
+                notify_switch.setChecked(true);
+            }
+
+
+        }else {
+            Intent intent = getIntent();
+            CalenderEvent storeEvent;
+            storeEvent = (CalenderEvent) intent.getSerializableExtra("QR_event");
             cEvent = storeEvent;
 
             //initialize the view on edit interface
