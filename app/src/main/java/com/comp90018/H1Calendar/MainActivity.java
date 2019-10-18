@@ -30,6 +30,7 @@ import com.comp90018.H1Calendar.utils.CalendarManager;
 import com.comp90018.H1Calendar.utils.CalenderEvent;
 import com.comp90018.H1Calendar.utils.EventBus;
 import com.comp90018.H1Calendar.utils.Events;
+import com.comp90018.H1Calendar.utils.LightSensorUtils;
 import com.google.android.material.navigation.NavigationView;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionHelper;
@@ -68,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
     private Button loginlogin, loginregister, logoutlogout, logoutsync, registerregister, registercancel;
 
     // store user info into shared preferences
-    private static final String SHAREDPREFS  = "sharedPrefs";
+    private static final String SHAREDPREFS = "sharedPrefs";
     private static final String USERID = "userid";
     private static final String USEREMAIL = "useremail";
     private static final String USERPWD = "userpwd";
@@ -85,7 +86,8 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
     // Tao: end here
 
 
-    //Region for basic UI
+    //region Main Layout Widgets
+
     //侧栏开关
     @BindView(R.id.drawer_layout)
     DrawerLayout drawer_layout;
@@ -134,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
     @BindView(R.id.main_fab_button)
     RapidFloatingActionButton main_fab_button;
+    //endregion
 
 
     @Override
@@ -165,13 +168,13 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                             break;
                         case R.id.day_night_swicth:
                             //TODO: To implement auto-mode-change with light-sensor
-                            if ((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO){
+                            if ((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO) {
+                                //default对整个app生效，如果只需对这个activity生效，setLocalNightMode(..)
                                 getDelegate().setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                                Log.d("NightMode", getResources().getConfiguration().uiMode+" - messageeeeeeeeeeeee");
-                            }
-                            else{
+                                Log.d("Theme_nav", "Switch to Dark");
+                            } else {
                                 getDelegate().setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                                Log.d("DayMode", "Switch to light");
+                                Log.d("Theme_nav", "Switch to Light");
                                 recreate();
                             }
                             recreate();
@@ -223,7 +226,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         loadUserInfo();
 
         // user info is available
-        if(!userId.equals("") && !userEmail.equals("") && !userPwd.equals("")){
+        if (!userId.equals("") && !userEmail.equals("") && !userPwd.equals("")) {
 
             // return something
             userValidation(userEmail, userPwd);
@@ -234,7 +237,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
 
             // successful
-            if(true){
+            if (true) {
 
                 // save user info (update user info)
                 // saveUserInfo(returnUserId, returnUserEmail, returnUserPwd);
@@ -248,7 +251,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
             }
             // failed
-            else{
+            else {
 
                 // jump to navigation_header_login
                 jumpToNavigationHeaderLogin();
@@ -259,7 +262,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
             }
         }
         // user info is not available
-        else{
+        else {
 
             jumpToNavigationHeaderLogin();
 
@@ -272,13 +275,12 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                 String loginUseremail = loginuseremail.getText().toString();
                 String loginPwd = loginpwd.getText().toString();
 
-                if(loginUseremail.equals("") || loginPwd.equals("")){
+                if (loginUseremail.equals("") || loginPwd.equals("")) {
 
                     Toast.makeText(getApplicationContext(), "username or pwd is missing",
                             Toast.LENGTH_SHORT).show();
 
-                }
-                else{
+                } else {
 
                     // return something
                     userValidation(loginUseremail, loginPwd);
@@ -288,7 +290,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                     String returnUserId, returnUserEmail, returnUserPwd;
 
                     // successful
-                    if(true){
+                    if (true) {
 
                         // save user info (update user info)
                         // saveUserInfo(returnUserId, returnUserEmail, returnUserPwd);
@@ -306,7 +308,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
                     }
                     // failed
-                    else{
+                    else {
 
                         Toast.makeText(getApplicationContext(), "login failed, try again please",
                                 Toast.LENGTH_SHORT).show();
@@ -332,7 +334,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
             @Override
             public void onClick(View view) {
 
-                saveUserInfo("","","");
+                saveUserInfo("", "", "");
                 loadUserInfo();
 
                 jumpToNavigationHeaderLogin();
@@ -369,12 +371,12 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                 // 收到反馈
 
                 // sync successfully
-                if(true){
+                if (true) {
                     Toast.makeText(getApplicationContext(), "sync successfully",
                             Toast.LENGTH_SHORT).show();
                 }
                 // sync failed
-                else{
+                else {
                     Toast.makeText(getApplicationContext(), "sync failed",
                             Toast.LENGTH_SHORT).show();
 
@@ -418,7 +420,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                     String returnUserId, returnUserEmail, returnUserPwd;
 
                     // successful
-                    if(true){
+                    if (true) {
 
                         // save user info (update user info)
                         // saveUserInfo(returnUserId, returnUserEmail, returnUserPwd);
@@ -435,7 +437,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
                     }
                     // failed
-                    else{
+                    else {
 
                         Toast.makeText(getApplicationContext(), "register failed, try again please",
                                 Toast.LENGTH_SHORT).show();
@@ -458,11 +460,40 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         });
 
 
-
         // Tao: end here
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LightSensorUtils.getInstance().register(this);
+        Boolean isDay = LightSensorUtils.getInstance().isDay();
+        if (isDay != null){
+            ThemeChange(isDay);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LightSensorUtils.getInstance().unRegister();
+    }
+
+    private void ThemeChange(boolean isDay){
+        if((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+            & isDay){
+            //change to DayTheme
+            getDelegate().setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            Log.d("Theme_sensor", "Sensor: Switch to Light");
+
+        }
+        else if ((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO
+            & (!isDay)){
+            getDelegate().setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            Log.d("Theme_sensor", "Sensor: Switch to Dark");
+        }
+    }
 
     //region CalendarView Settings
 
@@ -578,7 +609,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
     // Tao: start here
 
-    public void saveUserInfo(String userid, String useremail, String userpwd){
+    public void saveUserInfo(String userid, String useremail, String userpwd) {
         SharedPreferences sharedPreferences = getSharedPreferences(SHAREDPREFS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -592,7 +623,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         Toast.makeText(this, "data saved", Toast.LENGTH_SHORT).show();
     }
 
-    public void loadUserInfo(){
+    public void loadUserInfo() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHAREDPREFS, Context.MODE_PRIVATE);
 
         // the default values of these three variables are ""
@@ -603,12 +634,12 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
     }
 
     // return user info and validation state
-    public void userValidation(String useremail, String password){
+    public void userValidation(String useremail, String password) {
 
 
     }
 
-    public void jumpToNavigationHeaderLogin(){
+    public void jumpToNavigationHeaderLogin() {
 
         // setting of login
         loginuseremail.setText("");
@@ -631,14 +662,14 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
     }
 
-    public void jumpToNavigationHeaderLogout(){
+    public void jumpToNavigationHeaderLogout() {
 
         List<CalenderEvent> allDefaultCalenderEventList = new ArrayList<CalenderEvent>();
         allDefaultCalenderEventList = dbhelper.getAllEventsByUserId(defaultUserId);
 
         int numberOfDefaultEvents = allDefaultCalenderEventList.size();
 
-        if(numberOfDefaultEvents > 0){
+        if (numberOfDefaultEvents > 0) {
             // popup window
             changeDefaultEvents(numberOfDefaultEvents);
 
@@ -665,7 +696,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
     }
 
-    public void jumpToNavigationHeaderRegister(){
+    public void jumpToNavigationHeaderRegister() {
 
         // setting of login
         loginuseremail.setText("");
@@ -688,7 +719,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
     }
 
     // popup dialog
-    public void changeDefaultEvents(int numberOfDefaultEvents){
+    public void changeDefaultEvents(int numberOfDefaultEvents) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("changeDefaultEvents");
         builder.setMessage("There are " + numberOfDefaultEvents + " default events. Do you want to move them into your account?");
@@ -698,11 +729,10 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
                 boolean isSucceed = dbhelper.updateEventsByUserId(defaultUserId, userId);
 
-                if(isSucceed){
-                    Toast.makeText(MainActivity.this, "successful",Toast.LENGTH_SHORT).show();
-                }
-                else{
-                    Toast.makeText(MainActivity.this, "failed",Toast.LENGTH_SHORT).show();
+                if (isSucceed) {
+                    Toast.makeText(MainActivity.this, "successful", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "failed", Toast.LENGTH_SHORT).show();
                 }
 
 
@@ -711,7 +741,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Toast.makeText(MainActivity.this, "no",Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "no", Toast.LENGTH_SHORT).show();
             }
         });
 
