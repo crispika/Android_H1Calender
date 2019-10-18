@@ -259,6 +259,7 @@ public class AddFormScheduleActivity extends Activity {
         } else if(type.equals("editEvent")){
             Intent intent = getIntent();
             String event_id = intent.getStringExtra("id");
+            System.out.println(event_id+"11111111111111111");
             cEvent = dbhelper.getEventByEventId(event_id);
 
             //initialize the view on edit interface

@@ -68,7 +68,9 @@ public class DayEventView extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(DayEventView.this.getActivity(), EventDetailActivity.class);
                 Bundle bundle = new Bundle();
+                bundle.putString("id",dayEventListViewAdapter.getEvent(i).getEventId());
                 bundle.putString("title",dayEventListViewAdapter.getEvent(i).getTitle());
+                //System.out.println(dayEventListViewAdapter.getEvent(i).getEventId());
                 intent.putExtras(bundle);
                 startActivity(intent);
                 System.out.println(dayEventListViewAdapter.getEvent(i).getTitle());
