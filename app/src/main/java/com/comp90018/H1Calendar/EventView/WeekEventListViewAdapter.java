@@ -29,7 +29,13 @@ public class WeekEventListViewAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 10;
+        if(weekEvents == null){
+            return 0;
+        }else if(weekEvents.isEmpty()){
+            return 0;
+        }else{
+            return weekEvents.size();
+        }
     }
 
     @Override
@@ -66,6 +72,10 @@ public class WeekEventListViewAdapter extends BaseAdapter {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         ViewHolder holder = null;
+        if(weekEvents!=null){
+            mEvent = weekEvents.get(i);
+        }
+
         if (view == null) {
             view = myLayoutInflater.inflate(R.layout.week_event_list_layout, null);
             holder = new ViewHolder();

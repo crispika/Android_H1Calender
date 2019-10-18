@@ -73,6 +73,9 @@ public class DayEventListViewAdapter extends BaseAdapter {
     static class ViewHolder {
         public TextView tvDayEventTitle;
         public LinearLayout llEventBackground;
+        public TextView tvDayEventLocation;
+        public TextView tvDayEventTimeDuration;
+        public TextView tvDayEventDescription;
 
     }
 
@@ -85,6 +88,9 @@ public class DayEventListViewAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.tvDayEventTitle = view.findViewById(R.id.day_event_title);
             holder.llEventBackground = view.findViewById(R.id.day_event_background);
+            holder.tvDayEventLocation = view.findViewById(R.id.day_event_location);
+            holder.tvDayEventTimeDuration = view.findViewById(R.id.day_event_start_End_Time);
+            holder.tvDayEventDescription = view.findViewById(R.id.day_event_description);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
@@ -92,6 +98,9 @@ public class DayEventListViewAdapter extends BaseAdapter {
 
 
         holder.tvDayEventTitle.setText(mEvent.getTitle());
+        holder.tvDayEventLocation.setText(mEvent.getLocal());
+        holder.tvDayEventTimeDuration.setText(mEvent.getEventTime());
+        holder.tvDayEventDescription.setText(mEvent.getDescription());
         holder.llEventBackground.setBackgroundColor(Color.BLUE);
         return view;
     }
