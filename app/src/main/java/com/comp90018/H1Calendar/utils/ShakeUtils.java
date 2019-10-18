@@ -25,7 +25,7 @@ public class ShakeUtils implements SensorEventListener {
     }
 
 
-    public void register(Context context) {
+    public void register() {
         Sensor accelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mSensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
     }

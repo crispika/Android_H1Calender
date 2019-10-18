@@ -51,6 +51,9 @@ public class AddFormScheduleActivity extends Activity {
     private boolean isNeedNotify = false;
     private sqliteHelper dbhelper;
 
+    //Sensor
+    private ShakeUtils shakeItOff;
+
     // Tao
     // store user info into shared preferences
     private static final String SHAREDPREFS  = "sharedPrefs";
@@ -249,6 +252,9 @@ public class AddFormScheduleActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_form_schedule);
         ButterKnife.bind(this);
+
+        initSensor(); //shake sensor
+
         dbhelper = new sqliteHelper(getApplicationContext());
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this,R.color.colorPrimary));
@@ -311,6 +317,30 @@ public class AddFormScheduleActivity extends Activity {
 
 
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        shakeItOff.unRegister();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        shakeItOff.register();
+    }
+
+    private void initSensor(){
+        shakeItOff = new ShakeUtils(this);
+        shakeItOff.setOnShakeListener(new ShakeUtils.OnShakeListener() {
+            @Override
+            public void onShake() {
+                Intent intent = new Intent(AddFormScheduleActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 
     private void getDatePicker() {
