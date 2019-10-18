@@ -122,10 +122,10 @@ public class sqliteHelper extends SQLiteOpenHelper {
         Cursor cursor = sqlitedb.rawQuery("SELECT * FROM EVENT WHERE eventId = ?", new String[] {eventId});
 
         CalenderEvent calenderEvent = new CalenderEvent();
-
-        calenderEvent = returnCalenderEvent(cursor);
-
-//        while (cursor.moveToNext()){
+        
+        while (cursor.moveToNext()){
+            calenderEvent = returnCalenderEvent(cursor);
+        }
 //
 //            calenderEvent.setEventId(cursor.getString(0));
 //            calenderEvent.setTitle(cursor.getString(1));
