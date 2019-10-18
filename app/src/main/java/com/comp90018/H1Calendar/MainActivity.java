@@ -54,6 +54,8 @@ import com.google.gson.Gson;
 
 public class MainActivity extends AppCompatActivity implements RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener {
 
+    private LightSensorUtils lightSensor;
+
     private DayEventView dayEventView;
     private WeekEventView weekEventView;
     private Button btnDWswitch;
@@ -148,6 +150,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         initCalendarView();
         setMonthLabel();
         init_FAB();
+        initLightUtils();
 
         dayEventView = new DayEventView();
         weekEventView = new WeekEventView();
@@ -466,33 +469,52 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
     @Override
     protected void onResume() {
         super.onResume();
-        LightSensorUtils.getInstance().register(this);
-        Boolean isDay = LightSensorUtils.getInstance().isDay();
-        if (isDay != null){
-            ThemeChange(isDay);
-        }
+        lightSensor.register();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        LightSensorUtils.getInstance().unRegister();
+        lightSensor.unRegister();
     }
 
-    private void ThemeChange(boolean isDay){
-        if((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-            & isDay){
-            //change to DayTheme
-            getDelegate().setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            Log.d("Theme_sensor", "Sensor: Switch to Light");
+    private void initLightUtils(){
+        lightSensor = new LightSensorUtils(this);
+        lightSensor.setLightListener(new LightSensorUtils.LightListener() {
 
-        }
-        else if ((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO
-            & (!isDay)){
-            getDelegate().setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-            Log.d("Theme_sensor", "Sensor: Switch to Dark");
-        }
+            @Override
+            public void toLight() {
+                if((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES){
+                    //change to DayTheme
+                    getDelegate().setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    Log.d("Theme_sensor", "Sensor: Switch to Light");
+                }
+            }
+
+            @Override
+            public void toDark() {
+                if ((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO){
+                    getDelegate().setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    Log.d("Theme_sensor", "Sensor: Switch to Dark");
+                }
+            }
+        });
     }
+
+//    private void ThemeChange(boolean isDay){
+//        if((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+//            & isDay){
+//            //change to DayTheme
+//            getDelegate().setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+//            Log.d("Theme_sensor", "Sensor: Switch to Light");
+//
+//        }
+//        else if ((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO
+//            & (!isDay)){
+//            getDelegate().setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+//            Log.d("Theme_sensor", "Sensor: Switch to Dark");
+//        }
+//    }
 
     //region CalendarView Settings
 
