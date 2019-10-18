@@ -10,6 +10,7 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.comp90018.H1Calendar.EventSettingActivity.EventQRShare;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton;
 
 import butterknife.ButterKnife;
@@ -20,9 +21,10 @@ public class EventDetailActivity extends AppCompatActivity {
     private RelativeLayout event_detail_layout_header;
     private ImageButton btn_detail_back;
     private ImageButton btn_detail_delete;
+    private ImageButton btn_detail_share;
     private RapidFloatingActionButton rfab_detail_update;
 
-
+    private String eventID;
     private TextView tv_detail_title;
     private TextView tv_detail_date;
     private TextView tv_detail_start_end_time;
@@ -36,7 +38,20 @@ public class EventDetailActivity extends AppCompatActivity {
         finish();
     }
     @OnClick(R.id.event_detail_update_rfab) void updateEvent(){
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, AddFormScheduleActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("type","editEvent");
+        bundle.putString("id",eventID);
+        //System.out.println(eventID);
+        intent.putExtras(bundle);
+        startActivity(intent);
+        finish();
+    }
+    @OnClick(R.id.event_detail_share) void shareByQR(){
+        Intent intent = new Intent(this, EventQRShare.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("event_id",eventID);
+        intent.putExtras(bundle);
         startActivity(intent);
         finish();
     }
@@ -49,6 +64,7 @@ public class EventDetailActivity extends AppCompatActivity {
         //bindOnClickAction();
 
         Bundle bundle = getIntent().getExtras();
+        eventID = bundle.getString("id");
         tv_detail_title.setText(bundle.getString("title"));
     }
     public void bindView(){
