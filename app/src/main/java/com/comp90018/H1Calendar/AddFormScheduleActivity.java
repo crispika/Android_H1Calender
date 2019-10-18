@@ -35,6 +35,7 @@ import butterknife.ButterKnife;
 import com.comp90018.H1Calendar.DBHelper.sqliteHelper;
 import com.comp90018.H1Calendar.EventSettingActivity.EventColorSet;
 import com.comp90018.H1Calendar.EventSettingActivity.EventLocalSet;
+import com.comp90018.H1Calendar.EventSettingActivity.EventQRShare;
 import com.comp90018.H1Calendar.utils.*;
 
 public class AddFormScheduleActivity extends Activity {
@@ -229,6 +230,9 @@ public class AddFormScheduleActivity extends Activity {
 
             startActivity(new Intent(this, MainActivity.class));
             finish();
+//            Intent intent = new Intent(this, EventQRShare.class);
+//            intent.putExtra("event",cEvent);
+//            startActivity(intent);
         }
 
 
