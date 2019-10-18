@@ -4,6 +4,7 @@
     package="com.comp90018.H1Calendar">
 
     <application
+        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -28,6 +29,7 @@
             tools:replace="screenOrientation" />
 
     </application>
+    <uses-permission android:name="android.permission.INTERNET"/>
     <!--network state-->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!--taking phone-->
