@@ -18,6 +18,7 @@ import com.comp90018.H1Calendar.utils.DateManager;
 import com.comp90018.H1Calendar.utils.EventBus;
 import com.comp90018.H1Calendar.utils.Events;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import java.util.List;
@@ -32,6 +33,8 @@ public class WeekEventView extends Fragment {
     public TextView tvWeekEventTextHeader;
 
     private WeekEventListViewAdapter weekEventListViewAdapter;
+    private String defautStart = DateManager.headTailOfWeek(CalendarManager.getInstance().getTodayCalendar().get(Calendar.WEEK_OF_YEAR))[0];
+    private String defautEnd = DateManager.headTailOfWeek(CalendarManager.getInstance().getTodayCalendar().get(Calendar.WEEK_OF_YEAR))[1];
 
     public WeekEventView() {
         // Required empty public constructor
@@ -47,11 +50,11 @@ public class WeekEventView extends Fragment {
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        tv_week = view.findViewById(R.id.tv_week_event);
         lv_week = view.findViewById(R.id.lv_week_event);
         tvWeekEventTextHeader = view.findViewById(R.id.week_event_textHeader);
         weekEventListViewAdapter = new WeekEventListViewAdapter(WeekEventView.this.getActivity());
         lv_week.setAdapter(weekEventListViewAdapter);
+        weekEventListViewAdapter.setDate(defautStart,defautEnd);
         setTitle();
     }
 
@@ -74,17 +77,20 @@ public class WeekEventView extends Fragment {
                 int week_of_year = ((Events.DayClickedEvent) event).getDayItem().getmWeekOfTheYear();
                 String start = DateManager.headTailOfWeek(week_of_year)[0];
                 String end = DateManager.headTailOfWeek(week_of_year)[1];
-
+                defautStart = start;
+                defautEnd = end;
+                weekEventListViewAdapter.setDate(start,end);
 
                 //((DayEventListViewAdapter)lv_day.getAdapter()).setDate(dateStr);
                 //Log.d(LOG_TAG, "Date Setted!");
-
+                setTitle();
             }
             else if (event instanceof Events.BackToToday){
                 String dateStr = DateManager.dateToStr(CalendarManager.getInstance().getToday());
 
             }
         });
-
     }
+
+
 }

@@ -168,6 +168,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                             break;
                         case R.id.weeklyview:
                             getSupportFragmentManager().beginTransaction().replace(R.id.Event_container, weekEventView).commitAllowingStateLoss();
+                            getSupportFragmentManager().beginTransaction().show(weekEventView).commitAllowingStateLoss();
                             drawer_layout.closeDrawers();
                             break;
                         default:
@@ -177,6 +178,8 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                 }
             });
         }
+        getSupportFragmentManager().beginTransaction().add(R.id.Event_container, weekEventView).commitAllowingStateLoss();
+        getSupportFragmentManager().beginTransaction().hide(weekEventView).commitAllowingStateLoss();
         getSupportFragmentManager().beginTransaction().add(R.id.Event_container, dayEventView).commitAllowingStateLoss();
 
 
