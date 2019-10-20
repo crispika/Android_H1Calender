@@ -121,7 +121,7 @@ public class CalendarManager {
             String fullMonthName = monthFullNameFormat.format(date);
             boolean isToday = DateManager.isSameDay(temp_cal, today);
 
-            DayItem dayItem = new DayItem(date, day_of_month, isToday, monthName,fullMonthName,week_list_postion);
+            DayItem dayItem = new DayItem(date, day_of_month, isToday, monthName,fullMonthName,week_list_postion,week_of_year);
             day_list.add(dayItem);
 
             //日期往后推一天

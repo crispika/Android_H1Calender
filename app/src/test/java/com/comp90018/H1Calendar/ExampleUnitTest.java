@@ -57,5 +57,14 @@ public class ExampleUnitTest {
         System.out.println(DateManager.dateToStr(cal.getTime()));
     }
 
+    @Test
+    public void testCalendar(){
+        Calendar day = Calendar.getInstance();
+        day.set(Calendar.WEEK_OF_YEAR, 20);
+        System.out.println(day.getTime().toString());
+        day.set(Calendar.DAY_OF_WEEK,7);
+        System.out.println(day.getTime().toString());
+    }
+
 }
 

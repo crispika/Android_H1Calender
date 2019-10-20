@@ -15,16 +15,18 @@ public class DayItem implements Serializable {
     private String mMonth; // 月份名的简称
     private int weekListPosition;
     private String mMonthFullName; //月份全称
+    private int mWeekOfTheYear;
 
     // region Constructor
 
-    public DayItem(Date date, int dayOfTheMonth, boolean today, String month, String monthFullName,int position) {
+    public DayItem(Date date, int dayOfTheMonth, boolean today, String month, String monthFullName,int position, int weekOfTheYear) {
         this.mDate = date;
         this.mDayOfTheMonth = dayOfTheMonth;
         this.mToday = today;
         this.mMonth = month;
         this.mMonthFullName = monthFullName;
         this.weekListPosition = position;
+        this.mWeekOfTheYear = weekOfTheYear;
 
 
         if (mDayOfTheMonth == 1) {
@@ -97,6 +99,10 @@ public class DayItem implements Serializable {
 
     public int getWeekListPosition() {
         return weekListPosition;
+    }
+
+    public int getmWeekOfTheYear() {
+        return mWeekOfTheYear;
     }
 
     //endregion

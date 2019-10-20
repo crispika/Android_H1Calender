@@ -12,8 +12,12 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.comp90018.H1Calendar.R;
+import com.comp90018.H1Calendar.utils.CalendarManager;
+import com.comp90018.H1Calendar.utils.DateManager;
 import com.comp90018.H1Calendar.utils.EventBus;
 import com.comp90018.H1Calendar.utils.Events;
+
+import java.util.Date;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,4 +46,25 @@ public class WeekEventView extends Fragment {
         lv_week.setAdapter(new WeekEventListViewAdapter(WeekEventView.this.getActivity()));
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        EventBus.getInstance().getSubject().subscribe(event ->{
+            if (event instanceof Events.DayClickedEvent){
+                int week_of_year = ((Events.DayClickedEvent) event).getDayItem().getmWeekOfTheYear();
+                String start = DateManager.headTailOfWeek(week_of_year)[0];
+                String end = DateManager.headTailOfWeek(week_of_year)[1];
+
+
+                //((DayEventListViewAdapter)lv_day.getAdapter()).setDate(dateStr);
+                //Log.d(LOG_TAG, "Date Setted!");
+
+            }
+            else if (event instanceof Events.BackToToday){
+                String dateStr = DateManager.dateToStr(CalendarManager.getInstance().getToday());
+
+            }
+        });
+
+    }
 }
