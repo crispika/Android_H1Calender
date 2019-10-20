@@ -36,6 +36,8 @@ public class CalendarManager {
      */
     private Calendar today;
 
+    private DayItem todayItem;
+
 
     //region Constructor
     public CalendarManager() {
@@ -122,6 +124,7 @@ public class CalendarManager {
             boolean isToday = DateManager.isSameDay(temp_cal, today);
 
             DayItem dayItem = new DayItem(date, day_of_month, isToday, monthName,fullMonthName,week_list_postion,week_of_year);
+            if(isToday) todayItem =dayItem;
             day_list.add(dayItem);
 
             //日期往后推一天
@@ -143,6 +146,11 @@ public class CalendarManager {
     public ArrayList<WeekItem> getWeekList() {
         return week_list;
     }
+
+    public DayItem getTodayItem() {
+        return todayItem;
+    }
+
     //endregion
 }
 

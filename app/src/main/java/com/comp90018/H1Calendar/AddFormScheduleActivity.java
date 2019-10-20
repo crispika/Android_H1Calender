@@ -432,6 +432,7 @@ public class AddFormScheduleActivity extends Activity {
             if (resultCode == 2) {
                 if (data != null) {
                     event_color.setText(data.getStringExtra("color"));
+                    Log.d("eventColor: ",data.getStringExtra("color"));
                     cEvent.setEventColor(data.getStringExtra("color"));
                 }
             }

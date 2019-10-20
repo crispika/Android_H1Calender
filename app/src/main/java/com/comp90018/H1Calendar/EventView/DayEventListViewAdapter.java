@@ -73,7 +73,7 @@ public class DayEventListViewAdapter extends BaseAdapter {
         holder.tvDayEventLocation.setText(mEvent.getLocal());
         holder.tvDayEventTimeDuration.setText(mEvent.getEventTime());
         holder.tvDayEventDescription.setText(mEvent.getDescription());
-        holder.llEventBackground.setBackgroundColor(Color.BLUE);
+        holder.llEventBackground.setBackgroundColor(myContext.getResources().getColor(getColor(mEvent)));
         return view;
     }
 
@@ -94,6 +94,26 @@ public class DayEventListViewAdapter extends BaseAdapter {
 
     public List<CalenderEvent> getEvantList(){
         return dayEvents;
+    }
+
+    private int getColor(CalenderEvent mEvent){
+        String color;
+        if (mEvent == null) return R.color.Default;
+        if(mEvent.getEventColor() == null) color = "default";
+        else color = mEvent.getEventColor();
+
+        switch (color){
+            case "Green":
+                return R.color.Green;
+            case "Yellow":
+                return R.color.Yellow;
+            case "Red":
+                return R.color.Red;
+            case "Blue":
+                return R.color.Blue;
+            default:
+                return R.color.Default;
+        }
     }
 
     static class ViewHolder {
