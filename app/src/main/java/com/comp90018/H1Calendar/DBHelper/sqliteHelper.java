@@ -123,9 +123,10 @@ public class sqliteHelper extends SQLiteOpenHelper {
 
         CalenderEvent calenderEvent = new CalenderEvent();
 
-        calenderEvent = returnCalenderEvent(cursor);
 
-//        while (cursor.moveToNext()){
+        while (cursor.moveToNext()) {
+            calenderEvent = returnCalenderEvent(cursor);
+        }
 //
 //            calenderEvent.setEventId(cursor.getString(0));
 //            calenderEvent.setTitle(cursor.getString(1));
