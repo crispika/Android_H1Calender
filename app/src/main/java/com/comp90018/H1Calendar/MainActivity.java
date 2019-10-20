@@ -152,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         init_FAB();
         initLightUtils();
 
+        //set navigationView click event
         dayEventView = new DayEventView();
         weekEventView = new WeekEventView();
         myNavigationView = this.findViewById(R.id.navigation);

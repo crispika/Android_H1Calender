@@ -104,11 +104,11 @@ public class DayEventView extends Fragment {
 
     private void setTitle(){
         if(dayEventListViewAdapter.getEvantList() == null){
-            tvDayEventTextHeader.setText("There are no event for today, please add one");
+            tvDayEventTextHeader.setText("No event for today, please add one");
         }else if(dayEventListViewAdapter.getEvantList() .isEmpty()){
-            tvDayEventTextHeader.setText("There are no event for today, please add one");
+            tvDayEventTextHeader.setText("No event for today, please add one");
         }else{
-            tvDayEventTextHeader.setText("These are events for today");
+            tvDayEventTextHeader.setText("Today's Event");
         }
     }
 

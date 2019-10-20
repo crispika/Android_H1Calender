@@ -13,11 +13,14 @@ import androidx.fragment.app.Fragment;
 
 import com.comp90018.H1Calendar.R;
 import com.comp90018.H1Calendar.utils.CalendarManager;
+import com.comp90018.H1Calendar.utils.CalenderEvent;
 import com.comp90018.H1Calendar.utils.DateManager;
 import com.comp90018.H1Calendar.utils.EventBus;
 import com.comp90018.H1Calendar.utils.Events;
 
 import java.util.Date;
+
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -26,6 +29,9 @@ public class WeekEventView extends Fragment {
 
     private TextView tv_week;
     private ListView lv_week;
+    public TextView tvWeekEventTextHeader;
+
+    private WeekEventListViewAdapter weekEventListViewAdapter;
 
     public WeekEventView() {
         // Required empty public constructor
@@ -43,8 +49,22 @@ public class WeekEventView extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         tv_week = view.findViewById(R.id.tv_week_event);
         lv_week = view.findViewById(R.id.lv_week_event);
-        lv_week.setAdapter(new WeekEventListViewAdapter(WeekEventView.this.getActivity()));
+        tvWeekEventTextHeader = view.findViewById(R.id.week_event_textHeader);
+        weekEventListViewAdapter = new WeekEventListViewAdapter(WeekEventView.this.getActivity());
+        lv_week.setAdapter(weekEventListViewAdapter);
+        setTitle();
     }
+
+    private void setTitle(){
+        if(weekEventListViewAdapter.getEvantList() == null){
+            tvWeekEventTextHeader.setText("No event for this week, please add one");
+        }else if(weekEventListViewAdapter.getEvantList() .isEmpty()){
+            tvWeekEventTextHeader.setText("No event for this week, please add one");
+        }else{
+            tvWeekEventTextHeader.setText("Weekly Event");
+        }
+    }
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
