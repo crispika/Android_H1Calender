@@ -10,13 +10,19 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.comp90018.H1Calendar.DBHelper.sqliteHelper;
 import com.comp90018.H1Calendar.EventSettingActivity.EventQRShare;
+import com.comp90018.H1Calendar.utils.CalenderEvent;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class EventDetailActivity extends AppCompatActivity {
+
+    private sqliteHelper dbhelper;
+    private CalenderEvent mEvent;
+    private String timeStr;
 
     private RelativeLayout event_detail_layout_header;
     private ImageButton btn_detail_back;
@@ -59,26 +65,36 @@ public class EventDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_detail);
+        dbhelper = new sqliteHelper(this);
         ButterKnife.bind(this);
         bindView();
         //bindOnClickAction();
 
         Bundle bundle = getIntent().getExtras();
         eventID = bundle.getString("id");
-        tv_detail_title.setText(bundle.getString("title"));
+        mEvent = dbhelper.getEventByEventId(eventID);
+        setViewDetail();
     }
     public void bindView(){
         event_detail_layout_header = findViewById(R.id.event_detail_header);
-        btn_detail_back = findViewById(R.id.event_detail_back);
-        btn_detail_delete = findViewById(R.id.event_detail_delete);
-        rfab_detail_update = findViewById(R.id.event_detail_update_rfab);
-
         tv_detail_title = findViewById(R.id.event_detail_title);
         tv_detail_date = findViewById(R.id.event_detail_date);
         tv_detail_start_end_time = findViewById(R.id.event_detail_start_end_time);
         tv_detail_alarm_time = findViewById(R.id.event_detail_alarm_time);
         tv_detail_location = findViewById(R.id.event_detail_location);
         tv_detail_event_description = findViewById(R.id.event_detail_description);
+    }
+    public void setViewDetail(){
+        String dateStr = mEvent.getDay() + " / "+mEvent.getMonth() + " / " + mEvent.getYear();
+        setTimeStr();
+
+        event_detail_layout_header.setBackgroundColor(this.getResources().getColor(getColor(mEvent)));
+        tv_detail_title.setText(mEvent.getTitle());
+        tv_detail_date.setText(dateStr);
+        tv_detail_start_end_time.setText(timeStr);
+        tv_detail_alarm_time.setText(mEvent.getEventTime());
+        tv_detail_location.setText(mEvent.getLocal());
+        tv_detail_event_description.setText(mEvent.getDescription());
     }
     public void bindOnClickAction(){
 
@@ -88,5 +104,33 @@ public class EventDetailActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
+    }
+    private int getColor(CalenderEvent mEvent){
+        String color;
+        if (mEvent == null) return R.color.Default;
+        if(mEvent.getEventColor() == null) color = "default";
+        else color = mEvent.getEventColor();
+
+        switch (color){
+            case "Green":
+                return R.color.Green;
+            case "Yellow":
+                return R.color.Yellow;
+            case "Red":
+                return R.color.Red;
+            case "Blue":
+                return R.color.Blue;
+            default:
+                return R.color.Default;
+        }
+    }
+
+    public void setTimeStr(){
+        if(mEvent.getIsAllday()){
+            timeStr = "Full Day";
+        }else{
+            timeStr = mEvent.getStartTimeHour() + " : " + mEvent.getStartTimeMinute() + " - " +
+                    mEvent.getEndTimeHour() + " : " + mEvent.getEndTimeMinute();
+        }
     }
 }

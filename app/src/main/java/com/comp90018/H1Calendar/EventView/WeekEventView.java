@@ -1,16 +1,19 @@
 package com.comp90018.H1Calendar.EventView;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.comp90018.H1Calendar.EventDetailActivity;
 import com.comp90018.H1Calendar.R;
 import com.comp90018.H1Calendar.utils.CalendarManager;
 import com.comp90018.H1Calendar.utils.CalenderEvent;
@@ -56,6 +59,18 @@ public class WeekEventView extends Fragment {
         lv_week.setAdapter(weekEventListViewAdapter);
         weekEventListViewAdapter.setDate(defautStart,defautEnd);
         setTitle();
+        lv_week.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(WeekEventView.this.getActivity(), EventDetailActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("id",weekEventListViewAdapter.getEvent(i).getEventId());
+                //System.out.println(dayEventListViewAdapter.getEvent(i).getEventId());
+                intent.putExtras(bundle);
+                startActivity(intent);
+                System.out.println(weekEventListViewAdapter.getEvent(i).getTitle());
+            }
+        });
     }
 
     private void setTitle(){

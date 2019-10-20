@@ -23,7 +23,7 @@ public class DayEventListViewAdapter extends BaseAdapter {
     private sqliteHelper dbhelper;
     private List<CalenderEvent> dayEvents;
     private CalenderEvent mEvent;
-
+    private String timeStr;
 
     public DayEventListViewAdapter(Context context) {
         myContext = context;
@@ -68,10 +68,10 @@ public class DayEventListViewAdapter extends BaseAdapter {
             holder = (ViewHolder) view.getTag();
         }
 
-
+        setTimeStr();
         holder.tvDayEventTitle.setText(mEvent.getTitle());
         holder.tvDayEventLocation.setText(mEvent.getLocal());
-        holder.tvDayEventTimeDuration.setText(mEvent.getEventTime());
+        holder.tvDayEventTimeDuration.setText(timeStr);
         holder.tvDayEventDescription.setText(mEvent.getDescription());
         holder.llEventBackground.setBackgroundColor(myContext.getResources().getColor(getColor(mEvent)));
         return view;
@@ -123,6 +123,14 @@ public class DayEventListViewAdapter extends BaseAdapter {
         public TextView tvDayEventTimeDuration;
         public TextView tvDayEventDescription;
 
+    }
+    public void setTimeStr() {
+        if (mEvent.getIsAllday()) {
+            timeStr = "Full Day";
+        } else {
+            timeStr = mEvent.getStartTimeHour() + " : " + mEvent.getStartTimeMinute() + " - " +
+                    mEvent.getEndTimeHour() + " : " + mEvent.getEndTimeMinute();
+        }
     }
 
 }

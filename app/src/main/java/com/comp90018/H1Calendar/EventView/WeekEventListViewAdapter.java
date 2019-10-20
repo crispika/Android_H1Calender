@@ -21,6 +21,7 @@ public class WeekEventListViewAdapter extends BaseAdapter {
     private LayoutInflater myLayoutInflater;
     private String mDateStart;
     private String mDateEnd;
+    private String timeStr;
     private sqliteHelper dbhelper;
     private List<CalenderEvent> weekEvents;
     private CalenderEvent mEvent;
@@ -82,6 +83,8 @@ public class WeekEventListViewAdapter extends BaseAdapter {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         ViewHolder holder = null;
+        String dateStr = "";
+
         if(weekEvents!=null){
             mEvent = weekEvents.get(i);
         }
@@ -99,17 +102,45 @@ public class WeekEventListViewAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) view.getTag();
         }
-        String dateStr = mEvent.getDay() + "/"+mEvent.getMonth() + "/" + mEvent.getYear();
+        dateStr = mEvent.getDay() + " / "+mEvent.getMonth() + " / " + mEvent.getYear();
+        setTimeStr();
         holder.tvWeekEventTitle.setText(mEvent.getTitle());
         holder.tvWeekEventLocation.setText(mEvent.getLocal());
         holder.tvWeekEventDate.setText(dateStr);
-        holder.tvWeekEventTimeDuration.setText(mEvent.getEventTime());
+        holder.tvWeekEventTimeDuration.setText(timeStr);
         holder.tvWeekEventDescription.setText(mEvent.getDescription());
-        holder.llWeekEventBackground.setBackgroundColor(Color.BLUE);
+        holder.llWeekEventBackground.setBackgroundColor(myContext.getResources().getColor(getColor(mEvent)));
         return view;
     }
 
     public List<CalenderEvent> getEvantList(){
         return weekEvents;
+    }
+    public void setTimeStr(){
+        if(mEvent.getIsAllday()){
+            timeStr = "Full Day";
+        }else{
+            timeStr = mEvent.getStartTimeHour() + " : " + mEvent.getStartTimeMinute() + " - " +
+                    mEvent.getEndTimeHour() + " : " + mEvent.getEndTimeMinute();
+        }
+    }
+    private int getColor(CalenderEvent mEvent){
+        String color;
+        if (mEvent == null) return R.color.Default;
+        if(mEvent.getEventColor() == null) color = "default";
+        else color = mEvent.getEventColor();
+
+        switch (color){
+            case "Green":
+                return R.color.Green;
+            case "Yellow":
+                return R.color.Yellow;
+            case "Red":
+                return R.color.Red;
+            case "Blue":
+                return R.color.Blue;
+            default:
+                return R.color.Default;
+        }
     }
 }
