@@ -87,4 +87,8 @@ public class WeekEventListViewAdapter extends BaseAdapter {
         holder.tvWeekEvent.setText(mEvent.getTitle());
         return view;
     }
+
+    public List<CalenderEvent> getEvantList(){
+        return weekEvents;
+    }
 }
