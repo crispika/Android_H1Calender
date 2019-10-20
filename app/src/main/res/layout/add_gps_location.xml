@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/gps_cancel"
+            style="@style/imageButtonStyle"
+            android:src="@drawable/ic_cancel_white_24dp" />
+
+        <TextView
+            android:id="@+id/gps_title"
+            style="@style/ActivityTitleStyle"
+            android:text="Event Schedule"
+            android:textSize="18dp" />
+
+        <ImageButton
+            android:id="@+id/gps_save"
+            style="@style/imageButtonStyle"
+            android:src="@drawable/ic_confirm_white_24dp" />
+
+    </LinearLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+    <ImageView
+        android:id="@+id/gps_edit_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/ic_edit_grey_24dp"/>
+    <EditText
+        android:id="@+id/gps_location_input"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_toRightOf="@+id/location_edit_icon"
+        android:layout_marginLeft="70dp"
+        android:background="@null"
+        android:hint="Input Event Location"
+        />
+
+    </RelativeLayout>
+    <TextView
+        android:id="@+id/gps_latlng"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="getting current location..."
+        android:textAlignment="center"
+        />
+
+</LinearLayout>

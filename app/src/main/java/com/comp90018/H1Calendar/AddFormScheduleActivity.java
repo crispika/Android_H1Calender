@@ -35,6 +35,7 @@ import butterknife.ButterKnife;
 import com.comp90018.H1Calendar.DBHelper.sqliteHelper;
 import com.comp90018.H1Calendar.EventSettingActivity.EventColorSet;
 import com.comp90018.H1Calendar.EventSettingActivity.EventLocalSet;
+import com.comp90018.H1Calendar.EventSettingActivity.EventQRShare;
 import com.comp90018.H1Calendar.utils.*;
 
 public class AddFormScheduleActivity extends Activity {
@@ -49,6 +50,9 @@ public class AddFormScheduleActivity extends Activity {
     private boolean isAllDay = false;
     private boolean isNeedNotify = false;
     private sqliteHelper dbhelper;
+
+    //Sensor
+    private ShakeUtils shakeItOff;
 
     // Tao
     // store user info into shared preferences
@@ -229,6 +233,9 @@ public class AddFormScheduleActivity extends Activity {
 
             startActivity(new Intent(this, MainActivity.class));
             finish();
+//            Intent intent = new Intent(this, EventQRShare.class);
+//            intent.putExtra("event",cEvent);
+//            startActivity(intent);
         }
 
 
@@ -245,6 +252,9 @@ public class AddFormScheduleActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_form_schedule);
         ButterKnife.bind(this);
+
+        initSensor(); //shake sensor
+
         dbhelper = new sqliteHelper(getApplicationContext());
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this,R.color.colorPrimary));
@@ -252,17 +262,37 @@ public class AddFormScheduleActivity extends Activity {
         String type = getIntent().getStringExtra("type");
         if (type.equals("addEvent")) {
             edit_event_title.setText("New Event");
-        } else{
+        } else if(type.equals("editEvent")){
             Intent intent = getIntent();
-            CalenderEvent storeEvent;
-            if(type.equals("addFromQR")) {
-                storeEvent = (CalenderEvent) intent.getSerializableExtra("QR_event");
-                edit_event_title.setText("Event From QR");
-            } else {
-                storeEvent = (CalenderEvent) intent.getSerializableExtra("edit_event");
-                edit_event_title.setText("Edit Event");
+            String event_id = intent.getStringExtra("id");
+            System.out.println(event_id+"11111111111111111");
+            cEvent = dbhelper.getEventByEventId(event_id);
+
+            //initialize the view on edit interface
+            event_title.setText(cEvent.getTitle());
+            event_color.setText(cEvent.getEventColor());
+            event_detail.setText(cEvent.getDescription());
+            event_local.setText(cEvent.getLocal());
+            event_date.setText(genDateStr(cEvent.getYear(),cEvent.getMonth(),cEvent.getDay()));
+            if(cEvent.getIsAllday()){
+                allDaySwitch.setChecked(true);
+                event_start_time.setVisibility(View.GONE);
+                event_end_time.setVisibility(View.GONE);
+            }else{
+                allDaySwitch.setChecked(false);
+                event_start_time.setText(genTimeStr(cEvent.getStartTimeHour(),cEvent.getStartTimeMinute()));
+                event_end_time.setText(genTimeStr(cEvent.getEndTimeHour(),cEvent.getEndTimeMinute()));
             }
 
+            if(cEvent.getIsNeedNotify()){
+                notify_switch.setChecked(true);
+            }
+
+
+        }else {
+            Intent intent = getIntent();
+            CalenderEvent storeEvent;
+            storeEvent = (CalenderEvent) intent.getSerializableExtra("QR_event");
             cEvent = storeEvent;
 
             //initialize the view on edit interface
@@ -287,6 +317,30 @@ public class AddFormScheduleActivity extends Activity {
 
 
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        shakeItOff.unRegister();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        shakeItOff.register();
+    }
+
+    private void initSensor(){
+        shakeItOff = new ShakeUtils(this);
+        shakeItOff.setOnShakeListener(new ShakeUtils.OnShakeListener() {
+            @Override
+            public void onShake() {
+                Intent intent = new Intent(AddFormScheduleActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 
     private void getDatePicker() {
@@ -365,8 +419,13 @@ public class AddFormScheduleActivity extends Activity {
          if (requestCode == 1) {
             if (resultCode == 1) {
                 if (data != null) {
-                    event_local.setText(data.getStringExtra("location"));
+                    if(data.getBooleanExtra("has_coor",false)){
+
+                        cEvent.setCoordinate(data.getStringExtra("coordinate"));
+                    }
                     cEvent.setLocal(data.getStringExtra("location"));
+                    event_local.setText(data.getStringExtra("location"));
+
                 }
             }
         } else if (requestCode == 2) {

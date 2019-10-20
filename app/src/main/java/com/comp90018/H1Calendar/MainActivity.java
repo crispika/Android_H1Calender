@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -30,6 +32,7 @@ import com.comp90018.H1Calendar.utils.CalendarManager;
 import com.comp90018.H1Calendar.utils.CalenderEvent;
 import com.comp90018.H1Calendar.utils.EventBus;
 import com.comp90018.H1Calendar.utils.Events;
+import com.comp90018.H1Calendar.utils.LightSensorUtils;
 import com.google.android.material.navigation.NavigationView;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionHelper;
@@ -59,6 +62,8 @@ import com.google.gson.Gson;
 
 public class MainActivity extends AppCompatActivity implements RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener {
 
+    private LightSensorUtils lightSensor;
+
     private DayEventView dayEventView;
     private WeekEventView weekEventView;
     private Button btnDWswitch;
@@ -74,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
     private Button loginlogin, loginregister, logoutlogout, logoutsync, registerregister, registercancel;
 
     // store user info into shared preferences
-    private static final String SHAREDPREFS  = "sharedPrefs";
+    private static final String SHAREDPREFS = "sharedPrefs";
     private static final String USERID = "userid";
     private static final String USEREMAIL = "useremail";
     private static final String USERPWD = "userpwd";
@@ -91,7 +96,8 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
     // Tao: end here
 
 
-    //Region for basic UI
+    //region Main Layout Widgets
+
     //侧栏开关
     @BindView(R.id.drawer_layout)
     DrawerLayout drawer_layout;
@@ -124,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
     //Btn for back to today
     @OnClick(R.id.back_to_today)
-    public void back_to_today(){
+    public void back_to_today() {
         EventBus.getInstance().send(new Events.BackToToday());
         calendar_view.scrollToDate(CalendarManager.getInstance().getToday(), CalendarManager.getInstance().getWeekList());
     }
@@ -140,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
     @BindView(R.id.main_fab_button)
     RapidFloatingActionButton main_fab_button;
+    //endregion
 
 
     @Override
@@ -147,12 +154,11 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_drawerlayout);
         ButterKnife.bind(this);
-
         setCalendarInfo();
         initCalendarView();
         setMonthLabel();
         init_FAB();
-
+        initLightUtils();
 
         dayEventView = new DayEventView();
         weekEventView = new WeekEventView();
@@ -161,10 +167,11 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
             myNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                    switch(menuItem.getItemId()){
+                    switch (menuItem.getItemId()) {
                         case R.id.dayview:
                             getSupportFragmentManager().beginTransaction().replace(R.id.Event_container, dayEventView).commitAllowingStateLoss();
                             drawer_layout.closeDrawers();
+                            //EventBus.getInstance().send();
                             break;
                         case R.id.weeklyview:
                             getSupportFragmentManager().beginTransaction().replace(R.id.Event_container, weekEventView).commitAllowingStateLoss();
@@ -217,13 +224,42 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         loadUserInfo();
 
         // user info is available
-        if(!userId.equals("") && !userEmail.equals("") && !userPwd.equals("")){
+        if (!userId.equals("") && !userEmail.equals("") && !userPwd.equals("")) {
 
             userValidation(userEmail, userPwd);
 
+            // processing bar
+
+            String returnUserId, returnUserEmail, returnUserPwd;
+
+
+            // successful
+            if (true) {
+
+                // save user info (update user info)
+                // saveUserInfo(returnUserId, returnUserEmail, returnUserPwd);
+                // loadUserInfo();
+
+                // jump to navigation_header_logout
+                jumpToNavigationHeaderLogout();
+
+                Toast.makeText(getApplicationContext(), "login successfully",
+                        Toast.LENGTH_SHORT).show();
+
+            }
+            // failed
+            else {
+
+                // jump to navigation_header_login
+                jumpToNavigationHeaderLogin();
+
+                Toast.makeText(getApplicationContext(), "login failed, try again please",
+                        Toast.LENGTH_SHORT).show();
+
+            }
         }
         // user info is not available
-        else{
+        else {
 
             jumpToNavigationHeaderLogin();
 
@@ -234,18 +270,43 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
             @Override
             public void onClick(View view) {
 
+                if (loginUseremail.equals("") || loginPwd.equals("")) {
                 // network is working
                 if(isNetworkConnected(getApplicationContext())){
 
                     String loginUseremail = loginuseremail.getText().toString();
                     String loginPwd = loginpwd.getText().toString();
 
+                } else {
                     if(loginUseremail.equals("") || loginPwd.equals("")){
 
+                    // return something
+                    userValidation(loginUseremail, loginPwd);
+
+                    // processing bar
+
+                    String returnUserId, returnUserEmail, returnUserPwd;
+
+                    // successful
+                    if (true) {
+
+                        // save user info (update user info)
+                        // saveUserInfo(returnUserId, returnUserEmail, returnUserPwd);
+                        // loadUserInfo();
+
+                        // for test
+                        saveUserInfo("userid", loginUseremail, loginPwd);
+                        loadUserInfo();
+
+                        jumpToNavigationHeaderLogout();
+
+                        Toast.makeText(getApplicationContext(), "login successfully",
                         Toast.makeText(getApplicationContext(), "username or pwd is missing",
                                 Toast.LENGTH_SHORT).show();
 
                     }
+                    // failed
+                    else {
                     else{
 
                         userValidation(loginUseremail, loginPwd);
@@ -277,7 +338,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
             @Override
             public void onClick(View view) {
 
-                saveUserInfo("","","");
+                saveUserInfo("", "", "");
                 loadUserInfo();
 
                 jumpToNavigationHeaderLogin();
@@ -296,7 +357,35 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                     // sync
                     syncToCloud();
 
+                List<CalenderEvent> allCurrentCalenderEventList = new ArrayList<CalenderEvent>();
+                allCurrentCalenderEventList = dbhelper.getAllEventsByUserId(userId);
+
+                // 生成json传递 {userId : [events]}
+                Gson gson = new Gson();
+                String jsonString = gson.toJson(allCurrentCalenderEventList);
+
+                jsonString = "{" + '"' + userId + '"' + ":" + jsonString + "}";
+
+                // Http request
+
+                Log.d("json", jsonString);
+//                [{"day":10,"description":"None","endTimeHour":0,"endTimeMinute":0,"eventId":"509b23f6-a73a-4121-8b80-403681c258e6","isAllday":false,"isNeedNotify":false,"local":"None","month":10,"startTimeHour":0,"startTimeMinute":0,"title":"default1","year":2019},
+//                {"day":11,"description":"None","endTimeHour":0,"endTimeMinute":0,"eventId":"e93e3d36-8836-434d-bba7-352846a28eae","isAllday":false,"isNeedNotify":false,"local":"None","month":10,"startTimeHour":0,"startTimeMinute":0,"title":"default2","year":2019},
+//                {"day":13,"description":"None","endTimeHour":0,"endTimeMinute":0,"eventId":"9d01331f-ac2a-4e0a-9b8b-04069d1acd90","isAllday":false,"isNeedNotify":false,"local":"None","month":10,"startTimeHour":0,"startTimeMinute":0,"title":"default3","year":2019}]
+
+
+                // processing bar
+
+                // 收到反馈
+
+                // sync successfully
+                if (true) {
+                    Toast.makeText(getApplicationContext(), "sync successfully",
+                            Toast.LENGTH_SHORT).show();
                 }
+                // sync failed
+                else {
+                    Toast.makeText(getApplicationContext(), "sync failed",
                 else if(isMobileConnected(getApplicationContext())){
                     System.out.println("mobile");
                     //popup dialog
@@ -342,12 +431,16 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                         }
                         else{
 
+                    // successful
+                    if (true) {
                             Toast.makeText(getApplicationContext(), "register is failed",
                                     Toast.LENGTH_SHORT).show();
 
                         }
 
                     }
+                    // failed
+                    else {
 
                 }
                 else{
@@ -370,12 +463,62 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         });
 
 
-
         // Tao: end here
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        lightSensor.register();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        lightSensor.unRegister();
+    }
+
+    private void initLightUtils(){
+        lightSensor = new LightSensorUtils(this);
+        lightSensor.setLightListener(new LightSensorUtils.LightListener() {
+
+            @Override
+            public void toLight() {
+                if((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES){
+                    //change to DayTheme
+                    getDelegate().setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    Log.d("Theme_sensor", "Sensor: Switch to Light");
+                }
+            }
+
+            @Override
+            public void toDark() {
+                if ((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO){
+                    getDelegate().setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    Log.d("Theme_sensor", "Sensor: Switch to Dark");
+                }
+            }
+        });
+    }
+
+//    private void ThemeChange(boolean isDay){
+//        if((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+//            & isDay){
+//            //change to DayTheme
+//            getDelegate().setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+//            Log.d("Theme_sensor", "Sensor: Switch to Light");
+//
+//        }
+//        else if ((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO
+//            & (!isDay)){
+//            getDelegate().setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+//            Log.d("Theme_sensor", "Sensor: Switch to Dark");
+//        }
+//    }
+
     //region CalendarView Settings
+
     /**
      * set the data in the calendar
      */
@@ -400,12 +543,12 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
     /**
      * init the style, color, theme of the calendar
      */
-    private void initCalendarView(){
+    private void initCalendarView() {
         calendar_HeaderTextColor = getColor(R.color.calendar_text_header);
         calendar_CurrentDayTextColor = getColor(R.color.calendar_text_current_day);
         calendar_PastDayTextColor = getColor(R.color.calendar_text_past_day);
 
-        calendar_view.init(calendar_HeaderTextColor,calendar_CurrentDayTextColor,calendar_PastDayTextColor);
+        calendar_view.init(calendar_HeaderTextColor, calendar_CurrentDayTextColor, calendar_PastDayTextColor);
     }
     //endregion
 
@@ -430,6 +573,15 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                 .setLabelColor(0xff056f00)
                 .setWrapper(1)
         );
+        items.add(new RFACLabelItem<Integer>()
+                .setLabel("Bookmark Current Location")
+                .setResId(R.drawable.ic_location_on_grey_600_24dp)
+                .setIconNormalColor(0xff056f00)
+                .setIconPressedColor(0xff0d5302)
+                .setLabelColor(0xff056f00)
+                .setWrapper(1)
+        );
+
         rfaContent
                 .setItems(items)
                 .setIconShadowRadius(5)
@@ -461,13 +613,18 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
             case 0:
                 Intent intent_to_form = new Intent();
                 intent_to_form.setClass(this, AddFormScheduleActivity.class);
-                intent_to_form.putExtra("type","addEvent");
+                intent_to_form.putExtra("type", "addEvent");
                 startActivity(intent_to_form);
                 break;
             case 1:
                 Intent intent_to_qrcode = new Intent();
                 intent_to_qrcode.setClass(this, AddQRCodeScheduleActivity.class);
                 startActivity(intent_to_qrcode);
+                break;
+            case 2:
+                Intent intent_to_location = new Intent();
+                intent_to_location.setClass(this,AddGPSLocationActivity.class);
+                startActivity(intent_to_location);
                 break;
             default:
                 break;
@@ -477,18 +634,18 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
     }
     //endregion
 
-    private void setMonthLabel(){
+    private void setMonthLabel() {
         EventBus.getInstance().getSubject().subscribe(event -> {
-           if(event instanceof Events.MonthChangeEvent){
-               title_month_label.setText(((Events.MonthChangeEvent)event).getMonthFullName());
-           }
+            if (event instanceof Events.MonthChangeEvent) {
+                title_month_label.setText(((Events.MonthChangeEvent) event).getMonthFullName());
+            }
         });
     }
 
 
     // Tao: start here
 
-    public void saveUserInfo(String userid, String useremail, String userpwd){
+    public void saveUserInfo(String userid, String useremail, String userpwd) {
         SharedPreferences sharedPreferences = getSharedPreferences(SHAREDPREFS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -502,7 +659,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         Toast.makeText(this, "data saved", Toast.LENGTH_SHORT).show();
     }
 
-    public void loadUserInfo(){
+    public void loadUserInfo() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHAREDPREFS, Context.MODE_PRIVATE);
 
         // the default values of these three variables are ""
@@ -586,7 +743,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
     // TODO: user validation
     // return user info and validation state
-    public void userValidation(String useremail, String password){
+    public void userValidation(String useremail, String password) {
 
         // code: 200 / 401
         // token:
@@ -634,7 +791,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
     }
 
-    public void jumpToNavigationHeaderLogin(){
+    public void jumpToNavigationHeaderLogin() {
 
         // setting of login
         loginuseremail.setText("");
@@ -657,14 +814,14 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
     }
 
-    public void jumpToNavigationHeaderLogout(){
+    public void jumpToNavigationHeaderLogout() {
 
         List<CalenderEvent> allDefaultCalenderEventList = new ArrayList<CalenderEvent>();
         allDefaultCalenderEventList = dbhelper.getAllEventsByUserId(defaultUserId);
 
         int numberOfDefaultEvents = allDefaultCalenderEventList.size();
 
-        if(numberOfDefaultEvents > 0){
+        if (numberOfDefaultEvents > 0) {
             // popup window
             changeDefaultEvents(numberOfDefaultEvents);
 
@@ -691,7 +848,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
     }
 
-    public void jumpToNavigationHeaderRegister(){
+    public void jumpToNavigationHeaderRegister() {
 
         // setting of login
         loginuseremail.setText("");
@@ -713,6 +870,8 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
     }
 
+    // popup dialog
+    public void changeDefaultEvents(int numberOfDefaultEvents) {
     // popup dialog: move default events to a user account
     public void changeDefaultEvents(int numberOfDefaultEvents){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -724,11 +883,10 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
                 boolean isSucceed = dbhelper.updateEventsByUserId(defaultUserId, userId);
 
-                if(isSucceed){
-                    Toast.makeText(MainActivity.this, "successful",Toast.LENGTH_SHORT).show();
-                }
-                else{
-                    Toast.makeText(MainActivity.this, "failed",Toast.LENGTH_SHORT).show();
+                if (isSucceed) {
+                    Toast.makeText(MainActivity.this, "successful", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "failed", Toast.LENGTH_SHORT).show();
                 }
 
 
@@ -737,7 +895,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Toast.makeText(MainActivity.this, "no",Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "no", Toast.LENGTH_SHORT).show();
             }
         });
 

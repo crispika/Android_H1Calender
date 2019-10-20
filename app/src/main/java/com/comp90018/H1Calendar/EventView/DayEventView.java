@@ -1,6 +1,7 @@
 package com.comp90018.H1Calendar.EventView;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -10,9 +11,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.comp90018.H1Calendar.EventDetailActivity;
 import com.comp90018.H1Calendar.R;
 import com.comp90018.H1Calendar.utils.CalendarManager;
 import com.comp90018.H1Calendar.utils.DateManager;
@@ -30,7 +33,9 @@ public class DayEventView extends Fragment {
 
     private TextView tv_day;
     private ListView lv_day;
+    public TextView tvDayEventTextHeader;
     private DayEventListViewAdapter dayEventListViewAdapter;
+    private String daySelected = DateManager.dateToStr(CalendarManager.getInstance().getToday());
 
     public DayEventView() {
         // Required empty public constructor
@@ -46,12 +51,31 @@ public class DayEventView extends Fragment {
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        tv_day = view.findViewById(R.id.tv_day_event);
+        tv_day = view.findViewById(R.id.day_event_title);
         lv_day = view.findViewById(R.id.lv_day_event);
+        tvDayEventTextHeader = view.findViewById(R.id.day_event_textHeader);
         dayEventListViewAdapter = new DayEventListViewAdapter(DayEventView.this.getActivity());
+
+        dayEventListViewAdapter.setDate(daySelected);
+        //set Day Event View Header Text
+        setTitle();
         lv_day.setAdapter(dayEventListViewAdapter);
+        lv_day.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(DayEventView.this.getActivity(), EventDetailActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("id",dayEventListViewAdapter.getEvent(i).getEventId());
+                bundle.putString("title",dayEventListViewAdapter.getEvent(i).getTitle());
+                //System.out.println(dayEventListViewAdapter.getEvent(i).getEventId());
+                intent.putExtras(bundle);
+                startActivity(intent);
+                System.out.println(dayEventListViewAdapter.getEvent(i).getTitle());
+            }
+        });
 
     }
+
 
     public void setView(String date){
         dayEventListViewAdapter.setDate(date);
@@ -67,12 +91,25 @@ public class DayEventView extends Fragment {
                 dayEventListViewAdapter.setDate(dateStr);
                 //((DayEventListViewAdapter)lv_day.getAdapter()).setDate(dateStr);
                 //Log.d(LOG_TAG, "Date Setted!");
+                setTitle();
+                daySelected = dateStr;
             }
             else if (event instanceof Events.BackToToday){
                 String dateStr = DateManager.dateToStr(CalendarManager.getInstance().getToday());
                 dayEventListViewAdapter.setDate(dateStr);
+                //daySelected = dateStr;
             }
         });
+    }
+
+    private void setTitle(){
+        if(dayEventListViewAdapter.getEvantList() == null){
+            tvDayEventTextHeader.setText("There are no event for today, please add one");
+        }else if(dayEventListViewAdapter.getEvantList() .isEmpty()){
+            tvDayEventTextHeader.setText("There are no event for today, please add one");
+        }else{
+            tvDayEventTextHeader.setText("These are events for today");
+        }
     }
 
 }
