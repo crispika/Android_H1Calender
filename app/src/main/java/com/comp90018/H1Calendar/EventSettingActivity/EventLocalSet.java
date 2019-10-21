@@ -8,10 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -93,6 +90,7 @@ public class EventLocalSet extends Activity {
            intent.putExtra("has_coor",true);
            intent.putExtra("location",el.getName());
            intent.putExtra("coordinate",el.getCoordinate());
+           intent.putExtra("locationID",el.getLocationId());
            setResult(1, intent);
            finish();
        }

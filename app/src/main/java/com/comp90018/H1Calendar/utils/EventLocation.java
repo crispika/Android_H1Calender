@@ -33,6 +33,9 @@ public class EventLocation {
         this.userId = userId;
     }
 
+    public void printString(){
+        System.out.println("save info:"+userId+' ' +locationId+' '+name+' '+coordinate);
+    }
 
     public String getLocationId() {
         return locationId;
