@@ -3,6 +3,7 @@ package com.comp90018.H1Calendar.EventView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,8 +37,8 @@ public class WeekEventView extends Fragment {
     public TextView tvWeekEventTextHeader;
 
     private WeekEventListViewAdapter weekEventListViewAdapter;
-    private String defautStart = DateManager.headTailOfWeek(CalendarManager.getInstance().getTodayCalendar().get(Calendar.WEEK_OF_YEAR))[0];
-    private String defautEnd = DateManager.headTailOfWeek(CalendarManager.getInstance().getTodayCalendar().get(Calendar.WEEK_OF_YEAR))[1];
+    private String weekStart ;
+    private String weekEnd ;
 
     public WeekEventView() {
         // Required empty public constructor
@@ -57,7 +58,16 @@ public class WeekEventView extends Fragment {
         tvWeekEventTextHeader = view.findViewById(R.id.week_event_textHeader);
         weekEventListViewAdapter = new WeekEventListViewAdapter(WeekEventView.this.getActivity());
         lv_week.setAdapter(weekEventListViewAdapter);
-        weekEventListViewAdapter.setDate(defautStart,defautEnd);
+
+        if (CalendarManager.getInstance().getSelectedItem() == null) {
+            weekStart = DateManager.headTailOfWeek(CalendarManager.getInstance().getTodayCalendar().get(Calendar.WEEK_OF_YEAR))[0];
+            weekEnd = DateManager.headTailOfWeek(CalendarManager.getInstance().getTodayCalendar().get(Calendar.WEEK_OF_YEAR))[1];
+        }
+        else{
+            weekStart = CalendarManager.getInstance().getWeekStart();
+            weekEnd = CalendarManager.getInstance().getWeekEnd();
+        }
+        weekEventListViewAdapter.setDate(weekStart,weekEnd);
         setTitle();
         lv_week.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -92,8 +102,10 @@ public class WeekEventView extends Fragment {
                 int week_of_year = ((Events.DayClickedEvent) event).getDayItem().getmWeekOfTheYear();
                 String start = DateManager.headTailOfWeek(week_of_year)[0];
                 String end = DateManager.headTailOfWeek(week_of_year)[1];
-                defautStart = start;
-                defautEnd = end;
+                weekStart = start;
+                weekEnd = end;
+                CalendarManager.getInstance().setWeekStart(start);
+                CalendarManager.getInstance().setWeekEnd(end);
                 weekEventListViewAdapter.setDate(start,end);
 
                 //((DayEventListViewAdapter)lv_day.getAdapter()).setDate(dateStr);

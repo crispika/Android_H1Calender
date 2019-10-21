@@ -3,8 +3,10 @@ package com.comp90018.H1Calendar.utils;
 import com.google.gson.Gson;
 
 import java.io.Serializable;
+import java.util.Calendar;
 
-public class CalenderEvent implements Serializable {
+
+public class CalenderEvent implements Serializable,Comparable<CalenderEvent> {
 
     private String eventId;
     private String title;
@@ -172,6 +174,35 @@ public class CalenderEvent implements Serializable {
 
     public void setUserId(String userid) {
         this.userId = userid;
+    }
+
+
+//    @Override
+//    public int compareTo(CalenderEvent event) {
+//        if (getYear() != event.getYear()) return compareInt(getYear(),event.getYear());
+//        if (getMonth() != event.getMonth()) return compareInt(getMonth(),event.getMonth());
+//        if (getDay() != event.getDay()) return compareInt(getDay(),event.getDay());
+//        if (getStartTimeHour() != event.getStartTimeHour()) return compareInt(getStartTimeHour(),event.getStartTimeHour());
+//        if (getStartTimeMinute() != event.getStartTimeMinute()) return compareInt(getStartTimeMinute(),event.getStartTimeMinute());
+//        return 0;
+//    }
+//    private int compareInt(int a, int b){
+//        if (a<b) return -1;
+//        else if (a>b) return 1;
+//        else return 0;
+//    }
+
+    private Calendar getCalendarTime(){
+        Calendar cal = Calendar.getInstance();
+        cal.set(getYear(),getMonth(),getDay(),getStartTimeHour(),getStartTimeMinute());
+        return cal;
+    }
+
+    @Override
+    public int compareTo(CalenderEvent event) {
+        if (getCalendarTime().getTimeInMillis() > event.getCalendarTime().getTimeInMillis()) return 1;
+        if (getCalendarTime().getTimeInMillis() < event.getCalendarTime().getTimeInMillis()) return -1;
+        return 0;
     }
 
 

@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
     private Button btnDWswitch;
     private ListView leftList;
     private NavigationView myNavigationView;
+    private Boolean isDayView;
 
     // Tao: start here
 
@@ -152,35 +153,8 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         init_FAB();
         initLightUtils();
 
-        //set navigationView click event
-        dayEventView = new DayEventView();
-        weekEventView = new WeekEventView();
-        myNavigationView = this.findViewById(R.id.navigation);
-        if (myNavigationView != null) {
-            myNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                    switch (menuItem.getItemId()) {
-                        case R.id.dayview:
-                            getSupportFragmentManager().beginTransaction().replace(R.id.Event_container, dayEventView).commitAllowingStateLoss();
-                            drawer_layout.closeDrawers();
-                            //EventBus.getInstance().send();
-                            break;
-                        case R.id.weeklyview:
-                            getSupportFragmentManager().beginTransaction().replace(R.id.Event_container, weekEventView).commitAllowingStateLoss();
-                            getSupportFragmentManager().beginTransaction().show(weekEventView).commitAllowingStateLoss();
-                            drawer_layout.closeDrawers();
-                            break;
-                        default:
-                            break;
-                    }
-                    return false;
-                }
-            });
-        }
-        getSupportFragmentManager().beginTransaction().add(R.id.Event_container, weekEventView).commitAllowingStateLoss();
-        getSupportFragmentManager().beginTransaction().hide(weekEventView).commitAllowingStateLoss();
-        getSupportFragmentManager().beginTransaction().add(R.id.Event_container, dayEventView).commitAllowingStateLoss();
+        setEventViewFragment();
+
 
 
         // Tao: start here
@@ -777,6 +751,56 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
 
     // Tao: end here
+    public void setEventViewFragment(){
+        SharedPreferences mySharedPreferences = getSharedPreferences("FragmentSetting",MODE_PRIVATE);
+        SharedPreferences.Editor myEditor = mySharedPreferences.edit();
+        //set navigationView click event
+        dayEventView = new DayEventView();
+        weekEventView = new WeekEventView();
+        myNavigationView = this.findViewById(R.id.navigation);
+        isDayView = mySharedPreferences.getBoolean("isDayView",true);
+
+        getSupportFragmentManager().beginTransaction().add(R.id.Event_container, weekEventView).commitAllowingStateLoss();
+        getSupportFragmentManager().beginTransaction().hide(weekEventView).commitAllowingStateLoss();
+        getSupportFragmentManager().beginTransaction().add(R.id.Event_container, dayEventView).commitAllowingStateLoss();
+
+        if(isDayView){
+            getSupportFragmentManager().beginTransaction().replace(R.id.Event_container, dayEventView).commitAllowingStateLoss();
+            isDayView = true;
+        }else{
+            getSupportFragmentManager().beginTransaction().replace(R.id.Event_container, weekEventView).commitAllowingStateLoss();
+            getSupportFragmentManager().beginTransaction().show(weekEventView).commitAllowingStateLoss();
+            isDayView = false;
+        }
+
+        if (myNavigationView != null) {
+            myNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                    switch (menuItem.getItemId()) {
+                        case R.id.dayview:
+                            getSupportFragmentManager().beginTransaction().replace(R.id.Event_container, dayEventView).commitAllowingStateLoss();
+                            drawer_layout.closeDrawers();
+                            myEditor.putBoolean("isDayView",true);
+                            myEditor.apply();
+                            //EventBus.getInstance().send();
+                            break;
+                        case R.id.weeklyview:
+                            getSupportFragmentManager().beginTransaction().replace(R.id.Event_container, weekEventView).commitAllowingStateLoss();
+                            getSupportFragmentManager().beginTransaction().show(weekEventView).commitAllowingStateLoss();
+                            drawer_layout.closeDrawers();
+                            myEditor.putBoolean("isDayView",false);
+                            myEditor.apply();
+                            break;
+                        default:
+                            break;
+                    }
+                    return false;
+                }
+            });
+        }
+
+    }
 
 }
 

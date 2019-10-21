@@ -42,6 +42,9 @@ public class CalendarManager {
 
     private boolean isExist = false;
 
+    private String weekStart;
+    private String weekEnd;
+
 
     //region Constructor
     public CalendarManager() {
@@ -171,6 +174,13 @@ public class CalendarManager {
     public boolean isExist() {
         return isExist;
     }
+
+    public void setWeekStart(String start){this.weekStart = start;}
+    public void setWeekEnd(String end){this.weekEnd = end;}
+
+    public String getWeekStart(){return weekStart;}
+    public String getWeekEnd(){return weekEnd;}
+
     //endregion
 }
 

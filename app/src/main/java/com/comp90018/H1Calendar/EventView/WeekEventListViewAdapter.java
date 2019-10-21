@@ -13,6 +13,7 @@ import com.comp90018.H1Calendar.R;
 import com.comp90018.H1Calendar.DBHelper.sqliteHelper;
 import com.comp90018.H1Calendar.utils.CalenderEvent;
 
+import java.util.Collections;
 import java.util.List;
 
 public class WeekEventListViewAdapter extends BaseAdapter {
@@ -60,7 +61,7 @@ public class WeekEventListViewAdapter extends BaseAdapter {
     public void setEventList(){
         dbhelper = new sqliteHelper(myContext.getApplicationContext());
         weekEvents = dbhelper.getEventsByWeek(mDateStart,mDateEnd);
-        System.out.println("week:" + weekEvents.size());
+        Collections.sort(weekEvents);
         notifyDataSetChanged();
         //System.out.println(dayEvents.size());
     }

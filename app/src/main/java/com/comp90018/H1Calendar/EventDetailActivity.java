@@ -1,9 +1,12 @@
 package com.comp90018.H1Calendar;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -12,6 +15,7 @@ import android.widget.TextView;
 
 import com.comp90018.H1Calendar.DBHelper.sqliteHelper;
 import com.comp90018.H1Calendar.EventSettingActivity.EventQRShare;
+import com.comp90018.H1Calendar.EventView.DeleteDialog;
 import com.comp90018.H1Calendar.utils.CalenderEvent;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton;
 
@@ -60,6 +64,9 @@ public class EventDetailActivity extends AppCompatActivity {
         intent.putExtras(bundle);
         startActivity(intent);
         finish();
+    }
+    @OnClick(R.id.event_detail_delete) void deleteEvent(){
+        buildDialog();
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,5 +139,27 @@ public class EventDetailActivity extends AppCompatActivity {
             timeStr = mEvent.getStartTimeHour() + " : " + mEvent.getStartTimeMinute() + " - " +
                     mEvent.getEndTimeHour() + " : " + mEvent.getEndTimeMinute();
         }
+    }
+    public void buildDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(EventDetailActivity.this);
+        builder.setTitle("Attention");
+        builder.setMessage("Delete Event?");
+        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dbhelper.deleteEventByEventId(mEvent.getEventId());
+                Intent intent = new Intent(EventDetailActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                dialogInterface.dismiss();
+            }
+        });
+        builder.show();
     }
 }
