@@ -66,5 +66,10 @@ public class ExampleUnitTest {
         System.out.println(day.getTime().toString());
     }
 
+    @Test
+    public void testNotification(){
+
+    }
+
 }
 

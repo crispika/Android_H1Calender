@@ -13,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.comp90018.H1Calendar.Alarm.SendAlarmBroadcast;
 import com.comp90018.H1Calendar.DBHelper.sqliteHelper;
 import com.comp90018.H1Calendar.EventSettingActivity.EventQRShare;
 import com.comp90018.H1Calendar.EventView.DeleteDialog;
@@ -148,6 +149,7 @@ public class EventDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dbhelper.deleteEventByEventId(mEvent.getEventId());
+                SendAlarmBroadcast.startAlarmService(EventDetailActivity.this);
                 Intent intent = new Intent(EventDetailActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
