@@ -46,7 +46,9 @@
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="portrait"
             tools:replace="screenOrientation" />
-    </application>
+
+        <!--background service: WiFiAutoSync-->
+        <service android:enabled="true" android:name=".WiFiAutoSync" android:process="system"></service>
 
     </application>
     <!--network state-->

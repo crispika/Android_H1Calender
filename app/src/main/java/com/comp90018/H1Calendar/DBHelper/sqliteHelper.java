@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.comp90018.H1Calendar.MainActivity;
 import com.comp90018.H1Calendar.utils.CalenderEvent;
+import com.comp90018.H1Calendar.utils.EventLocation;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,7 +26,7 @@ public class sqliteHelper extends SQLiteOpenHelper {
     private static final int DATABASEVERSION = 1;
 
     // variable used to store user info that get from shared preferences
-    private String userId, userEmail, userPwd;
+    // private String userId, userEmail, userPwd;
 
     public sqliteHelper(Context context) {
         super(context, DATABASENAME, null, DATABASEVERSION);
@@ -41,9 +42,13 @@ public class sqliteHelper extends SQLiteOpenHelper {
         // create event table
         String createEventTable = "CREATE TABLE EVENT(eventId char(36) PRIMARY KEY, title char(20), isAllday int(20), " +
                 "isNeedNotify int(20), date char(20), startTimeHour int(20),startTimeMinute int(20), endTimeHour int(20),endTimeMinute int(20), " +
-                "eventColor char(20), local char(20), description char(500),updateTime datetime, userId char(36))";
-        // , userId char(36) , FOREIGN KEY (userId) REFERENCES USER (userId)
+                "eventColor char(20), eventTime char(50), local char(20), description char(500), coordinate char(50), userId char(36), locationId char(36))";
+        // updateTime char(50),
         sqLiteDatabase.execSQL(createEventTable);
+
+        // create location table
+        String createLocationTable = "CREATE TABLE LOCATION(locationId char(36) PRIMARY KEY, name char(200), coordinate char(50), userId char(36))";
+        sqLiteDatabase.execSQL(createLocationTable);
 
         // print log msg
         Log.d("createDB", "successful");
@@ -56,6 +61,9 @@ public class sqliteHelper extends SQLiteOpenHelper {
 
         String dropEventTable = "DROP TABLE IF EXISTS EVENT";
         sqLiteDatabase.execSQL(dropEventTable);
+
+        String dropLocationTable = "DROP TABLE IF EXISTS LOCATION";
+        sqLiteDatabase.execSQL(dropLocationTable);
 
         onCreate(sqLiteDatabase);
 
@@ -421,6 +429,65 @@ public class sqliteHelper extends SQLiteOpenHelper {
 
     }
 
+    // location
+    // add locations
+    public boolean insertLocations(EventLocation eventLocation){
+
+        SQLiteDatabase sqlitedb = this.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("locationId", eventLocation.getLocationId());
+        contentValues.put("name", eventLocation.getName());
+        contentValues.put("coordiante", eventLocation.getCoordinate());
+        contentValues.put("userId", eventLocation.getUserId());
+
+        long result = sqlitedb.insert("LOCATION", null, contentValues);
+
+        sqlitedb.close();
 
 
+
+        if(result == -1){
+            return false;
+        }
+        else{
+            return true;
+        }
+
+    }
+
+    // get all locations by userId
+    public List<EventLocation> getAllLocationsByUserId(String userId){
+        SQLiteDatabase sqlitedb = this.getWritableDatabase();
+
+        List<EventLocation> eventLocationsList = new ArrayList<EventLocation>();
+
+        Cursor cursor = sqlitedb.rawQuery("SELECT * FROM LOCATION WHERE userId = ?", new String[] {userId});
+
+        while (cursor.moveToNext()){
+
+            eventLocationsList.add(returnEventLocation(cursor));
+
+        }
+
+        cursor.close();
+        sqlitedb.close();
+
+        return eventLocationsList;
+
+    }
+
+    // assign values getting from db to the object
+    public EventLocation returnEventLocation(Cursor cursor){
+
+        EventLocation eventLocation = new EventLocation();
+
+        eventLocation.setLocationId(cursor.getString(0));
+        eventLocation.setName(cursor.getString(1));
+        eventLocation.setCoordinate(cursor.getString(2));
+        eventLocation.setUserId(cursor.getString(3));
+
+        return eventLocation;
+
+    }
 }

@@ -8,17 +8,29 @@ package com.comp90018.H1Calendar.utils;
 public class EventLocation {
     private String name;
     private String coordinate;
+    private String locationId;
+    private String userId;
+
 
     public EventLocation(){
 
     }
 
-    public EventLocation(String name, String coordinate){
+    public EventLocation(String locationId, String name, String coordinate, String userId){
+        this.locationId = locationId;
         this.name = name;
         this.coordinate = coordinate;
+        this.userId = userId;
     }
 
 
+    public String getLocationId() {
+        return locationId;
+    }
+
+    public void setLocationId(String locationId) {
+        this.locationId = locationId;
+    }
 
     public String getName() {
         return name;
@@ -34,5 +46,13 @@ public class EventLocation {
 
     public void setCoordinate(String coordinate) {
         this.coordinate = coordinate;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

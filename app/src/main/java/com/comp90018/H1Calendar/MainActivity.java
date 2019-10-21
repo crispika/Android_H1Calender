@@ -80,12 +80,13 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
     // store user info into shared preferences
     private static final String SHAREDPREFS = "sharedPrefs";
+    private static final String USERTOKEN = "usertoken";
     private static final String USERID = "userid";
     private static final String USEREMAIL = "useremail";
     private static final String USERPWD = "userpwd";
 
     // variable used to store user info that get from shared preferences
-    private String userId, userEmail, userPwd;
+    private String userToken, userId, userEmail, userPwd;
 
     // db helper
     sqliteHelper dbhelper;
@@ -189,6 +190,10 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
         // Tao: start here
 
+        // start background service - auto sync if wifi is available
+        Intent intent = new Intent(this, WiFiAutoSync.class);
+        startService(intent);
+
         navigationView = findViewById(R.id.navigation);
 
         // add three header layouts to navigation view
@@ -220,43 +225,52 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         dbhelper = new sqliteHelper(getApplicationContext());
 
         // load user info from shared preferences
-        // assign the values to userId, userName, userPwd, the default values are ""
+        // assign the values to userToken, userId, userName, userPwd, the default values are ""
         loadUserInfo();
 
         // user info is available
         if (!userId.equals("") && !userEmail.equals("") && !userPwd.equals("")) {
 
-            userValidation(userEmail, userPwd);
+            // network is working
+            if(isNetworkConnected(getApplicationContext())){
 
-            // processing bar
+                userValidation(userEmail, userPwd);
 
-            String returnUserId, returnUserEmail, returnUserPwd;
+                // processing bar
+
+                String returnToken, returnUserId, returnUserEmail, returnUserPwd;
 
 
-            // successful
-            if (true) {
+                // successful
+                if (true) {
 
-                // save user info (update user info)
-                // saveUserInfo(returnUserId, returnUserEmail, returnUserPwd);
-                // loadUserInfo();
+                    // save user info (update user info)
+                    // saveUserInfo(returnUserId, returnUserEmail, returnUserPwd);
+                    // loadUserInfo();
 
-                // jump to navigation_header_logout
-                jumpToNavigationHeaderLogout();
+                    // jump to navigation_header_logout
+                    jumpToNavigationHeaderLogout();
 
-                Toast.makeText(getApplicationContext(), "login successfully",
-                        Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "auto login successfully",
+                            Toast.LENGTH_SHORT).show();
+
+                }
+                // failed
+                else {
+
+                    // jump to navigation_header_login
+                    jumpToNavigationHeaderLogin();
+
+                    Toast.makeText(getApplicationContext(), "auto login failed, try again please",
+                            Toast.LENGTH_SHORT).show();
+
+                }
 
             }
-            // failed
-            else {
-
-                // jump to navigation_header_login
-                jumpToNavigationHeaderLogin();
-
-                Toast.makeText(getApplicationContext(), "login failed, try again please",
-                        Toast.LENGTH_SHORT).show();
-
+            else{
+                Toast.makeText(getApplicationContext(), "network is not available", Toast.LENGTH_SHORT).show();
             }
+
         }
         // user info is not available
         else {
@@ -270,55 +284,54 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
             @Override
             public void onClick(View view) {
 
-                if (loginUseremail.equals("") || loginPwd.equals("")) {
+                String loginUseremail = loginuseremail.getText().toString();
+                String loginPwd = loginpwd.getText().toString();
+
                 // network is working
-                if(isNetworkConnected(getApplicationContext())){
+                if(isNetworkConnected(getApplicationContext())) {
 
-                    String loginUseremail = loginuseremail.getText().toString();
-                    String loginPwd = loginpwd.getText().toString();
+                    if (loginUseremail.equals("") || loginPwd.equals("")) {
 
-                } else {
-                    if(loginUseremail.equals("") || loginPwd.equals("")){
-
-                    // return something
-                    userValidation(loginUseremail, loginPwd);
-
-                    // processing bar
-
-                    String returnUserId, returnUserEmail, returnUserPwd;
-
-                    // successful
-                    if (true) {
-
-                        // save user info (update user info)
-                        // saveUserInfo(returnUserId, returnUserEmail, returnUserPwd);
-                        // loadUserInfo();
-
-                        // for test
-                        saveUserInfo("userid", loginUseremail, loginPwd);
-                        loadUserInfo();
-
-                        jumpToNavigationHeaderLogout();
-
-                        Toast.makeText(getApplicationContext(), "login successfully",
                         Toast.makeText(getApplicationContext(), "username or pwd is missing",
                                 Toast.LENGTH_SHORT).show();
 
                     }
-                    // failed
                     else {
-                    else{
 
+                        // return something
                         userValidation(loginUseremail, loginPwd);
 
-                    }
+                        // processing bar
 
+                        String returnToken, returnUserId, returnUserEmail, returnUserPwd;
+
+                        // successful
+                        if (true) {
+
+                            // save user info (update user info)
+                            // saveUserInfo(returnToken, returnUserId, returnUserEmail, returnUserPwd);
+                            // loadUserInfo();
+
+                            // for test
+                            saveUserInfo("usertoken", "userid", loginUseremail, loginPwd);
+                            loadUserInfo();
+
+                            jumpToNavigationHeaderLogout();
+
+                            Toast.makeText(getApplicationContext(), "login successfully", Toast.LENGTH_SHORT).show();
+
+                        }
+                        // failed
+                        else{
+
+                            Toast.makeText(getApplicationContext(), "login failed, try again please", Toast.LENGTH_SHORT).show();
+
+                        }
+
+                    }
                 }
                 else{
-
-                    Toast.makeText(getApplicationContext(), "network is not available",
-                            Toast.LENGTH_SHORT).show();
-
+                    Toast.makeText(getApplicationContext(), "network is not available", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -338,7 +351,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
             @Override
             public void onClick(View view) {
 
-                saveUserInfo("", "", "");
+                saveUserInfo("", "", "", "");
                 loadUserInfo();
 
                 jumpToNavigationHeaderLogin();
@@ -352,23 +365,37 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
             public void onClick(View view) {
 
                 // check wifi
-                if(isWifiConnected(getApplicationContext())){
+                if (isWifiConnected(getApplicationContext())) {
                     System.out.println("wifi");
                     // sync
                     syncToCloud();
 
-                List<CalenderEvent> allCurrentCalenderEventList = new ArrayList<CalenderEvent>();
-                allCurrentCalenderEventList = dbhelper.getAllEventsByUserId(userId);
 
-                // 生成json传递 {userId : [events]}
-                Gson gson = new Gson();
-                String jsonString = gson.toJson(allCurrentCalenderEventList);
+                } else if (isMobileConnected(getApplicationContext())) {
+                    System.out.println("mobile");
+                    //popup dialog
+                    syncUnderMobileNetwork();
 
-                jsonString = "{" + '"' + userId + '"' + ":" + jsonString + "}";
 
-                // Http request
+                } else {
 
-                Log.d("json", jsonString);
+                    Toast.makeText(getApplicationContext(), "network is not available", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+
+//                List<CalenderEvent> allCurrentCalenderEventList = new ArrayList<CalenderEvent>();
+//                allCurrentCalenderEventList = dbhelper.getAllEventsByUserId(userId);
+//
+//                // 生成json传递 {userId : [events]}
+//                Gson gson = new Gson();
+//                String jsonString = gson.toJson(allCurrentCalenderEventList);
+//
+//                jsonString = "{" + '"' + userId + '"' + ":" + jsonString + "}";
+//
+//                // Http request
+//
+//                Log.d("json", jsonString);
 //                [{"day":10,"description":"None","endTimeHour":0,"endTimeMinute":0,"eventId":"509b23f6-a73a-4121-8b80-403681c258e6","isAllday":false,"isNeedNotify":false,"local":"None","month":10,"startTimeHour":0,"startTimeMinute":0,"title":"default1","year":2019},
 //                {"day":11,"description":"None","endTimeHour":0,"endTimeMinute":0,"eventId":"e93e3d36-8836-434d-bba7-352846a28eae","isAllday":false,"isNeedNotify":false,"local":"None","month":10,"startTimeHour":0,"startTimeMinute":0,"title":"default2","year":2019},
 //                {"day":13,"description":"None","endTimeHour":0,"endTimeMinute":0,"eventId":"9d01331f-ac2a-4e0a-9b8b-04069d1acd90","isAllday":false,"isNeedNotify":false,"local":"None","month":10,"startTimeHour":0,"startTimeMinute":0,"title":"default3","year":2019}]
@@ -378,26 +405,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
                 // 收到反馈
 
-                // sync successfully
-                if (true) {
-                    Toast.makeText(getApplicationContext(), "sync successfully",
-                            Toast.LENGTH_SHORT).show();
-                }
-                // sync failed
-                else {
-                    Toast.makeText(getApplicationContext(), "sync failed",
-                else if(isMobileConnected(getApplicationContext())){
-                    System.out.println("mobile");
-                    //popup dialog
-                    syncUnderMobileNetwork();
-                }
-                else{
 
-                    Toast.makeText(getApplicationContext(), "network is not available",
-                            Toast.LENGTH_SHORT).show();
-
-                }
-            }
         });
 
         // register: register buttion
@@ -406,7 +414,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
             public void onClick(View view) {
 
                 // network is working
-                if(isNetworkConnected(getApplicationContext())){
+                if(isNetworkConnected(getApplicationContext())) {
 
                     String registerUseremail = registeruseremail.getText().toString();
                     String registerPwd = registerpwd.getText().toString();
@@ -414,41 +422,63 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
                     if (registerUseremail.equals("") || registerPwd.equals("") || registerPwdAgain.equals("")) {
 
-                        Toast.makeText(getApplicationContext(), "username or pwd is missing",
-                                Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "username or pwd is missing", Toast.LENGTH_SHORT).show();
 
                     } else if (!registerPwd.equals(registerPwdAgain)) {
 
-                        Toast.makeText(getApplicationContext(), "passwords are not same",
-                                Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "passwords are not same", Toast.LENGTH_SHORT).show();
 
                     } else {
 
-                        if(userRegister(registerUseremail, registerPwd)){
+                        boolean isRegister = userRegister(registerUseremail, registerPwd);
 
+                        if (isRegister) {
+
+                            String returnToken, returnUserId, returnUserEmail, returnUserPwd;
+
+                            // save user info (update user info)
+                            // saveUserInfo(returnToken, returnUserId, returnUserEmail, returnUserPwd);
+                            // loadUserInfo();
+
+                            // auto login
                             userValidation(userEmail, userPwd);
+
+                            // successful
+                            if (true) {
+
+
+
+                                // for test
+//                                saveUserInfo("usertoken", "userid", loginUseremail, loginPwd);
+//                                loadUserInfo();
+
+                                jumpToNavigationHeaderLogout();
+
+                                Toast.makeText(getApplicationContext(), "login successfully", Toast.LENGTH_SHORT).show();
+
+                            }
+                            // failed
+                            else{
+
+                                Toast.makeText(getApplicationContext(), "login failed, try again please", Toast.LENGTH_SHORT).show();
+
+                            }
 
                         }
                         else{
 
-                    // successful
-                    if (true) {
                             Toast.makeText(getApplicationContext(), "register is failed",
                                     Toast.LENGTH_SHORT).show();
 
                         }
-
                     }
-                    // failed
-                    else {
-
                 }
                 else{
 
-                    Toast.makeText(getApplicationContext(), "network is not available",
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "network is not available", Toast.LENGTH_SHORT).show();
 
                 }
+
             }
         });
 
@@ -645,10 +675,11 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
     // Tao: start here
 
-    public void saveUserInfo(String userid, String useremail, String userpwd) {
+    public void saveUserInfo(String usertoken, String userid, String useremail, String userpwd) {
         SharedPreferences sharedPreferences = getSharedPreferences(SHAREDPREFS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
+        editor.putString(USERTOKEN, usertoken);
         editor.putString(USERID, userid);
         editor.putString(USEREMAIL, useremail);
         editor.putString(USERPWD, userpwd);
@@ -656,13 +687,14 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         // apply(): apply会把数据同步写入内存缓存，然后异步保存到磁盘，可能会执行失败，失败不会收到错误回调
         // commit(): commit将同步的把数据写入磁盘和内存缓存
         editor.apply();
-        Toast.makeText(this, "data saved", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "data saved", Toast.LENGTH_SHORT).show();
     }
 
     public void loadUserInfo() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHAREDPREFS, Context.MODE_PRIVATE);
 
-        // the default values of these three variables are ""
+        // the default values of these four variables are ""
+        userToken = sharedPreferences.getString(USERTOKEN, "");
         userId = sharedPreferences.getString(USERID, "");
         userEmail = sharedPreferences.getString(USEREMAIL, "");
         userPwd = sharedPreferences.getString(USERPWD, "");
@@ -712,13 +744,8 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
     // TODO: user register
     public boolean userRegister(String registerUseremail, String registerPwd){
-        // successful
-        // save id, email, pwd
-        // load user info
-        // saveUserInfo(returnUserId, returnUserEmail, returnUserPwd);
-        // loadUserInfo();
-        // variables used to store user info that returned by cloud
-        String returnUserId, returnUserEmail, returnUserPwd;
+
+        String returnToken, returnUserId, returnUserEmail, returnUserPwd;
         String result, urlAddress, paramValue;
         urlAddress = "";
         paramValue = "{" + '"' + "userEmail" + '"' + ":" + registerUseremail + ", " + '"' + "userPwd" + '"' + ":" + registerPwd + "}";
@@ -749,12 +776,8 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         // token:
         // userinfo: email, id, username
 
-
-
-
-
         // variables used to store user info that returned by cloud
-        String returnUserId, returnUserEmail, returnUserPwd;
+        String  returnToken, returnUserId, returnUserEmail, returnUserPwd;
         String result, urlAddress, paramValue;
         urlAddress = "";
         paramValue = "{" + '"' + "userEmail" + '"' + ":" + useremail + ", " + '"' + "userPwd" + '"' + ":" + password + "}";
@@ -871,9 +894,9 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
     }
 
     // popup dialog
-    public void changeDefaultEvents(int numberOfDefaultEvents) {
     // popup dialog: move default events to a user account
     public void changeDefaultEvents(int numberOfDefaultEvents){
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("changeDefaultEvents");
         builder.setMessage("There are " + numberOfDefaultEvents + " default events. Do you want to move them into your account?");
@@ -1016,4 +1039,3 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
     // Tao: end here
 
 }
-
