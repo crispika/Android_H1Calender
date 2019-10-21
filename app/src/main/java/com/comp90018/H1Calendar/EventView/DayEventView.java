@@ -35,7 +35,7 @@ public class DayEventView extends Fragment {
     private ListView lv_day;
     public TextView tvDayEventTextHeader;
     private DayEventListViewAdapter dayEventListViewAdapter;
-    private String daySelected = DateManager.dateToStr(CalendarManager.getInstance().getToday());
+    private String daySelected;
 
     public DayEventView() {
         // Required empty public constructor
@@ -56,6 +56,12 @@ public class DayEventView extends Fragment {
         tvDayEventTextHeader = view.findViewById(R.id.day_event_textHeader);
         dayEventListViewAdapter = new DayEventListViewAdapter(DayEventView.this.getActivity());
 
+        if (CalendarManager.getInstance().getSelectedItem() == null){
+            daySelected= DateManager.dateToStr(CalendarManager.getInstance().getToday());
+        }
+        else{
+            daySelected= DateManager.dateToStr(CalendarManager.getInstance().getSelectedDate());
+        }
         dayEventListViewAdapter.setDate(daySelected);
         //set Day Event View Header Text
         setTitle();

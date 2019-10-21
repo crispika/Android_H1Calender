@@ -38,6 +38,10 @@ public class CalendarManager {
 
     private DayItem todayItem;
 
+    private DayItem selectedItem;
+
+    private boolean isExist = false;
+
 
     //region Constructor
     public CalendarManager() {
@@ -53,6 +57,7 @@ public class CalendarManager {
     //endregion
 
     public void initCalendar(Calendar min_date, Calendar max_date, Locale locale) {
+        isExist = true;
         this.locale = locale;
         this.max_Date = max_date;
         this.min_date = min_date;
@@ -151,6 +156,21 @@ public class CalendarManager {
         return todayItem;
     }
 
+    public void setSelectedItem(DayItem selectedItem) {
+        this.selectedItem = selectedItem;
+    }
+
+    public DayItem getSelectedItem() {
+        return selectedItem;
+    }
+
+    public Date getSelectedDate(){
+        return selectedItem.getDate();
+    }
+
+    public boolean isExist() {
+        return isExist;
+    }
     //endregion
 }
 

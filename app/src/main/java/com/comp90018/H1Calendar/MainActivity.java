@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_drawerlayout);
         ButterKnife.bind(this);
-        setCalendarInfo();
+        if (!CalendarManager.getInstance().isExist()) setCalendarInfo();
         initCalendarView();
         setMonthLabel();
         init_FAB();

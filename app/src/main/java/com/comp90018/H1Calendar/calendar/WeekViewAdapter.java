@@ -114,7 +114,10 @@ public class WeekViewAdapter extends RecyclerView.Adapter<WeekViewAdapter.WeekVi
                 month_label.setTypeface(null, Typeface.NORMAL);
 
                 //Send Click event
-                dayview.setOnClickListener(view -> EventBus.getInstance().send(new Events.DayClickedEvent(dayItem)));
+                dayview.setOnClickListener(view -> {
+                    EventBus.getInstance().send(new Events.DayClickedEvent(dayItem));
+                    CalendarManager.getInstance().setSelectedItem(dayItem);
+                });
 
                 day_label.setText(dayItem.getDayOfTheMonth() + "");
                 //设置字体颜色

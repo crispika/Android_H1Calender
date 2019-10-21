@@ -95,7 +95,12 @@ public class CalendarView extends LinearLayout {
         this.currentDayTextColor = currentDayTextColor;
         this.pastDayTextColor = pastDayTextColor;
         initWeekView();
-        scrollToDate(CalendarManager.getInstance().getToday(), CalendarManager.getInstance().getWeekList());
+        if (CalendarManager.getInstance().getSelectedItem() == null){
+            scrollToDate(CalendarManager.getInstance().getToday(), CalendarManager.getInstance().getWeekList());
+        }
+        else{
+            scrollToDate(CalendarManager.getInstance().getSelectedDate(), CalendarManager.getInstance().getWeekList());
+        }
     }
 
     void initWeekView() {
