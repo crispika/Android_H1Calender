@@ -16,6 +16,8 @@
 
     <application
         android:name=".CalApplication"
+
+        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -51,6 +53,8 @@
         <service android:enabled="true" android:name=".WiFiAutoSync" android:process="system"></service>
 
     </application>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <!--network state-->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!--taking phone-->

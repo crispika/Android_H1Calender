@@ -1,5 +1,7 @@
 package com.comp90018.H1Calendar;
 
+import java.io.OutputStream;
+import java.io.InputStream;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,6 +11,8 @@ import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +36,9 @@ import com.comp90018.H1Calendar.utils.CalendarManager;
 import com.comp90018.H1Calendar.utils.CalenderEvent;
 import com.comp90018.H1Calendar.utils.EventBus;
 import com.comp90018.H1Calendar.utils.Events;
+import com.comp90018.H1Calendar.utils.ResultFromLogin;
+import com.comp90018.H1Calendar.utils.UserLogin;
+import com.comp90018.H1Calendar.utils.UserRegister;
 import com.comp90018.H1Calendar.utils.LightSensorUtils;
 import com.google.android.material.navigation.NavigationView;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton;
@@ -429,6 +436,29 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                         Toast.makeText(getApplicationContext(), "passwords are not same", Toast.LENGTH_SHORT).show();
 
                     } else {
+                        String urlAddress = "http://35.197.167.33:8222/register";
+                        Gson gson = new Gson();
+                        UserRegister userRegister = new UserRegister(registerUseremail, registerPwd, "dsd@qq.com");
+                        String jsonObject = gson.toJson(userRegister);
+                        Handler handler=new Handler(){
+                            public void handleMessage(Message msg) {
+                                super.handleMessage(msg);
+                                Bundle bundle = msg.getData();
+                                String jsonString = bundle.getString("result");
+                                ResultFromLogin json = gson.fromJson(jsonString, ResultFromLogin.class);
+                                //register success, login
+                                if(json.code == 200) {
+                                    jumpToNavigationHeaderLogout();
+                                    Toast.makeText(getApplicationContext(), json.msg,
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                                else{
+                                    Toast.makeText(getApplicationContext(), json.msg,
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            }};
+                        SendPostJson sendPostJson = new SendPostJson(urlAddress, jsonObject, handler);
+                        sendPostJson.request();
 
                         boolean isRegister = userRegister(registerUseremail, registerPwd);
 
@@ -702,44 +732,48 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
     }
 
     // http post
-    public String sendPost(String urlAddress, String paramValue){
+        public String sendPost(String urlAddress, String paramValue){
 
-        try {
-            URL url = new URL(urlAddress);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoOutput(true);
-            connection.setDoInput(true);
-            connection.setUseCaches(false);
-            connection.setInstanceFollowRedirects(true);
-            connection.setRequestMethod("POST");
-            // 设置接收数据的格式
-            // connection.setRequestProperty("Accept", "application/json");
-            // 设置发送数据的格式
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.connect();
+            int responseCode = 0;
+            OutputStream out = null;
+            InputStream in = null;
+            try {
+                URL url = new URL(urlAddress);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setDoOutput(true);
+                connection.setDoInput(true);
+                connection.setUseCaches(false);
+                connection.setInstanceFollowRedirects(true);
+                connection.setRequestMethod("POST");
+                // 设置接收数据的格式
+                // connection.setRequestProperty("Accept", "application/json");
+                // 设置发送数据的格式
+                connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                connection.connect();
+                out = connection.getOutputStream();
+                out.write(paramValue.getBytes());
+                out.flush();
+                out.close();
 
-            OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
-            out.append(paramValue);
-            out.flush();
-            out.close();
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
-            String line;
-            String res = "";
-            while ((line = reader.readLine()) != null) {
-                res += line;
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+                String line;
+                String res = "";
+                while ((line = reader.readLine()) != null) {
+                    res += line;
+                }
+                reader.close();
+
+                return res;
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
-            reader.close();
+            // 自定义错误信息
+            return "error";
 
-            return res;
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
-        // 自定义错误信息
-        return "error";
 
-    }
 
 
     // TODO: user register
@@ -770,46 +804,74 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
     // TODO: user validation
     // return user info and validation state
+    public void userValidation(String username, String password){
     public void userValidation(String useremail, String password) {
 
         // code: 200 / 401
         // token:
         // userinfo: email, id, username
 
+        Gson gson = new Gson();
+        UserLogin userLogin = new UserLogin(username, password);
+
+        String jsonObject = gson.toJson(userLogin);
+        Log.d("abiosdjifos", jsonObject);
+
+
+
         // variables used to store user info that returned by cloud
+        //String returnUserId, returnUserEmail, returnUserPwd;
         String  returnToken, returnUserId, returnUserEmail, returnUserPwd;
         String result, urlAddress, paramValue;
-        urlAddress = "";
-        paramValue = "{" + '"' + "userEmail" + '"' + ":" + useremail + ", " + '"' + "userPwd" + '"' + ":" + password + "}";
+        urlAddress = "http://35.197.167.33:8222/login";
+        //paramValue = "{" + '"' + "userEmail" + '"' + ":" + useremail + ", " + '"' + "userPwd" + '"' + ":" + password + "}";
 
-        result = sendPost(urlAddress, paramValue);
+        Handler handler=new Handler(){
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                Bundle bundle = msg.getData();
+                String jsonString = bundle.getString("result");
+                ResultFromLogin json = gson.fromJson(jsonString, ResultFromLogin.class);
+                if(json.code == 200) {
+                    jumpToNavigationHeaderLogout();
+                    Toast.makeText(getApplicationContext(), "login successfully",
+                            Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(getApplicationContext(), json.msg,
+                            Toast.LENGTH_SHORT).show();
+                }
+            }};
+        SendPostJson sendPostJson = new SendPostJson(urlAddress, jsonObject, handler);
+        sendPostJson.request();
+
 
         // split result or read json
 
         // validation is successful
-        if(true){
+        //if(true){
 
             // save user info (update user info)
             // saveUserInfo(returnUserId, returnUserEmail, returnUserPwd);
             // loadUserInfo();
 
             // jump to navigation_header_logout
-            jumpToNavigationHeaderLogout();
+            //jumpToNavigationHeaderLogout();
 
-            Toast.makeText(getApplicationContext(), "login successfully",
-                    Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "login successfully",
+             //       Toast.LENGTH_SHORT).show();
 
-        }
+        //}
         // validation is failed
-        else{
+        //else{
 
             // jump to navigation_header_login
-            jumpToNavigationHeaderLogin();
+            //jumpToNavigationHeaderLogin();
 
-            Toast.makeText(getApplicationContext(), "login failed, try again please",
-                    Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "login failed, try again please",
+            //        Toast.LENGTH_SHORT).show();
 
-        }
+        //}
 
 
     }
