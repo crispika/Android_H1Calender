@@ -10,6 +10,8 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,7 +34,9 @@ import com.comp90018.H1Calendar.utils.CalendarManager;
 import com.comp90018.H1Calendar.utils.CalenderEvent;
 import com.comp90018.H1Calendar.utils.EventBus;
 import com.comp90018.H1Calendar.utils.Events;
+import com.comp90018.H1Calendar.utils.ResultFromLogin;
 import com.comp90018.H1Calendar.utils.UserLogin;
+import com.comp90018.H1Calendar.utils.UserRegister;
 import com.google.android.material.navigation.NavigationView;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionHelper;
@@ -337,18 +341,30 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                                 Toast.LENGTH_SHORT).show();
 
                     } else {
+                        String urlAddress = "http://35.197.167.33:8222/register";
+                        Gson gson = new Gson();
+                        UserRegister userRegister = new UserRegister(registerUseremail, registerPwd, "dsd@qq.com");
+                        String jsonObject = gson.toJson(userRegister);
+                        Handler handler=new Handler(){
+                            public void handleMessage(Message msg) {
+                                super.handleMessage(msg);
+                                Bundle bundle = msg.getData();
+                                String jsonString = bundle.getString("result");
+                                ResultFromLogin json = gson.fromJson(jsonString, ResultFromLogin.class);
+                                //register success, login
+                                if(json.code == 200) {
+                                    jumpToNavigationHeaderLogout();
+                                    Toast.makeText(getApplicationContext(), json.msg,
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                                else{
+                                    Toast.makeText(getApplicationContext(), json.msg,
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            }};
+                        SendPostJson sendPostJson = new SendPostJson(urlAddress, jsonObject, handler);
+                        sendPostJson.request();
 
-                        if(userRegister(registerUseremail, registerPwd)){
-
-                            userValidation(userEmail, userPwd);
-
-                        }
-                        else{
-
-                            Toast.makeText(getApplicationContext(), "register is failed",
-                                    Toast.LENGTH_SHORT).show();
-
-                        }
 
                     }
 
@@ -559,36 +575,6 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         }
 
 
-    // TODO: user register
-    public boolean userRegister(String registerUseremail, String registerPwd){
-        // successful
-        // save id, email, pwd
-        // load user info
-        // saveUserInfo(returnUserId, returnUserEmail, returnUserPwd);
-        // loadUserInfo();
-        // variables used to store user info that returned by cloud
-        String returnUserId, returnUserEmail, returnUserPwd;
-        String result, urlAddress, paramValue;
-        urlAddress = "";
-        paramValue = "{" + '"' + "userEmail" + '"' + ":" + registerUseremail + ", " + '"' + "userPwd" + '"' + ":" + registerPwd + "}";
-
-        result = sendPost(urlAddress, paramValue);
-
-        // split result or read json
-
-
-        // register is successful
-        if(true){
-            // saveUserInfo(returnUserId, returnUserEmail, returnUserPwd);
-            // loadUserInfo();
-            return true;
-        }
-        // failed
-        else{
-            return false;
-        }
-
-    }
 
     // TODO: user validation
     // return user info and validation state
@@ -609,39 +595,55 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         // variables used to store user info that returned by cloud
         //String returnUserId, returnUserEmail, returnUserPwd;
         String result, urlAddress, paramValue;
-        urlAddress = "http://10.12.120.190:8222/login";
+        urlAddress = "http://35.197.167.33:8222/login";
         //paramValue = "{" + '"' + "userEmail" + '"' + ":" + useremail + ", " + '"' + "userPwd" + '"' + ":" + password + "}";
 
-        result = sendPost(urlAddress, jsonObject);
-        Log.d("fddgfdg", result);
+        Handler handler=new Handler(){
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                Bundle bundle = msg.getData();
+                String jsonString = bundle.getString("result");
+                ResultFromLogin json = gson.fromJson(jsonString, ResultFromLogin.class);
+                if(json.code == 200) {
+                    jumpToNavigationHeaderLogout();
+                    Toast.makeText(getApplicationContext(), "login successfully",
+                            Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(getApplicationContext(), json.msg,
+                            Toast.LENGTH_SHORT).show();
+                }
+            }};
+        SendPostJson sendPostJson = new SendPostJson(urlAddress, jsonObject, handler);
+        sendPostJson.request();
 
-        System.out.println(result);
+
         // split result or read json
 
         // validation is successful
-        if(true){
+        //if(true){
 
             // save user info (update user info)
             // saveUserInfo(returnUserId, returnUserEmail, returnUserPwd);
             // loadUserInfo();
 
             // jump to navigation_header_logout
-            jumpToNavigationHeaderLogout();
+            //jumpToNavigationHeaderLogout();
 
-            Toast.makeText(getApplicationContext(), "login successfully",
-                    Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "login successfully",
+             //       Toast.LENGTH_SHORT).show();
 
-        }
+        //}
         // validation is failed
-        else{
+        //else{
 
             // jump to navigation_header_login
-            jumpToNavigationHeaderLogin();
+            //jumpToNavigationHeaderLogin();
 
-            Toast.makeText(getApplicationContext(), "login failed, try again please",
-                    Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "login failed, try again please",
+            //        Toast.LENGTH_SHORT).show();
 
-        }
+        //}
 
 
     }

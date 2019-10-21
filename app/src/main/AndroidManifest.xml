@@ -4,6 +4,7 @@
     package="com.comp90018.H1Calendar">
 
     <application
+
         android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -30,6 +31,7 @@
 
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <!--network state-->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!--taking phone-->
