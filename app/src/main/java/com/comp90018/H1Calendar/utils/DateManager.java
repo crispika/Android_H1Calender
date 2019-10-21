@@ -3,6 +3,7 @@ package com.comp90018.H1Calendar.utils;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 静态类，用于储存日期间比较的方法
@@ -41,5 +42,4 @@ public class DateManager {
         String[] index = {dateToStr(head.getTime()),dateToStr(tail.getTime())};
         return index;
     }
-
 }

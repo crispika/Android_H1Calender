@@ -22,6 +22,8 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.comp90018.H1Calendar.Alarm.AlarmService;
+import com.comp90018.H1Calendar.Alarm.SendAlarmBroadcast;
 import com.comp90018.H1Calendar.DBHelper.sqliteHelper;
 import com.comp90018.H1Calendar.EventView.DayEventView;
 import com.comp90018.H1Calendar.EventView.WeekEventView;
@@ -157,6 +159,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
 
 
+        //region Tao
         // Tao: start here
 
         navigationView = findViewById(R.id.navigation);
@@ -429,6 +432,10 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
 
         // Tao: end here
+        //endregion
+
+        //start the notification Alarm
+        SendAlarmBroadcast.startAlarmService(this);
 
     }
 
@@ -467,20 +474,6 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         });
     }
 
-//    private void ThemeChange(boolean isDay){
-//        if((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-//            & isDay){
-//            //change to DayTheme
-//            getDelegate().setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-//            Log.d("Theme_sensor", "Sensor: Switch to Light");
-//
-//        }
-//        else if ((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO
-//            & (!isDay)){
-//            getDelegate().setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-//            Log.d("Theme_sensor", "Sensor: Switch to Dark");
-//        }
-//    }
 
     //region CalendarView Settings
 
@@ -515,7 +508,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
         calendar_view.init(calendar_HeaderTextColor, calendar_CurrentDayTextColor, calendar_PastDayTextColor);
     }
-    //endregion
+    //endregionthis
 
     //region Fab Setting
     private void init_FAB() {
@@ -608,6 +601,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
     }
 
 
+    //region Tao
     // Tao: start here
 
     public void saveUserInfo(String userid, String useremail, String userpwd) {
@@ -748,8 +742,6 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
         builder.show();
     }
-
-
     // Tao: end here
     public void setEventViewFragment(){
         SharedPreferences mySharedPreferences = getSharedPreferences("FragmentSetting",MODE_PRIVATE);
@@ -759,6 +751,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         weekEventView = new WeekEventView();
         myNavigationView = this.findViewById(R.id.navigation);
         isDayView = mySharedPreferences.getBoolean("isDayView",true);
+    //endregion
 
         getSupportFragmentManager().beginTransaction().add(R.id.Event_container, weekEventView).commitAllowingStateLoss();
         getSupportFragmentManager().beginTransaction().hide(weekEventView).commitAllowingStateLoss();
