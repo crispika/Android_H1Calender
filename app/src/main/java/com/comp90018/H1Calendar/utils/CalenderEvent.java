@@ -11,8 +11,6 @@ import com.google.gson.Gson;
 import java.io.Serializable;
 import java.util.Calendar;
 
-public class CalenderEvent implements Serializable, Comparable<CalenderEvent> {
-
 public class CalenderEvent implements Serializable,Comparable<CalenderEvent> {
 
     private String eventId;
