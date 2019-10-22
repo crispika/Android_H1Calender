@@ -3,6 +3,7 @@ package com.comp90018.H1Calendar.utils;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 静态类，用于储存日期间比较的方法
@@ -32,4 +33,13 @@ public class DateManager {
         return dateString;
     }
 
+    public static String[]  headTailOfWeek(int week_of_year){
+        Calendar head = Calendar.getInstance();
+        Calendar tail = Calendar.getInstance();
+        head.set(Calendar.WEEK_OF_YEAR, week_of_year);// first day of the week
+        tail.set(Calendar.WEEK_OF_YEAR, week_of_year);
+        tail.set(Calendar.DAY_OF_WEEK, 7);// last day of the week
+        String[] index = {dateToStr(head.getTime()),dateToStr(tail.getTime())};
+        return index;
+    }
 }

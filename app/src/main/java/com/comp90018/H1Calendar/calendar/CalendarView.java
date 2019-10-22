@@ -77,11 +77,13 @@ public class CalendarView extends LinearLayout {
         MarginLayoutParams layoutParams = (MarginLayoutParams) getLayoutParams();
         layoutParams.height = (int) (getResources().getDimension(R.dimen.calendarview_header) + 5 * getResources().getDimension(R.dimen.calendarview_weekitem));
         setLayoutParams(layoutParams);
-        //TODO 接收click事件，
 
         EventBus.getInstance().getSubject().subscribe(event -> {
             if (event instanceof Events.DayClickedEvent) {
                 updateSelectedDay(((Events.DayClickedEvent) event).getDayItem());
+            }
+            else if(event instanceof Events.BackToToday){
+                updateSelectedDay(CalendarManager.getInstance().getTodayItem());
             }
         });
     }
@@ -93,7 +95,12 @@ public class CalendarView extends LinearLayout {
         this.currentDayTextColor = currentDayTextColor;
         this.pastDayTextColor = pastDayTextColor;
         initWeekView();
-        scrollToDate(CalendarManager.getInstance().getToday(), CalendarManager.getInstance().getWeekList());
+        if (CalendarManager.getInstance().getSelectedItem() == null){
+            scrollToDate(CalendarManager.getInstance().getToday(), CalendarManager.getInstance().getWeekList());
+        }
+        else{
+            scrollToDate(CalendarManager.getInstance().getSelectedDate(), CalendarManager.getInstance().getWeekList());
+        }
     }
 
     void initWeekView() {

@@ -6,7 +6,7 @@ import rx.subjects.SerializedSubject;
 import rx.subjects.Subject;
 
 /**
- * 总线，收发event
+ * Main stream to send and receive event
  * The bus to send/receive events
  */
 

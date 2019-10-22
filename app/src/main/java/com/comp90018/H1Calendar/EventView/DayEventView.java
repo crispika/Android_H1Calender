@@ -35,7 +35,7 @@ public class DayEventView extends Fragment {
     private ListView lv_day;
     public TextView tvDayEventTextHeader;
     private DayEventListViewAdapter dayEventListViewAdapter;
-    private String daySelected = DateManager.dateToStr(CalendarManager.getInstance().getToday());
+    private String daySelected;
 
     public DayEventView() {
         // Required empty public constructor
@@ -56,6 +56,12 @@ public class DayEventView extends Fragment {
         tvDayEventTextHeader = view.findViewById(R.id.day_event_textHeader);
         dayEventListViewAdapter = new DayEventListViewAdapter(DayEventView.this.getActivity());
 
+        if (CalendarManager.getInstance().getSelectedItem() == null){
+            daySelected= DateManager.dateToStr(CalendarManager.getInstance().getToday());
+        }
+        else{
+            daySelected= DateManager.dateToStr(CalendarManager.getInstance().getSelectedDate());
+        }
         dayEventListViewAdapter.setDate(daySelected);
         //set Day Event View Header Text
         setTitle();
@@ -66,7 +72,6 @@ public class DayEventView extends Fragment {
                 Intent intent = new Intent(DayEventView.this.getActivity(), EventDetailActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putString("id",dayEventListViewAdapter.getEvent(i).getEventId());
-                bundle.putString("title",dayEventListViewAdapter.getEvent(i).getTitle());
                 //System.out.println(dayEventListViewAdapter.getEvent(i).getEventId());
                 intent.putExtras(bundle);
                 startActivity(intent);
@@ -104,11 +109,11 @@ public class DayEventView extends Fragment {
 
     private void setTitle(){
         if(dayEventListViewAdapter.getEvantList() == null){
-            tvDayEventTextHeader.setText("There are no event for today, please add one");
+            tvDayEventTextHeader.setText("No event for today, please add one");
         }else if(dayEventListViewAdapter.getEvantList() .isEmpty()){
-            tvDayEventTextHeader.setText("There are no event for today, please add one");
+            tvDayEventTextHeader.setText("No event for today, please add one");
         }else{
-            tvDayEventTextHeader.setText("These are events for today");
+            tvDayEventTextHeader.setText("Today's Event");
         }
     }
 

@@ -36,6 +36,15 @@ public class CalendarManager {
      */
     private Calendar today;
 
+    private DayItem todayItem;
+
+    private DayItem selectedItem;
+
+    private boolean isExist = false;
+
+    private String weekStart;
+    private String weekEnd;
+
 
     //region Constructor
     public CalendarManager() {
@@ -51,6 +60,7 @@ public class CalendarManager {
     //endregion
 
     public void initCalendar(Calendar min_date, Calendar max_date, Locale locale) {
+        isExist = true;
         this.locale = locale;
         this.max_Date = max_date;
         this.min_date = min_date;
@@ -121,7 +131,8 @@ public class CalendarManager {
             String fullMonthName = monthFullNameFormat.format(date);
             boolean isToday = DateManager.isSameDay(temp_cal, today);
 
-            DayItem dayItem = new DayItem(date, day_of_month, isToday, monthName,fullMonthName,week_list_postion);
+            DayItem dayItem = new DayItem(date, day_of_month, isToday, monthName,fullMonthName,week_list_postion,week_of_year);
+            if(isToday) todayItem =dayItem;
             day_list.add(dayItem);
 
             //日期往后推一天
@@ -143,6 +154,33 @@ public class CalendarManager {
     public ArrayList<WeekItem> getWeekList() {
         return week_list;
     }
+
+    public DayItem getTodayItem() {
+        return todayItem;
+    }
+
+    public void setSelectedItem(DayItem selectedItem) {
+        this.selectedItem = selectedItem;
+    }
+
+    public DayItem getSelectedItem() {
+        return selectedItem;
+    }
+
+    public Date getSelectedDate(){
+        return selectedItem.getDate();
+    }
+
+    public boolean isExist() {
+        return isExist;
+    }
+
+    public void setWeekStart(String start){this.weekStart = start;}
+    public void setWeekEnd(String end){this.weekEnd = end;}
+
+    public String getWeekStart(){return weekStart;}
+    public String getWeekEnd(){return weekEnd;}
+
     //endregion
 }
 

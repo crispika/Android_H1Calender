@@ -9,6 +9,10 @@
     <uses-feature
         android:name="android.hardware.sensor.light"
         android:required="true"/>
+    <uses-feature
+        android:name="android.hardware.sensor.accelerometer"
+        android:required="true"/>
+
 
     <uses-permission android:name="android.permission.CAMERA" /> <!-- read and write -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -25,11 +29,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".EventDetailActivity"></activity>
-        <activity android:name=".MainActivity"
-            android:launchMode="singleTask">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+
             </intent-filter>
         </activity>
         <activity android:name=".AddFormScheduleActivity">
@@ -48,6 +52,9 @@
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="portrait"
             tools:replace="screenOrientation" />
+        <service android:name=".Alarm.AlarmService"/>
+        <receiver android:name=".Alarm.StartAlarmReceiver"/>
+        <receiver android:name=".Alarm.AlarmReceiver"/>
 
         <!--background service: WiFiAutoSync-->
         <service android:enabled="true" android:name=".WiFiAutoSync" android:process="system"></service>
@@ -68,4 +75,12 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!--Notification-->
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+
 </manifest>

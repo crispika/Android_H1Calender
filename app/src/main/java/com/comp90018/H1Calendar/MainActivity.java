@@ -28,6 +28,8 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.comp90018.H1Calendar.Alarm.AlarmService;
+import com.comp90018.H1Calendar.Alarm.SendAlarmBroadcast;
 import com.comp90018.H1Calendar.DBHelper.sqliteHelper;
 import com.comp90018.H1Calendar.EventView.DayEventView;
 import com.comp90018.H1Calendar.EventView.WeekEventView;
@@ -85,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
     private Button btnDWswitch;
     private ListView leftList;
     private NavigationView myNavigationView;
+    private Boolean isDayView;
 
     // Tao: start here
 
@@ -172,39 +175,17 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_drawerlayout);
         ButterKnife.bind(this);
-        setCalendarInfo();
+        if (!CalendarManager.getInstance().isExist()) setCalendarInfo();
         initCalendarView();
         setMonthLabel();
         init_FAB();
         initLightUtils();
 
-        dayEventView = new DayEventView();
-        weekEventView = new WeekEventView();
-        myNavigationView = this.findViewById(R.id.navigation);
-        if (myNavigationView != null) {
-            myNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                    switch (menuItem.getItemId()) {
-                        case R.id.dayview:
-                            getSupportFragmentManager().beginTransaction().replace(R.id.Event_container, dayEventView).commitAllowingStateLoss();
-                            drawer_layout.closeDrawers();
-                            //EventBus.getInstance().send();
-                            break;
-                        case R.id.weeklyview:
-                            getSupportFragmentManager().beginTransaction().replace(R.id.Event_container, weekEventView).commitAllowingStateLoss();
-                            drawer_layout.closeDrawers();
-                            break;
-                        default:
-                            break;
-                    }
-                    return false;
-                }
-            });
-        }
-        getSupportFragmentManager().beginTransaction().add(R.id.Event_container, dayEventView).commitAllowingStateLoss();
+        setEventViewFragment();
 
 
+
+        //region Tao
         // Tao: start here
 
         // start background service - auto sync if wifi is available
@@ -414,6 +395,10 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
 
         // Tao: end here
+        //endregion
+
+        //start the notification Alarm
+        SendAlarmBroadcast.startAlarmService(this);
 
     }
 
@@ -452,20 +437,6 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         });
     }
 
-//    private void ThemeChange(boolean isDay){
-//        if((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-//            & isDay){
-//            //change to DayTheme
-//            getDelegate().setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-//            Log.d("Theme_sensor", "Sensor: Switch to Light");
-//
-//        }
-//        else if ((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO
-//            & (!isDay)){
-//            getDelegate().setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-//            Log.d("Theme_sensor", "Sensor: Switch to Dark");
-//        }
-//    }
 
     //region CalendarView Settings
 
@@ -500,7 +471,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
         calendar_view.init(calendar_HeaderTextColor, calendar_CurrentDayTextColor, calendar_PastDayTextColor);
     }
-    //endregion
+    //endregionthis
 
     //region Fab Setting
     private void init_FAB() {
@@ -593,6 +564,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
     }
 
 
+    //region Tao
     // Tao: start here
 
     public void saveUserInfo(String usertoken, String userid, String useremail, String username, String userpwd) {
@@ -870,7 +842,6 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
         builder.show();
     }
-
     // check for network availability
     public boolean isNetworkConnected(Context context) {
         if (context != null) {
@@ -882,188 +853,58 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         }
         return false;
     }
-
-    // check for wifi
-    public boolean isWifiConnected(Context context) {
-        if (context != null) {
-            ConnectivityManager mConnectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo mWiFiNetworkInfo = mConnectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-
-            if (mWiFiNetworkInfo != null && mWiFiNetworkInfo.isConnected()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // check for mobile
-    public boolean isMobileConnected(Context context) {
-        if (context != null) {
-            ConnectivityManager mConnectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo mMobileNetworkInfo = mConnectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-            if (mMobileNetworkInfo != null && mMobileNetworkInfo.isConnected()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // popup dialog: sync under mobile network
-    public void syncUnderMobileNetwork(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("syncUnderMobileNetwork");
-        builder.setMessage("Do you want to use Mobile Network to do synchronization?");
-
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-                syncToCloud();
-
-            }
-        });
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-                Toast.makeText(MainActivity.this, "no sync",Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        builder.show();
-    }
-
-    // TODO: http
-    // sync
-    public void syncToCloud(){
-
-        // token
-        // userinfo
-        // events
-        // code 201 /
-
-        // getAllEventsByUserId
-
-        List<Event> allCurrentEventList = dbhelper.syncGetAllEventsByUserId(userId);
-        // locationList need more word
-        List<Location> allCurentLocationList = dbhelper.syncGetAllLocationsByUserId(userId);
-        // EventSync
-        EventSync eventSync = new EventSync();
-        eventSync.events = allCurrentEventList;
-        eventSync.locations = allCurentLocationList;
-        eventSync.token = userToken;
-        eventSync.username = userName;
-        Gson gson1 = new GsonBuilder().serializeNulls().create();
-        Gson gson = new Gson();
-        String jsonObject = gson1.toJson(eventSync);
-        String urlAddress = "http://35.197.167.33:8222/sync";
-        Log.d("sendJson", jsonObject);
-        Handler handler = new Handler() {
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                Bundle bundle = msg.getData();
-                String jsonString = bundle.getString("result");
-                ResultFromSync json = gson.fromJson(jsonString, ResultFromSync.class);
-                //register success, login
-                if (json.code == 201) {
-                    saveUserInfo(json.token, json.userInfo.userid,json.userInfo.email,json.userInfo.username);
-                    loadUserInfo();
-                    updateEventAndLocationFromSync(userId, json.events, json.locations);
-                    dbhelper.deleteEventByEventIdForReal();
-                    dbhelper.deleteLocationByLocationIdForReal();
-
-                    Toast.makeText(getApplicationContext(), "Sync success",
-                            Toast.LENGTH_SHORT).show();
-                } else if (json.code == 408) {
-                    jumpToNavigationHeaderLogin();
-                    Toast.makeText(getApplicationContext(), json.msg,
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Sync failed",
-                            Toast.LENGTH_SHORT).show();
-                }
-            }
-        };
-        SendPostJson sendPostJson = new SendPostJson(urlAddress, jsonObject, handler);
-        sendPostJson.request();
-        // Http request
-
-        //Log.d("json", jsonString);
-//                [{"day":10,"description":"None","endTimeHour":0,"endTimeMinute":0,"eventId":"509b23f6-a73a-4121-8b80-403681c258e6","isAllday":false,"isNeedNotify":false,"local":"None","month":10,"startTimeHour":0,"startTimeMinute":0,"title":"default1","year":2019},
-//                {"day":11,"description":"None","endTimeHour":0,"endTimeMinute":0,"eventId":"e93e3d36-8836-434d-bba7-352846a28eae","isAllday":false,"isNeedNotify":false,"local":"None","month":10,"startTimeHour":0,"startTimeMinute":0,"title":"default2","year":2019},
-//                {"day":13,"description":"None","endTimeHour":0,"endTimeMinute":0,"eventId":"9d01331f-ac2a-4e0a-9b8b-04069d1acd90","isAllday":false,"isNeedNotify":false,"local":"None","month":10,"startTimeHour":0,"startTimeMinute":0,"title":"default3","year":2019}]
-
-
-        // send http
-
-
-        // 收到反馈
-
-        // sync successfully
-        //if(true){
-        //    Toast.makeText(getApplicationContext(), "sync successfully",
-        //            Toast.LENGTH_SHORT).show();
-        //}
-        // sync failed
-        //else{
-        //    Toast.makeText(getApplicationContext(), "sync failed",
-        //            Toast.LENGTH_SHORT).show();
-
-        //}
-
-
-    }
-
-    public void updateEventAndLocationFromSync(String userid, List<Event> events, List<Location> locations){
-
-        List<Event> localEvents = dbhelper.syncGetAllEventsByUserId(userid);
-        HashMap<String, Event> eventMap = new HashMap<String, Event>();
-        //Log.d("update", "update");
-        for (Event localevent: localEvents){
-            eventMap.put(localevent.eventid, localevent);
-
-        }
-        for (Event event: events){
-            if (event.isdelete != null && event.isdelete.compareTo("T") == 0){
-                if (eventMap.get(event.eventid) != null) {
-                    dbhelper.deleteEventByEventId(event.eventid);
-                }
-            }
-            if (eventMap.get(event.eventid) == null) {
-                dbhelper.insertSyncEvent(event);
-            }
-            else{
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                Event localEvent = eventMap.get(event.eventid);
-                if(event.updatetime != null && localEvent.updatetime != null){
-                    try{
-                        if (simpleDateFormat.parse(event.updatetime).getTime() > simpleDateFormat.parse(localEvent.updatetime).getTime()){
-                            dbhelper.updateEventFromSyncByEventId(event.eventid, event);
-                        }
-                    }catch(ParseException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-
-        List<Location> localLocations = dbhelper.syncGetAllLocationsByUserId(userid);
-        HashMap<String, Location> locationMap = new HashMap<String, Location>();
-        for (Location locallocation: localLocations){
-            locationMap.put(locallocation.locationid, locallocation);
-        }
-        for (Location location: locations){
-            if (location.isdelete != null && location.isdelete.compareTo("T") == 0){
-                if (locationMap.get(location.locationid) != null) {
-                    dbhelper.deleteLocationByLocationId(location.locationid);
-                }
-            }
-            if (locationMap.get(location.locationid) == null) {
-                dbhelper.insertSyncLocation(location);
-            }
-        }
-    }
-
     // Tao: end here
+    public void setEventViewFragment(){
+        SharedPreferences mySharedPreferences = getSharedPreferences("FragmentSetting",MODE_PRIVATE);
+        SharedPreferences.Editor myEditor = mySharedPreferences.edit();
+        //set navigationView click event
+        dayEventView = new DayEventView();
+        weekEventView = new WeekEventView();
+        myNavigationView = this.findViewById(R.id.navigation);
+        isDayView = mySharedPreferences.getBoolean("isDayView",true);
+    //endregion
+
+        getSupportFragmentManager().beginTransaction().add(R.id.Event_container, weekEventView).commitAllowingStateLoss();
+        getSupportFragmentManager().beginTransaction().hide(weekEventView).commitAllowingStateLoss();
+        getSupportFragmentManager().beginTransaction().add(R.id.Event_container, dayEventView).commitAllowingStateLoss();
+
+
+        if(isDayView){
+            getSupportFragmentManager().beginTransaction().replace(R.id.Event_container, dayEventView).commitAllowingStateLoss();
+            isDayView = true;
+        }else{
+            getSupportFragmentManager().beginTransaction().replace(R.id.Event_container, weekEventView).commitAllowingStateLoss();
+            getSupportFragmentManager().beginTransaction().show(weekEventView).commitAllowingStateLoss();
+            isDayView = false;
+        }
+
+        if (myNavigationView != null) {
+            myNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                    switch (menuItem.getItemId()) {
+                        case R.id.dayview:
+                            getSupportFragmentManager().beginTransaction().replace(R.id.Event_container, dayEventView).commitAllowingStateLoss();
+                            drawer_layout.closeDrawers();
+                            myEditor.putBoolean("isDayView",true);
+                            myEditor.apply();
+                            //EventBus.getInstance().send();
+                            break;
+                        case R.id.weeklyview:
+                            getSupportFragmentManager().beginTransaction().replace(R.id.Event_container, weekEventView).commitAllowingStateLoss();
+                            getSupportFragmentManager().beginTransaction().show(weekEventView).commitAllowingStateLoss();
+                            drawer_layout.closeDrawers();
+                            myEditor.putBoolean("isDayView",false);
+                            myEditor.apply();
+                            break;
+                        default:
+                            break;
+                    }
+                    return false;
+                }
+            });
+        }
+
+    }
 
 }

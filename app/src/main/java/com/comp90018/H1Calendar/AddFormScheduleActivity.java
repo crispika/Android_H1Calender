@@ -32,6 +32,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.ButterKnife;
 
+import com.comp90018.H1Calendar.Alarm.SendAlarmBroadcast;
 import com.comp90018.H1Calendar.DBHelper.sqliteHelper;
 import com.comp90018.H1Calendar.EventSettingActivity.EventColorSet;
 import com.comp90018.H1Calendar.EventSettingActivity.EventLocalSet;
@@ -197,6 +198,7 @@ public class AddFormScheduleActivity extends Activity {
             }
             if(isSucceed){
                 Toast.makeText(this, "Save Successful!", Toast.LENGTH_SHORT).show();
+                SendAlarmBroadcast.startAlarmService(AddFormScheduleActivity.this);
             }else {
                 Toast.makeText(this, "Save ERROR!", Toast.LENGTH_SHORT).show();
             }
@@ -445,6 +447,7 @@ public class AddFormScheduleActivity extends Activity {
             if (resultCode == 2) {
                 if (data != null) {
                     event_color.setText(data.getStringExtra("color"));
+                    Log.d("eventColor: ",data.getStringExtra("color"));
                     cEvent.setEventColor(data.getStringExtra("color"));
                 }
             }

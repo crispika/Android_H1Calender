@@ -13,6 +13,7 @@ import com.comp90018.H1Calendar.DBHelper.sqliteHelper;
 import com.comp90018.H1Calendar.R;
 import com.comp90018.H1Calendar.utils.CalenderEvent;
 
+import java.util.Collections;
 import java.util.List;
 
 public class DayEventListViewAdapter extends BaseAdapter {
@@ -23,7 +24,7 @@ public class DayEventListViewAdapter extends BaseAdapter {
     private sqliteHelper dbhelper;
     private List<CalenderEvent> dayEvents;
     private CalenderEvent mEvent;
-
+    private String timeStr;
 
     public DayEventListViewAdapter(Context context) {
         myContext = context;
@@ -68,12 +69,12 @@ public class DayEventListViewAdapter extends BaseAdapter {
             holder = (ViewHolder) view.getTag();
         }
 
-
+        setTimeStr();
         holder.tvDayEventTitle.setText(mEvent.getTitle());
         holder.tvDayEventLocation.setText(mEvent.getLocal());
-        holder.tvDayEventTimeDuration.setText(mEvent.getEventTime());
+        holder.tvDayEventTimeDuration.setText(timeStr);
         holder.tvDayEventDescription.setText(mEvent.getDescription());
-        holder.llEventBackground.setBackgroundColor(Color.BLUE);
+        holder.llEventBackground.setBackgroundColor(myContext.getResources().getColor(getColor(mEvent)));
         return view;
     }
 
@@ -84,6 +85,7 @@ public class DayEventListViewAdapter extends BaseAdapter {
     public void setEventList(){
         dbhelper = new sqliteHelper(myContext.getApplicationContext());
         dayEvents = dbhelper.getEventsByDay(mDate);
+        Collections.sort(dayEvents);
         notifyDataSetChanged();
         //System.out.println(dayEvents.size());
     }
@@ -96,6 +98,26 @@ public class DayEventListViewAdapter extends BaseAdapter {
         return dayEvents;
     }
 
+    private int getColor(CalenderEvent mEvent){
+        String color;
+        if (mEvent == null) return R.color.Default;
+        if(mEvent.getEventColor() == null) color = "default";
+        else color = mEvent.getEventColor();
+
+        switch (color){
+            case "Green":
+                return R.color.Green;
+            case "Yellow":
+                return R.color.Yellow;
+            case "Red":
+                return R.color.Red;
+            case "Blue":
+                return R.color.Blue;
+            default:
+                return R.color.Default;
+        }
+    }
+
     static class ViewHolder {
         public TextView tvDayEventTitle;
         public LinearLayout llEventBackground;
@@ -103,6 +125,14 @@ public class DayEventListViewAdapter extends BaseAdapter {
         public TextView tvDayEventTimeDuration;
         public TextView tvDayEventDescription;
 
+    }
+    public void setTimeStr() {
+        if (mEvent.getIsAllday()) {
+            timeStr = "Full Day";
+        } else {
+            timeStr = mEvent.getStartTimeHour() + " : " + mEvent.getStartTimeMinute() + " - " +
+                    mEvent.getEndTimeHour() + " : " + mEvent.getEndTimeMinute();
+        }
     }
 
 }
