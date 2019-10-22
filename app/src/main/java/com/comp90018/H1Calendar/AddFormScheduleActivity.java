@@ -48,6 +48,7 @@ public class AddFormScheduleActivity extends Activity {
     private Calendar endTime;
     private CalenderEvent cEvent;
     private String eventId;
+    private boolean editMode;
     private boolean isAllDay = false;
     private boolean isNeedNotify = false;
     private sqliteHelper dbhelper;
@@ -57,12 +58,15 @@ public class AddFormScheduleActivity extends Activity {
 
     // Tao
     // store user info into shared preferences
-    private static final String SHAREDPREFS  = "sharedPrefs";
+    private static final String SHAREDPREFS = "sharedPrefs";
+    private static final String USERTOKEN = "usertoken";
     private static final String USERID = "userid";
     private static final String USEREMAIL = "useremail";
+    private static final String USERNAME = "username";
     private static final String USERPWD = "userpwd";
+
     // variable used to store user info that get from shared preferences
-    private String userId, userEmail, userPwd;
+    private String userToken, userId, userEmail, userName, userPwd;
 
     @BindView(R.id.event_title)
     EditText event_title;
@@ -186,7 +190,12 @@ public class AddFormScheduleActivity extends Activity {
 
             //TODO: store event into DB
 
-            boolean isSucceed = dbhelper.insert(cEvent);
+            boolean isSucceed;
+            if(!editMode){
+                isSucceed = dbhelper.insert(cEvent);
+            }else {
+                isSucceed = dbhelper.updateEventByEventId(cEvent.getEventId(),cEvent);
+            }
             if(isSucceed){
                 Toast.makeText(this, "Save Successful!", Toast.LENGTH_SHORT).show();
                 SendAlarmBroadcast.startAlarmService(AddFormScheduleActivity.this);
@@ -257,6 +266,8 @@ public class AddFormScheduleActivity extends Activity {
 
         initSensor(); //shake sensor
 
+        editMode = false;//initialize edit mode
+
         dbhelper = new sqliteHelper(getApplicationContext());
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this,R.color.colorPrimary));
@@ -265,6 +276,7 @@ public class AddFormScheduleActivity extends Activity {
         if (type.equals("addEvent")) {
             edit_event_title.setText("New Event");
         } else if(type.equals("editEvent")){
+            editMode = true; //It is under edit mode;
             Intent intent = getIntent();
             String event_id = intent.getStringExtra("id");
             System.out.println(event_id+"11111111111111111");
@@ -277,10 +289,12 @@ public class AddFormScheduleActivity extends Activity {
             event_local.setText(cEvent.getLocal());
             event_date.setText(genDateStr(cEvent.getYear(),cEvent.getMonth(),cEvent.getDay()));
             if(cEvent.getIsAllday()){
+                isAllDay = true;
                 allDaySwitch.setChecked(true);
                 event_start_time.setVisibility(View.GONE);
                 event_end_time.setVisibility(View.GONE);
             }else{
+                isAllDay = false;
                 allDaySwitch.setChecked(false);
                 event_start_time.setText(genTimeStr(cEvent.getStartTimeHour(),cEvent.getStartTimeMinute()));
                 event_end_time.setText(genTimeStr(cEvent.getEndTimeHour(),cEvent.getEndTimeMinute()));
@@ -424,6 +438,7 @@ public class AddFormScheduleActivity extends Activity {
                     if(data.getBooleanExtra("has_coor",false)){
 
                         cEvent.setCoordinate(data.getStringExtra("coordinate"));
+                        cEvent.setLocationId(data.getStringExtra("locationID"));
                     }
                     cEvent.setLocal(data.getStringExtra("location"));
                     event_local.setText(data.getStringExtra("location"));
@@ -465,12 +480,14 @@ public class AddFormScheduleActivity extends Activity {
     }
 
     // Tao
-    public void loadUserInfo(){
+    public void loadUserInfo() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHAREDPREFS, Context.MODE_PRIVATE);
 
-        // the default values of these three variables are ""
+        // the default values of these four variables are ""
+        userToken = sharedPreferences.getString(USERTOKEN, "");
         userId = sharedPreferences.getString(USERID, "");
         userEmail = sharedPreferences.getString(USEREMAIL, "");
+        userName = sharedPreferences.getString(USERNAME, "");
         userPwd = sharedPreferences.getString(USERPWD, "");
 
     }

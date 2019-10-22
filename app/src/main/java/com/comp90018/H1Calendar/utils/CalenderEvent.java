@@ -32,10 +32,10 @@ public class CalenderEvent implements Serializable,Comparable<CalenderEvent> {
     private String description;
 
     private String coordinate;
+    private String locationId;
 
     // Tao
     private String userId;
-
     public CalenderEvent() {
 
     }
@@ -46,6 +46,14 @@ public class CalenderEvent implements Serializable,Comparable<CalenderEvent> {
 
     public void setEventId(String id) {
         this.eventId = id;
+    }
+
+    public void setLocationId(String id) {
+        this.locationId = id;
+    }
+
+    public String getLocationId() {
+        return locationId;
     }
 
     public String getTitle() {
@@ -168,11 +176,6 @@ public class CalenderEvent implements Serializable,Comparable<CalenderEvent> {
         this.coordinate = coordinate;
     }
 
-    public String toJsonStr() {
-        Gson gson = new Gson();
-        String json = gson.toJson(this);
-        return json;
-    }
 
     // Tao
     public String getUserId() {
@@ -182,39 +185,6 @@ public class CalenderEvent implements Serializable,Comparable<CalenderEvent> {
     public void setUserId(String userid) {
         this.userId = userid;
     }
-
-//
-//    @Override
-//    public int compareTo(CalenderEvent event) {
-//        if (getYear() != event.getYear()) return compareInt(getYear(),event.getYear());
-//        if (getMonth() != event.getMonth()) return compareInt(getMonth(),event.getMonth());
-//        if (getDay() != event.getDay()) return compareInt(getDay(),event.getDay());
-//        if (getStartTimeHour() != event.getStartTimeHour()) return compareInt(getStartTimeHour(),event.getStartTimeHour());
-//        if (getStartTimeMinute() != event.getStartTimeMinute()) return compareInt(getStartTimeMinute(),event.getStartTimeMinute());
-//        return 0;
-//    }
-//
-//    private int compareInt(int a, int b){
-//        if (a<b) return -1;
-//        else if (a>b) return 1;
-//        else return 0;
-//    }
-
-//    @Override
-//    public int compareTo(CalenderEvent event) {
-//        if (getYear() != event.getYear()) return compareInt(getYear(),event.getYear());
-//        if (getMonth() != event.getMonth()) return compareInt(getMonth(),event.getMonth());
-//        if (getDay() != event.getDay()) return compareInt(getDay(),event.getDay());
-//        if (getStartTimeHour() != event.getStartTimeHour()) return compareInt(getStartTimeHour(),event.getStartTimeHour());
-//        if (getStartTimeMinute() != event.getStartTimeMinute()) return compareInt(getStartTimeMinute(),event.getStartTimeMinute());
-//        return 0;
-//    }
-//    private int compareInt(int a, int b){
-//        if (a<b) return -1;
-//        else if (a>b) return 1;
-//        else return 0;
-//    }
-
     /**
      * 默认提前一个小时提醒
      *
@@ -233,6 +203,7 @@ public class CalenderEvent implements Serializable,Comparable<CalenderEvent> {
         cal.set(getYear(), getMonth(), getDay(), getStartTimeHour(), getStartTimeMinute());
         return cal;
     }
+
 
     @Override
     public int compareTo(CalenderEvent event) {
@@ -256,5 +227,12 @@ public class CalenderEvent implements Serializable,Comparable<CalenderEvent> {
 
         Log.d("Notification","Alarm Time: " + getAlarmTime().getTime().toString());
         Log.d("Notification","Alarm setted.");
+    }
+
+
+    public String toJsonStr(){
+        Gson gson = new Gson();
+        String json = gson.toJson(this);
+        return json;
     }
 }
