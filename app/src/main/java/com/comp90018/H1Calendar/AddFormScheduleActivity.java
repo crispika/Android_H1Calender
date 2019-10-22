@@ -289,10 +289,12 @@ public class AddFormScheduleActivity extends Activity {
             event_local.setText(cEvent.getLocal());
             event_date.setText(genDateStr(cEvent.getYear(),cEvent.getMonth(),cEvent.getDay()));
             if(cEvent.getIsAllday()){
+                isAllDay = true;
                 allDaySwitch.setChecked(true);
                 event_start_time.setVisibility(View.GONE);
                 event_end_time.setVisibility(View.GONE);
             }else{
+                isAllDay = false;
                 allDaySwitch.setChecked(false);
                 event_start_time.setText(genTimeStr(cEvent.getStartTimeHour(),cEvent.getStartTimeMinute()));
                 event_end_time.setText(genTimeStr(cEvent.getEndTimeHour(),cEvent.getEndTimeMinute()));
