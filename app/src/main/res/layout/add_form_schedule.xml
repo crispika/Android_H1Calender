@@ -1,38 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <LinearLayout
+        android:id="@+id/action_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="50dp"
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal">
 
-        <LinearLayout
-            android:id="@+id/action_bar"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@color/colorPrimary"
-            android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/cancel_edit"
+            style="@style/imageButtonStyle"
+            android:src="@drawable/ic_cancel_white_24dp" />
 
-            <ImageButton
-                android:id="@+id/cancel_edit"
-                style="@style/imageButtonStyle"
-                android:src="@drawable/ic_cancel_white_24dp" />
+        <TextView
+            android:id="@+id/edit_type"
+            style="@style/ActivityTitleStyle"
+            android:text="Event Schedule"
+            android:textSize="18dp" />
 
-            <TextView
-                android:id="@+id/edit_type"
-                style="@style/ActivityTitleStyle"
-                android:text="Event Schedule"
-                android:textSize="18dp" />
-
-            <ImageButton
-                android:id="@+id/tv_save"
-                style="@style/imageButtonStyle"
-                android:src="@drawable/ic_confirm_white_24dp" />
-
-        </LinearLayout>
+        <ImageButton
+            android:id="@+id/tv_save"
+            style="@style/imageButtonStyle"
+            android:src="@drawable/ic_confirm_white_24dp" />
 
     </LinearLayout>
+
 
     <ScrollView
         android:layout_width="match_parent"
