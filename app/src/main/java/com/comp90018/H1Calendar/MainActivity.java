@@ -853,6 +853,192 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         }
         return false;
     }
+
+
+    // check for wifi
+    public boolean isWifiConnected(Context context) {
+        if (context != null) {
+            ConnectivityManager mConnectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo mWiFiNetworkInfo = mConnectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+            if (mWiFiNetworkInfo != null && mWiFiNetworkInfo.isConnected()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // check for mobile
+    public boolean isMobileConnected(Context context) {
+        if (context != null) {
+            ConnectivityManager mConnectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo mMobileNetworkInfo = mConnectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            if (mMobileNetworkInfo != null && mMobileNetworkInfo.isConnected()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // popup dialog: sync under mobile network
+    public void syncUnderMobileNetwork(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("syncUnderMobileNetwork");
+        builder.setMessage("Do you want to use Mobile Network to do synchronization?");
+
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                syncToCloud();
+
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                Toast.makeText(MainActivity.this, "no sync",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.show();
+    }
+
+    // TODO: http
+    // sync
+    public void syncToCloud(){
+
+        // token
+        // userinfo
+        // events
+        // code 201 /
+
+        // getAllEventsByUserId
+
+        List<Event> allCurrentEventList = dbhelper.syncGetAllEventsByUserId(userId);
+        // locationList need more word
+        List<Location> allCurentLocationList = dbhelper.syncGetAllLocationsByUserId(userId);
+        // EventSync
+        EventSync eventSync = new EventSync();
+        eventSync.events = allCurrentEventList;
+        eventSync.locations = allCurentLocationList;
+        eventSync.token = userToken;
+        eventSync.username = userName;
+        Gson gson1 = new GsonBuilder().serializeNulls().create();
+        Gson gson = new Gson();
+        String jsonObject = gson1.toJson(eventSync);
+        String urlAddress = "http://35.197.167.33:8222/sync";
+        Log.d("sendJson", jsonObject);
+        Handler handler = new Handler() {
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                Bundle bundle = msg.getData();
+                String jsonString = bundle.getString("result");
+                ResultFromSync json = gson.fromJson(jsonString, ResultFromSync.class);
+                //register success, login
+                if (json.code == 201) {
+                    saveUserInfo(json.token, json.userInfo.userid,json.userInfo.email,json.userInfo.username);
+                    loadUserInfo();
+                    updateEventAndLocationFromSync(userId, json.events, json.locations);
+                    dbhelper.deleteEventByEventIdForReal();
+                    dbhelper.deleteLocationByLocationIdForReal();
+
+                    Toast.makeText(getApplicationContext(), "Sync success",
+                            Toast.LENGTH_SHORT).show();
+                } else if (json.code == 408) {
+                    jumpToNavigationHeaderLogin();
+                    Toast.makeText(getApplicationContext(), json.msg,
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Sync failed",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+        SendPostJson sendPostJson = new SendPostJson(urlAddress, jsonObject, handler);
+        sendPostJson.request();
+        // Http request
+
+        //Log.d("json", jsonString);
+//                [{"day":10,"description":"None","endTimeHour":0,"endTimeMinute":0,"eventId":"509b23f6-a73a-4121-8b80-403681c258e6","isAllday":false,"isNeedNotify":false,"local":"None","month":10,"startTimeHour":0,"startTimeMinute":0,"title":"default1","year":2019},
+//                {"day":11,"description":"None","endTimeHour":0,"endTimeMinute":0,"eventId":"e93e3d36-8836-434d-bba7-352846a28eae","isAllday":false,"isNeedNotify":false,"local":"None","month":10,"startTimeHour":0,"startTimeMinute":0,"title":"default2","year":2019},
+//                {"day":13,"description":"None","endTimeHour":0,"endTimeMinute":0,"eventId":"9d01331f-ac2a-4e0a-9b8b-04069d1acd90","isAllday":false,"isNeedNotify":false,"local":"None","month":10,"startTimeHour":0,"startTimeMinute":0,"title":"default3","year":2019}]
+
+
+        // send http
+
+
+        // 收到反馈
+
+        // sync successfully
+        //if(true){
+        //    Toast.makeText(getApplicationContext(), "sync successfully",
+        //            Toast.LENGTH_SHORT).show();
+        //}
+        // sync failed
+        //else{
+        //    Toast.makeText(getApplicationContext(), "sync failed",
+        //            Toast.LENGTH_SHORT).show();
+
+        //}
+
+
+    }
+
+    public void updateEventAndLocationFromSync(String userid, List<Event> events, List<Location> locations){
+
+        List<Event> localEvents = dbhelper.syncGetAllEventsByUserId(userid);
+        HashMap<String, Event> eventMap = new HashMap<String, Event>();
+        //Log.d("update", "update");
+        for (Event localevent: localEvents){
+            eventMap.put(localevent.eventid, localevent);
+
+        }
+        for (Event event: events){
+            if (event.isdelete != null && event.isdelete.compareTo("T") == 0){
+                if (eventMap.get(event.eventid) != null) {
+                    dbhelper.deleteEventByEventId(event.eventid);
+                }
+            }
+            if (eventMap.get(event.eventid) == null) {
+                dbhelper.insertSyncEvent(event);
+            }
+            else{
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Event localEvent = eventMap.get(event.eventid);
+                if(event.updatetime != null && localEvent.updatetime != null){
+                    try{
+                        if (simpleDateFormat.parse(event.updatetime).getTime() > simpleDateFormat.parse(localEvent.updatetime).getTime()){
+                            dbhelper.updateEventFromSyncByEventId(event.eventid, event);
+                        }
+                    }catch(ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        List<Location> localLocations = dbhelper.syncGetAllLocationsByUserId(userid);
+        HashMap<String, Location> locationMap = new HashMap<String, Location>();
+        for (Location locallocation: localLocations){
+            locationMap.put(locallocation.locationid, locallocation);
+        }
+        for (Location location: locations){
+            if (location.isdelete != null && location.isdelete.compareTo("T") == 0){
+                if (locationMap.get(location.locationid) != null) {
+                    dbhelper.deleteLocationByLocationId(location.locationid);
+                }
+            }
+            if (locationMap.get(location.locationid) == null) {
+                dbhelper.insertSyncLocation(location);
+            }
+        }
+    }
+
+    // Tao: end here
+
+
     // Tao: end here
     public void setEventViewFragment(){
         SharedPreferences mySharedPreferences = getSharedPreferences("FragmentSetting",MODE_PRIVATE);
