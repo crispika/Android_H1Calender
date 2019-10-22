@@ -56,12 +56,15 @@ public class AddFormScheduleActivity extends Activity {
 
     // Tao
     // store user info into shared preferences
-    private static final String SHAREDPREFS  = "sharedPrefs";
+    private static final String SHAREDPREFS = "sharedPrefs";
+    private static final String USERTOKEN = "usertoken";
     private static final String USERID = "userid";
     private static final String USEREMAIL = "useremail";
+    private static final String USERNAME = "username";
     private static final String USERPWD = "userpwd";
+
     // variable used to store user info that get from shared preferences
-    private String userId, userEmail, userPwd;
+    private String userToken, userId, userEmail, userName, userPwd;
 
     @BindView(R.id.event_title)
     EditText event_title;
@@ -462,12 +465,14 @@ public class AddFormScheduleActivity extends Activity {
     }
 
     // Tao
-    public void loadUserInfo(){
+    public void loadUserInfo() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHAREDPREFS, Context.MODE_PRIVATE);
 
-        // the default values of these three variables are ""
+        // the default values of these four variables are ""
+        userToken = sharedPreferences.getString(USERTOKEN, "");
         userId = sharedPreferences.getString(USERID, "");
         userEmail = sharedPreferences.getString(USEREMAIL, "");
+        userName = sharedPreferences.getString(USERNAME, "");
         userPwd = sharedPreferences.getString(USERPWD, "");
 
     }

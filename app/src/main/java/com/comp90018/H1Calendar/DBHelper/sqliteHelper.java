@@ -24,12 +24,25 @@ public class sqliteHelper extends SQLiteOpenHelper {
     // create a DB
     private static final String DATABASENAME = "H1Calendar.db";
     private static final int DATABASEVERSION = 1;
+    Context context;
+    // store user info into shared preferences
+    private static final String SHAREDPREFS = "sharedPrefs";
+    private static final String USERTOKEN = "usertoken";
+    private static final String USERID = "userid";
+    private static final String USEREMAIL = "useremail";
+    private static final String USERNAME = "username";
+    private static final String USERPWD = "userpwd";
+
+    // variable used to store user info that get from shared preferences
+    private String userToken, userId, userEmail, userName, userPwd;
 
     // variable used to store user info that get from shared preferences
     // private String userId, userEmail, userPwd;
 
     public sqliteHelper(Context context) {
+
         super(context, DATABASENAME, null, DATABASEVERSION);
+        this.context = context;
     }
 
 
@@ -174,13 +187,16 @@ public class sqliteHelper extends SQLiteOpenHelper {
 
     // get events by day
     // day format: dd/MM/yyyy
-    // 需要userid
     public List<CalenderEvent> getEventsByDay(String day) {
+        // get current userid
+        loadUserInfo();
+        String userid = userId;
+
         SQLiteDatabase sqlitedb = this.getWritableDatabase();
 
         List<CalenderEvent> calenderEventList = new ArrayList<CalenderEvent>();
 
-        Cursor cursor = sqlitedb.rawQuery("SELECT * FROM EVENT WHERE adate = ? and isDelete = 'F'", new String[]{day});
+        Cursor cursor = sqlitedb.rawQuery("SELECT * FROM EVENT WHERE userId = ? and adate = ? and isDelete = 'F'", new String[]{userid, day});
 
         while (cursor.moveToNext()) {
 
@@ -198,12 +214,16 @@ public class sqliteHelper extends SQLiteOpenHelper {
 
     // get events by week
     // day format: dd/mm/yyyy
-    public List<CalenderEvent> getEventsByWeek(String userId, String startDay, String endDay) {
+    public List<CalenderEvent> getEventsByWeek(String startDay, String endDay) {
+        // get current userid
+        loadUserInfo();
+        String userid = userId;
+
         SQLiteDatabase sqlitedb = this.getWritableDatabase();
 
         List<CalenderEvent> calenderEventList = new ArrayList<CalenderEvent>();
 
-        Cursor cursor = sqlitedb.rawQuery("SELECT * FROM EVENT WHERE userId = ? and idDelete = 'F' and adate BETWEEN ? AND ?", new String[]{userId, startDay, endDay});
+        Cursor cursor = sqlitedb.rawQuery("SELECT * FROM EVENT WHERE userId = ? and isDelete = 'F' and adate BETWEEN ? AND ?", new String[]{userid, startDay, endDay});
 
         while (cursor.moveToNext()) {
 
@@ -389,7 +409,11 @@ public class sqliteHelper extends SQLiteOpenHelper {
     }
 
     // get all locations by userId
+    // public List<EventLocation> getAllLocationsByUserId()
     public List<EventLocation> getAllLocationsByUserId(String userId) {
+//        loadUserInfo();
+//        String userid = userId;
+
         SQLiteDatabase sqlitedb = this.getWritableDatabase();
 
         List<EventLocation> eventLocationsList = new ArrayList<EventLocation>();
@@ -458,6 +482,21 @@ public class sqliteHelper extends SQLiteOpenHelper {
 //            return false;
 //        }
 
+
+    }
+
+
+
+
+    public void loadUserInfo() {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHAREDPREFS, Context.MODE_PRIVATE);
+
+        // the default values of these four variables are ""
+        userToken = sharedPreferences.getString(USERTOKEN, "");
+        userId = sharedPreferences.getString(USERID, "");
+        userEmail = sharedPreferences.getString(USEREMAIL, "");
+        userName = sharedPreferences.getString(USERNAME, "");
+        userPwd = sharedPreferences.getString(USERPWD, "");
 
     }
 
