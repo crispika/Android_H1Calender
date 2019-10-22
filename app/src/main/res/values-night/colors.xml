@@ -24,4 +24,6 @@
     <color name="fab_pressed">#6F2920</color>
     <color name="fab_shadow">#7C4B45</color>
 
+    <color name="text_color">#C9C4C4</color>
+
 </resources>
