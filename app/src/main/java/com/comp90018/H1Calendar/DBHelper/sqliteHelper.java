@@ -438,7 +438,7 @@ public class sqliteHelper extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put("locationId", eventLocation.getLocationId());
         contentValues.put("name", eventLocation.getName());
-        contentValues.put("coordiante", eventLocation.getCoordinate());
+        contentValues.put("coordinate", eventLocation.getCoordinate());
         contentValues.put("userId", eventLocation.getUserId());
 
         long result = sqlitedb.insert("LOCATION", null, contentValues);
