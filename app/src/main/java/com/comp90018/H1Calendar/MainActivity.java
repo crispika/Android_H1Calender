@@ -957,7 +957,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         Gson gson = new Gson();
         String jsonObject = gson1.toJson(eventSync);
         String urlAddress = "http://35.197.167.33:8222/sync";
-
+        Log.d("sendJson", jsonObject);
         Handler handler = new Handler() {
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
@@ -1018,8 +1018,10 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
         List<Event> localEvents = dbhelper.syncGetAllEventsByUserId(userid);
         HashMap<String, Event> eventMap = new HashMap<String, Event>();
-        for (Event localevent: events){
+        //Log.d("update", "update");
+        for (Event localevent: localEvents){
             eventMap.put(localevent.eventid, localevent);
+
         }
         for (Event event: events){
             if (event.isdelete != null && event.isdelete.compareTo("T") == 0){
@@ -1047,7 +1049,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
         List<Location> localLocations = dbhelper.syncGetAllLocationsByUserId(userid);
         HashMap<String, Location> locationMap = new HashMap<String, Location>();
-        for (Location locallocation: locations){
+        for (Location locallocation: localLocations){
             locationMap.put(locallocation.locationid, locallocation);
         }
         for (Location location: locations){
