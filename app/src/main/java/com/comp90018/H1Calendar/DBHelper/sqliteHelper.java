@@ -10,7 +10,9 @@ import android.util.Log;
 
 import com.comp90018.H1Calendar.MainActivity;
 import com.comp90018.H1Calendar.utils.CalenderEvent;
+import com.comp90018.H1Calendar.utils.Event;
 import com.comp90018.H1Calendar.utils.EventLocation;
+import com.comp90018.H1Calendar.utils.Location;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -85,6 +87,43 @@ public class sqliteHelper extends SQLiteOpenHelper {
 
     }
 
+    public boolean insertSyncEvent(Event event){
+        SQLiteDatabase sqlitedb = this.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("eventId", event.getEventid());
+        contentValues.put("title", event.getTitle());
+        contentValues.put("isAllday", event.getIsallday());
+        contentValues.put("isNeedNotify", event.getIsneednotify());
+        contentValues.put("adate", event.getAdate());
+        contentValues.put("startTimeHour", event.getStarttimehour());
+        contentValues.put("startTimeMinute", event.getStarttimeminute());
+        contentValues.put("endTimeHour", event.getEndtimehour());
+        contentValues.put("endTimeMinute", event.getEndtimeminute());
+        contentValues.put("eventColor", event.getEventcolor());
+        contentValues.put("eventTime", event.getEventtime());
+        contentValues.put("local", event.getLoc());
+        contentValues.put("coordinate", event.getCoordinate());
+        contentValues.put("description", event.getDescription());
+        contentValues.put("userId", event.getUserid());
+        contentValues.put("locationId", event.getLocationid());
+        contentValues.put("updateTime", event.getUpdatetime());
+        // F 没有删除
+        contentValues.put("isDelete", "F");
+
+
+        long result = sqlitedb.insert("EVENT", null, contentValues);
+
+        sqlitedb.close();
+
+
+        if (result == -1) {
+            return false;
+        } else {
+            return true;
+        }
+
+    }
 
     // add events
     public boolean insert(CalenderEvent calenderEvent) {
@@ -185,6 +224,69 @@ public class sqliteHelper extends SQLiteOpenHelper {
 
     }
 
+    // get all events by userId used to sync
+    public List<Event> syncGetAllEventsByUserId(String userId) {
+        SQLiteDatabase sqlitedb = this.getWritableDatabase();
+
+        List<Event> eventList = new ArrayList<Event>();
+
+        Cursor cursor = sqlitedb.rawQuery("SELECT eventid, title, isallday, isneednotify, adate, starttimehour," +
+                " starttimeminute, endtimehour, endtimeminute, eventcolor, eventtime, local, description, " +
+                "coordinate, updatetime, userid, locationid, isdelete FROM EVENT WHERE userId = ? ", new String[]{userId});
+
+        while (cursor.moveToNext()) {
+            Event event = new Event();
+            event.eventid = cursor.getString(0);
+            event.title = cursor.getString(1);
+            event.isallday = cursor.getInt(2);
+            event.isneednotify = cursor.getInt(3);
+            event.adate = cursor.getString(4);
+            event.starttimehour = cursor.getInt(5);
+            event.starttimeminute = cursor.getInt(6);
+            event.endtimehour = cursor.getInt(7);
+            event.endtimeminute = cursor.getInt(8);
+            event.eventcolor = cursor.getString(9);
+            event.eventtime = cursor.getString(10);
+            event.loc = cursor.getString(11);
+            event.description = cursor.getString(12);
+            event.coordinate = cursor.getString(13);
+            event.updatetime = cursor.getString(14);
+            event.userid = cursor.getString(15);
+            event.locationid = cursor.getString(16);
+            event.isdelete = cursor.getString(17);
+            eventList.add(event);
+        }
+
+        cursor.close();
+        sqlitedb.close();
+
+        return eventList;
+    }
+    public List<Location> syncGetAllLocationsByUserId(String userId) {
+        SQLiteDatabase sqlitedb = this.getWritableDatabase();
+
+        List<Location> locationList = new ArrayList<Location>();
+
+        Cursor cursor = sqlitedb.rawQuery("SELECT locationid, locationname, userid, coordinate, isdelete FROM LOCATION WHERE userId = ? ", new String[]{userId});
+
+        while (cursor.moveToNext()) {
+            Location location = new Location();
+            location.locationid = cursor.getString(0);
+            location.locationname = cursor.getString(1);
+            location.userid = cursor.getString(2);
+            location.coordinate = cursor.getString(3);
+            location.isdelete = cursor.getString(4);
+
+            locationList.add(location);
+        }
+
+        cursor.close();
+        sqlitedb.close();
+
+        return locationList;
+    }
+
+
     // get events by day
     // day format: dd/MM/yyyy
     public List<CalenderEvent> getEventsByDay(String day) {
@@ -279,6 +381,42 @@ public class sqliteHelper extends SQLiteOpenHelper {
     }
 
     // update
+    public boolean updateEventFromSyncByEventId(String eventId, Event event) {
+        SQLiteDatabase sqlitedb = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("eventId", event.getEventid());
+        contentValues.put("title", event.getTitle());
+        contentValues.put("isAllday", event.getIsallday());
+        contentValues.put("isNeedNotify", event.getIsneednotify());
+        contentValues.put("adate", event.getAdate());
+        contentValues.put("startTimeHour", event.getStarttimehour());
+        contentValues.put("startTimeMinute", event.getStarttimeminute());
+        contentValues.put("endTimeHour", event.getEndtimehour());
+        contentValues.put("endTimeMinute", event.getEndtimeminute());
+        contentValues.put("eventColor", event.getEventcolor());
+        contentValues.put("eventTime", event.getEventtime());
+        contentValues.put("local", event.getLoc());
+        contentValues.put("coordinate", event.getCoordinate());
+        contentValues.put("description", event.getDescription());
+        contentValues.put("userId", event.getUserid());
+        contentValues.put("locationId", event.getLocationid());
+        contentValues.put("updateTime", event.getUpdatetime());
+        // F 没有删除
+        contentValues.put("isDelete", "F");
+
+        // number of rows affected
+        int result = sqlitedb.update("EVENT", contentValues, "eventId = ?", new String[]{eventId});
+
+        sqlitedb.close();
+
+        if (result > 0) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
     public boolean updateEventByEventId(String eventId, CalenderEvent calenderEvent) {
         SQLiteDatabase sqlitedb = this.getWritableDatabase();
 
@@ -405,7 +543,30 @@ public class sqliteHelper extends SQLiteOpenHelper {
         } else {
             return true;
         }
+    }
 
+    public boolean insertSyncLocation(Location location) {
+
+        SQLiteDatabase sqlitedb = this.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("locationId", location.getLocationid());
+        contentValues.put("locationName", location.getLocationname());
+        contentValues.put("coordinate", location.getCoordinate());
+        contentValues.put("userId", location.getUserid());
+        // F == 没有删除
+        contentValues.put("isDelete", "F");
+
+        long result = sqlitedb.insert("LOCATION", null, contentValues);
+
+        sqlitedb.close();
+
+
+        if (result == -1) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     // get all locations by userId
