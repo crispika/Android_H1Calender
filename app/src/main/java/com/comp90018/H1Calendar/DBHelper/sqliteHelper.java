@@ -361,7 +361,7 @@ public class sqliteHelper extends SQLiteOpenHelper {
         String date = cursor.getString(4);
         String[] subStrings = date.split("/");
         calenderEvent.setDay(Integer.parseInt(subStrings[0]));
-        calenderEvent.setMonth(Integer.parseInt(subStrings[1]));
+        calenderEvent.setMonth(Integer.parseInt(subStrings[1]) - 1);
         calenderEvent.setYear(Integer.parseInt(subStrings[2]));
 
         calenderEvent.setStartTimeHour(Integer.parseInt(cursor.getString(5)));
