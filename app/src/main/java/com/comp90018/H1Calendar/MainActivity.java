@@ -34,13 +34,18 @@ import com.comp90018.H1Calendar.EventView.WeekEventView;
 import com.comp90018.H1Calendar.calendar.CalendarView;
 import com.comp90018.H1Calendar.utils.CalendarManager;
 import com.comp90018.H1Calendar.utils.CalenderEvent;
+import com.comp90018.H1Calendar.utils.Event;
 import com.comp90018.H1Calendar.utils.EventBus;
+import com.comp90018.H1Calendar.utils.EventSync;
 import com.comp90018.H1Calendar.utils.Events;
+import com.comp90018.H1Calendar.utils.Location;
 import com.comp90018.H1Calendar.utils.ResultFromLogin;
+import com.comp90018.H1Calendar.utils.ResultFromSync;
 import com.comp90018.H1Calendar.utils.UserLogin;
 import com.comp90018.H1Calendar.utils.UserRegister;
 import com.comp90018.H1Calendar.utils.LightSensorUtils;
 import com.google.android.material.navigation.NavigationView;
+import com.google.gson.GsonBuilder;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionHelper;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout;
@@ -378,7 +383,8 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                                     jumpToNavigationHeaderLogout();
                                     Toast.makeText(getApplicationContext(), json.msg,
                                             Toast.LENGTH_SHORT).show();
-                                } else {
+                                }
+                                else {
                                     Toast.makeText(getApplicationContext(), json.msg,
                                             Toast.LENGTH_SHORT).show();
                                 }
@@ -594,6 +600,20 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         editor.putString(USEREMAIL, useremail);
         editor.putString(USERNAME, username);
         editor.putString(USERPWD, userpwd);
+
+        // apply(): apply会把数据同步写入内存缓存，然后异步保存到磁盘，可能会执行失败，失败不会收到错误回调
+        // commit(): commit将同步的把数据写入磁盘和内存缓存
+        editor.apply();
+        //Toast.makeText(this, "data saved", Toast.LENGTH_SHORT).show();
+    }
+    public void saveUserInfo(String usertoken, String userid, String useremail, String username) {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHAREDPREFS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putString(USERTOKEN, usertoken);
+        editor.putString(USERID, userid);
+        editor.putString(USEREMAIL, useremail);
+        editor.putString(USERNAME, username);
 
         // apply(): apply会把数据同步写入内存缓存，然后异步保存到磁盘，可能会执行失败，失败不会收到错误回调
         // commit(): commit将同步的把数据写入磁盘和内存缓存
@@ -920,18 +940,48 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
         // getAllEventsByUserId
 
-        List<CalenderEvent> allCurrentCalenderEventList = new ArrayList<CalenderEvent>();
-        allCurrentCalenderEventList = dbhelper.getAllEventsByUserId(userId);
-
-        // 生成json传递 {userId : [events]}
+        List<Event> allCurrentEventList = new ArrayList<Event>();
+        allCurrentEventList = dbhelper.syncGetAllEventsByUserId(userId);
+        List<Location> allCurentLocationList = new ArrayList<Location>();
+        // EventSync
+        EventSync eventSync = new EventSync();
+        eventSync.events = allCurrentEventList;
+        eventSync.locations = allCurentLocationList;
+        eventSync.token = userToken;
+        eventSync.username = userName;
+        Gson gson1 = new GsonBuilder().serializeNulls().create();
         Gson gson = new Gson();
-        String jsonString = gson.toJson(allCurrentCalenderEventList);
+        String jsonObject = gson1.toJson(eventSync);
+        String urlAddress = "http://35.197.167.33:8222/sync";
 
-        jsonString = "{" + '"' + userId + '"' + ":" + jsonString + "}";
+        Handler handler = new Handler() {
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                Bundle bundle = msg.getData();
+                String jsonString = bundle.getString("result");
+                ResultFromSync json = gson.fromJson(jsonString, ResultFromSync.class);
+                //register success, login
+                if (json.code == 201) {
 
+                    saveUserInfo(json.token, json.userInfo.userid,json.userInfo.email,json.userInfo.username);
+                    loadUserInfo();
+                    Toast.makeText(getApplicationContext(), "Sync success",
+                            Toast.LENGTH_SHORT).show();
+                } else if (json.code == 408) {
+                    jumpToNavigationHeaderLogin();
+                    Toast.makeText(getApplicationContext(), json.msg,
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Sync failed",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+        SendPostJson sendPostJson = new SendPostJson(urlAddress, jsonObject, handler);
+        sendPostJson.request();
         // Http request
 
-        Log.d("json", jsonString);
+        //Log.d("json", jsonString);
 //                [{"day":10,"description":"None","endTimeHour":0,"endTimeMinute":0,"eventId":"509b23f6-a73a-4121-8b80-403681c258e6","isAllday":false,"isNeedNotify":false,"local":"None","month":10,"startTimeHour":0,"startTimeMinute":0,"title":"default1","year":2019},
 //                {"day":11,"description":"None","endTimeHour":0,"endTimeMinute":0,"eventId":"e93e3d36-8836-434d-bba7-352846a28eae","isAllday":false,"isNeedNotify":false,"local":"None","month":10,"startTimeHour":0,"startTimeMinute":0,"title":"default2","year":2019},
 //                {"day":13,"description":"None","endTimeHour":0,"endTimeMinute":0,"eventId":"9d01331f-ac2a-4e0a-9b8b-04069d1acd90","isAllday":false,"isNeedNotify":false,"local":"None","month":10,"startTimeHour":0,"startTimeMinute":0,"title":"default3","year":2019}]
@@ -943,16 +993,16 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         // 收到反馈
 
         // sync successfully
-        if(true){
-            Toast.makeText(getApplicationContext(), "sync successfully",
-                    Toast.LENGTH_SHORT).show();
-        }
+        //if(true){
+        //    Toast.makeText(getApplicationContext(), "sync successfully",
+        //            Toast.LENGTH_SHORT).show();
+        //}
         // sync failed
-        else{
-            Toast.makeText(getApplicationContext(), "sync failed",
-                    Toast.LENGTH_SHORT).show();
+        //else{
+        //    Toast.makeText(getApplicationContext(), "sync failed",
+        //            Toast.LENGTH_SHORT).show();
 
-        }
+        //}
 
 
     }

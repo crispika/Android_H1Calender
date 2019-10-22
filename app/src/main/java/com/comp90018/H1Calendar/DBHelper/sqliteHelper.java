@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.comp90018.H1Calendar.MainActivity;
 import com.comp90018.H1Calendar.utils.CalenderEvent;
+import com.comp90018.H1Calendar.utils.Event;
 import com.comp90018.H1Calendar.utils.EventLocation;
 
 import java.text.ParseException;
@@ -183,6 +184,45 @@ public class sqliteHelper extends SQLiteOpenHelper {
 
         return calenderEventList;
 
+    }
+
+    // get all events by userId used to sync
+    public List<Event> syncGetAllEventsByUserId(String userId) {
+        SQLiteDatabase sqlitedb = this.getWritableDatabase();
+
+        List<Event> eventList = new ArrayList<Event>();
+
+        Cursor cursor = sqlitedb.rawQuery("SELECT eventid, title, isallday, isneednotify, adate, starttimehour," +
+                " starttimeminute, endtimehour, endtimeminute, eventcolor, eventtime, local, description, " +
+                "coordinate, updatetime, userid, locationid, isdelete FROM EVENT WHERE userId = ? ", new String[]{userId});
+
+        while (cursor.moveToNext()) {
+            Event event = new Event();
+            event.eventid = cursor.getString(0);
+            event.title = cursor.getString(1);
+            event.isallday = cursor.getInt(2);
+            event.isneednotify = cursor.getInt(3);
+            event.adate = cursor.getString(4);
+            event.starttimehour = cursor.getInt(5);
+            event.starttimeminute = cursor.getInt(6);
+            event.endtimehour = cursor.getInt(7);
+            event.endtimeminute = cursor.getInt(8);
+            event.eventcolor = cursor.getString(9);
+            event.eventtime = cursor.getString(10);
+            event.loc = cursor.getString(11);
+            event.description = cursor.getString(12);
+            event.coordinate = cursor.getString(13);
+            event.updatetime = cursor.getString(14);
+            event.userid = cursor.getString(15);
+            event.locationid = cursor.getString(16);
+            event.isdelete = cursor.getString(17);
+            eventList.add(event);
+        }
+
+        cursor.close();
+        sqlitedb.close();
+
+        return eventList;
     }
 
     // get events by day
