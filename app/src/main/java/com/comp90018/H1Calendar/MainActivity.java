@@ -58,10 +58,14 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -940,9 +944,9 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
         // getAllEventsByUserId
 
-        List<Event> allCurrentEventList = new ArrayList<Event>();
-        allCurrentEventList = dbhelper.syncGetAllEventsByUserId(userId);
-        List<Location> allCurentLocationList = new ArrayList<Location>();
+        List<Event> allCurrentEventList = dbhelper.syncGetAllEventsByUserId(userId);
+        // locationList need more word
+        List<Location> allCurentLocationList = dbhelper.syncGetAllLocationsByUserId(userId);
         // EventSync
         EventSync eventSync = new EventSync();
         eventSync.events = allCurrentEventList;
@@ -962,9 +966,12 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                 ResultFromSync json = gson.fromJson(jsonString, ResultFromSync.class);
                 //register success, login
                 if (json.code == 201) {
-
                     saveUserInfo(json.token, json.userInfo.userid,json.userInfo.email,json.userInfo.username);
                     loadUserInfo();
+                    updateEventAndLocationFromSync(userId, json.events, json.locations);
+                    dbhelper.deleteEventByEventIdForReal();
+                    dbhelper.deleteLocationByLocationIdForReal();
+
                     Toast.makeText(getApplicationContext(), "Sync success",
                             Toast.LENGTH_SHORT).show();
                 } else if (json.code == 408) {
@@ -1007,6 +1014,53 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
     }
 
+    public void updateEventAndLocationFromSync(String userid, List<Event> events, List<Location> locations){
+
+        List<Event> localEvents = dbhelper.syncGetAllEventsByUserId(userid);
+        HashMap<String, Event> eventMap = new HashMap<String, Event>();
+        for (Event localevent: events){
+            eventMap.put(localevent.eventid, localevent);
+        }
+        for (Event event: events){
+            if (event.isdelete != null && event.isdelete.compareTo("T") == 0){
+                if (eventMap.get(event.eventid) != null) {
+                    dbhelper.deleteEventByEventId(event.eventid);
+                }
+            }
+            if (eventMap.get(event.eventid) == null) {
+                dbhelper.insertSyncEvent(event);
+            }
+            else{
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Event localEvent = eventMap.get(event.eventid);
+                if(event.updatetime != null && localEvent.updatetime != null){
+                    try{
+                        if (simpleDateFormat.parse(event.updatetime).getTime() > simpleDateFormat.parse(localEvent.updatetime).getTime()){
+                            dbhelper.updateEventFromSyncByEventId(event.eventid, event);
+                        }
+                    }catch(ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        List<Location> localLocations = dbhelper.syncGetAllLocationsByUserId(userid);
+        HashMap<String, Location> locationMap = new HashMap<String, Location>();
+        for (Location locallocation: locations){
+            locationMap.put(locallocation.locationid, locallocation);
+        }
+        for (Location location: locations){
+            if (location.isdelete != null && location.isdelete.compareTo("T") == 0){
+                if (locationMap.get(location.locationid) != null) {
+                    dbhelper.deleteLocationByLocationId(location.locationid);
+                }
+            }
+            if (locationMap.get(location.locationid) == null) {
+                dbhelper.insertSyncLocation(location);
+            }
+        }
+    }
 
     // Tao: end here
 
