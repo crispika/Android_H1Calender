@@ -328,7 +328,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                 if (isWifiConnected(getApplicationContext())) {
                     System.out.println("wifi");
                     // sync
-                    syncToCloud();
+                    syncToCloud(userToken, userName);
 
 
                 } else if (isMobileConnected(getApplicationContext())) {
@@ -918,7 +918,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
-                syncToCloud();
+                syncToCloud(userToken, userName);
 
             }
         });
@@ -935,7 +935,9 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
     // TODO: http
     // sync
-    public void syncToCloud(){
+    // use token and name to sync this user's events and locations
+    // call /sync with EventSync
+    public void syncToCloud(String usertoken, String username){
 
         // token
         // userinfo
@@ -951,8 +953,8 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         EventSync eventSync = new EventSync();
         eventSync.events = allCurrentEventList;
         eventSync.locations = allCurentLocationList;
-        eventSync.token = userToken;
-        eventSync.username = userName;
+        eventSync.token = usertoken;
+        eventSync.username = username;
         Gson gson1 = new GsonBuilder().serializeNulls().create();
         Gson gson = new Gson();
         String jsonObject = gson1.toJson(eventSync);
