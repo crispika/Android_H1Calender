@@ -1,4 +1,7 @@
 package com.comp90018.H1Calendar.utils;
+
+import java.util.UUID;
+
 /**
  * 基础类
  * 用于储存地点信息的对象
@@ -15,9 +18,11 @@ public class EventLocation {
 
     }
 
-    public EventLocation(String name, String coordinate){
+    public EventLocation(String userId, String name, String coordinate){
+        this.userId = userId;
         this.name = name;
         this.coordinate = coordinate;
+        this.locationId = genLocationId();
 
     }
 
@@ -59,5 +64,11 @@ public class EventLocation {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    private String genLocationId(){
+        UUID uuid = UUID.randomUUID();
+        String uniqueId = uuid.toString();
+        return uniqueId;
     }
 }

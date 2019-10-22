@@ -47,6 +47,7 @@ public class AddFormScheduleActivity extends Activity {
     private Calendar endTime;
     private CalenderEvent cEvent;
     private String eventId;
+    private boolean editMode;
     private boolean isAllDay = false;
     private boolean isNeedNotify = false;
     private sqliteHelper dbhelper;
@@ -188,7 +189,12 @@ public class AddFormScheduleActivity extends Activity {
 
             //TODO: store event into DB
 
-            boolean isSucceed = dbhelper.insert(cEvent);
+            boolean isSucceed;
+            if(!editMode){
+                isSucceed = dbhelper.insert(cEvent);
+            }else {
+                isSucceed = dbhelper.updateEventByEventId(cEvent.getEventId(),cEvent);
+            }
             if(isSucceed){
                 Toast.makeText(this, "Save Successful!", Toast.LENGTH_SHORT).show();
             }else {
@@ -258,6 +264,8 @@ public class AddFormScheduleActivity extends Activity {
 
         initSensor(); //shake sensor
 
+        editMode = false;//initialize edit mode
+
         dbhelper = new sqliteHelper(getApplicationContext());
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this,R.color.colorPrimary));
@@ -266,6 +274,7 @@ public class AddFormScheduleActivity extends Activity {
         if (type.equals("addEvent")) {
             edit_event_title.setText("New Event");
         } else if(type.equals("editEvent")){
+            editMode = true; //It is under edit mode;
             Intent intent = getIntent();
             String event_id = intent.getStringExtra("id");
             System.out.println(event_id+"11111111111111111");
@@ -425,6 +434,7 @@ public class AddFormScheduleActivity extends Activity {
                     if(data.getBooleanExtra("has_coor",false)){
 
                         cEvent.setCoordinate(data.getStringExtra("coordinate"));
+                        cEvent.setLocationId(data.getStringExtra("locationID"));
                     }
                     cEvent.setLocal(data.getStringExtra("location"));
                     event_local.setText(data.getStringExtra("location"));

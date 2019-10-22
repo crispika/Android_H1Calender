@@ -1,24 +1,24 @@
 package com.comp90018.H1Calendar.EventSettingActivity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.comp90018.H1Calendar.DBHelper.sqliteHelper;
 import com.comp90018.H1Calendar.R;
 import com.comp90018.H1Calendar.utils.EventLocation;
 import com.comp90018.H1Calendar.utils.LocationListAdapter;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 
@@ -26,6 +26,12 @@ import butterknife.OnClick;
 import butterknife.ButterKnife;
 
 public class EventLocalSet extends Activity {
+    // store user info into shared preferences
+    private static final String SHAREDPREFS  = "sharedPrefs";
+    private static final String USERID = "userid";
+    // variable used to store user info that get from shared preferences
+    private String userId;
+
 
     private LocationListAdapter locationListAdapter;
     private String coordinate;
@@ -63,14 +69,10 @@ public class EventLocalSet extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_location);
         ButterKnife.bind(this);
+        sqliteHelper db = new sqliteHelper(this);
         //TODO: getting saved location list from DB
-
         //test
-        ArrayList<EventLocation> loclist = new ArrayList<>();
-        loclist.add(new EventLocation("guangzhou","123.123,135,56"));
-        loclist.add(new EventLocation("beijing","122.1333,14445,56"));
-        loclist.add(new EventLocation("shanghai","132.24345,58.232435"));
-
+        List<EventLocation> loclist = db.getAllLocationsByUserId(getUserID());
         locationListAdapter = new LocationListAdapter(this,loclist);
         location_list.setAdapter(locationListAdapter);
         location_list.setOnItemClickListener(new OnClickLocationListner());
@@ -88,8 +90,15 @@ public class EventLocalSet extends Activity {
            intent.putExtra("has_coor",true);
            intent.putExtra("location",el.getName());
            intent.putExtra("coordinate",el.getCoordinate());
+           intent.putExtra("locationID",el.getLocationId());
            setResult(1, intent);
            finish();
        }
    }
+
+    public String getUserID(){
+        SharedPreferences sharedPreferences = getSharedPreferences(SHAREDPREFS, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(USERID, "");
+
+    }
 }
