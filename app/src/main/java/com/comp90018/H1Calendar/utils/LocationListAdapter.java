@@ -5,19 +5,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
-
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.comp90018.H1Calendar.R;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class LocationListAdapter extends BaseAdapter {
-    private ArrayList<EventLocation> locationList;
+    private List<EventLocation> locationList;
     private Context context;
-    public LocationListAdapter(Context context, ArrayList<EventLocation> locationList){
+    public LocationListAdapter(Context context, List<EventLocation> locationList){
         this.locationList = locationList;
         this.context = context;
     }
