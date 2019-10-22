@@ -21,6 +21,7 @@ public class EventLocation {
     public EventLocation(String name, String coordinate){
         this.name = name;
         this.coordinate = coordinate;
+        this.locationId = genLocationId();
 
     }
 
@@ -31,16 +32,6 @@ public class EventLocation {
         this.userId = userId;
     }
 
-    public EventLocation(String userId,String name, String coordinate){
-        this.locationId = genLocationId();
-        this.name = name;
-        this.coordinate = coordinate;
-        this.userId = userId;
-    }
-
-    public void printString(){
-        System.out.println("save info:"+userId+' ' +locationId+' '+name+' '+coordinate);
-    }
 
     public String getLocationId() {
         return locationId;
