@@ -177,14 +177,15 @@ public class AddFormScheduleActivity extends Activity {
             } else {
                 cEvent.setIsAllday(false);
             }
-            if(cEvent.getEventId() == null){
+
+            // Tao
+            // new Event Mode: associate userId and eventID
+            loadUserInfo();
+            if(!editMode){
+                cEvent.setUserId(userId);
                 cEvent.setEventId(generateEventID());
             }
 
-            // Tao
-            // add userId to calender event
-            loadUserInfo();
-            cEvent.setUserId(userId);
 
 
 
@@ -202,51 +203,10 @@ public class AddFormScheduleActivity extends Activity {
             }else {
                 Toast.makeText(this, "Save ERROR!", Toast.LENGTH_SHORT).show();
             }
-
-
-            // test for selection statement
-
-            // weekly
-//            List<CalenderEvent> weeklyCalenderEventList = new ArrayList<CalenderEvent>();
-//            weeklyCalenderEventList = dbhelper.getEventsByWeek("8/9/2019", "8/9/2019");
-//            Log.d("weekly", weeklyCalenderEventList.size()+"");
-//
-//            CalenderEvent c1 = new CalenderEvent();
-//            c1 = weeklyCalenderEventList.get(weeklyCalenderEventList.size() - 1);
-//            Log.d("weekly", c1.getTitle() + " day " + c1.getDay() + " month " + c1.getMonth() + " year " + c1.getYear());
-//
-//            // daily
-//            List<CalenderEvent> dailyCalenderEventList = new ArrayList<CalenderEvent>();
-//            dailyCalenderEventList = dbhelper.getEventsByDay("8/9/2019");
-//            Log.d("daily", dailyCalenderEventList.size()+"");
-//
-//            CalenderEvent c2 = new CalenderEvent();
-//            c2 = dailyCalenderEventList.get(dailyCalenderEventList.size() - 1);
-//            Log.d("daily", c2.getTitle() + " day " + c2.getDay() + " month " + c2.getMonth() + " year " + c2.getYear());
-//
-//            // all
-//            List<CalenderEvent> allCalenderEventList = new ArrayList<CalenderEvent>();
-//            allCalenderEventList = dbhelper.getAllEvents();
-//            Log.d("all", allCalenderEventList.size()+"");
-//
-//            CalenderEvent c3 = new CalenderEvent();
-//            c3 = allCalenderEventList.get(allCalenderEventList.size() - 1);
-//            Log.d("all", c3.getTitle() + " day " + c3.getDay() + " month " + c3.getMonth() + " year " + c3.getYear());
-//
-//            // select an event by event Id
-//            CalenderEvent c4 = new CalenderEvent();
-//            c4 = dbhelper.getEventByEventId("3984429d-f33c-4816-abb7-87d77f32fbce");
-//            Log.d("eventId", c4.getTitle() + " day " + c4.getDay() + " month " + c4.getMonth() + " year " + c4.getYear());
-
-
-            // end here
-
+            
 
             startActivity(new Intent(this, MainActivity.class));
             finish();
-//            Intent intent = new Intent(this, EventQRShare.class);
-//            intent.putExtra("event",cEvent);
-//            startActivity(intent);
         }
 
 
@@ -318,16 +278,19 @@ public class AddFormScheduleActivity extends Activity {
             event_local.setText(storeEvent.getLocal());
             event_date.setText(genDateStr(cEvent.getYear(),cEvent.getMonth(),cEvent.getDay()));
             if(cEvent.getIsAllday()){
+                isAllDay = true;
                 allDaySwitch.setChecked(true);
                 event_start_time.setVisibility(View.GONE);
                 event_end_time.setVisibility(View.GONE);
             }else{
+                isAllDay = false;
                 allDaySwitch.setChecked(false);
                 event_start_time.setText(genTimeStr(cEvent.getStartTimeHour(),cEvent.getStartTimeMinute()));
                 event_end_time.setText(genTimeStr(cEvent.getEndTimeHour(),cEvent.getEndTimeMinute()));
             }
 
             if(cEvent.getIsNeedNotify()){
+                isNeedNotify = true;
                 notify_switch.setChecked(true);
             }
 

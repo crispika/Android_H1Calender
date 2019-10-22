@@ -32,7 +32,7 @@ public class EventQRShare extends Activity {
         String event_id = getIntent().getStringExtra("event_id");
         CalenderEvent event = (CalenderEvent) new sqliteHelper(getApplicationContext()).getEventByEventId(event_id);
         String jsonContent = event.toJsonStr();
-        Bitmap qrcode = QRShareUtils.createQRCodeBitmap(jsonContent,500,500);
+        Bitmap qrcode = QRShareUtils.createQRCodeBitmap(jsonContent,700,700);
 
         qrImage.setImageBitmap(qrcode);
     }
