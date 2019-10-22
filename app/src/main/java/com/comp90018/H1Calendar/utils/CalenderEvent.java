@@ -27,6 +27,7 @@ public class CalenderEvent implements Serializable {
 
     // Tao
     private String userId;
+    private String locationId;
 
     public CalenderEvent() {
 
@@ -38,6 +39,14 @@ public class CalenderEvent implements Serializable {
 
     public void setEventId(String id) {
         this.eventId = id;
+    }
+
+    public void setLocationId(String id) {
+        this.locationId = id;
+    }
+
+    public String getLocationId() {
+        return locationId;
     }
 
     public String getTitle() {

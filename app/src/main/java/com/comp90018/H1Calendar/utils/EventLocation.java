@@ -14,8 +14,13 @@ public class EventLocation {
     private String locationId;
     private String userId;
 
-
     public EventLocation(){
+
+    }
+
+    public EventLocation(String name, String coordinate){
+        this.name = name;
+        this.coordinate = coordinate;
 
     }
 

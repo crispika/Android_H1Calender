@@ -3,7 +3,7 @@
     android:id="@+id/nav_header_logout"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="400dp"
+    android:layout_height="450dp"
     android:gravity="center">
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -27,7 +27,7 @@
             android:layout_height="40dp">
 
             <ImageView
-                android:id="@+id/iv_userId"
+                android:id="@+id/iv_userName"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
@@ -35,11 +35,11 @@
                 android:src="@drawable/ic_username" />
 
             <TextView
-                android:id="@+id/tv_userId"
+                android:id="@+id/tv_userName"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="20dp"
-                android:layout_toRightOf="@id/iv_userId"
+                android:layout_toRightOf="@id/iv_userName"
                 android:background="@null"
                 android:textColor="#000"
                 android:textSize="15dp"

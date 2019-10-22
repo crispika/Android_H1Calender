@@ -3,7 +3,7 @@
     android:id="@+id/nav_header_register"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="400dp"
+    android:layout_height="450dp"
     android:gravity="center">
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -21,6 +21,40 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginTop="100px">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp">
+
+        <ImageView
+            android:id="@+id/iv_username"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_username" />
+
+        <EditText
+            android:id="@+id/et_username"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@id/iv_username"
+            android:background="@null"
+            android:cursorVisible="true"
+            android:hint="your username here"
+            android:textColor="#000"
+            android:textColorHint="#717070"
+            android:textSize="15dp"/>
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="#c1bcbc" />
 
         <RelativeLayout
             android:layout_width="match_parent"
