@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.hardware.Sensor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import com.comp90018.H1Calendar.DBHelper.sqliteHelper;
 import com.comp90018.H1Calendar.EventSettingActivity.EventQRShare;
 import com.comp90018.H1Calendar.EventView.DeleteDialog;
 import com.comp90018.H1Calendar.utils.CalenderEvent;
+import com.comp90018.H1Calendar.utils.ShakeUtils;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton;
 
 import butterknife.ButterKnife;
@@ -42,6 +44,8 @@ public class EventDetailActivity extends AppCompatActivity {
     private TextView tv_detail_alarm_time;
     private TextView tv_detail_location;
     private TextView tv_detail_event_description;
+
+    private ShakeUtils shakeItOff;
 
     @OnClick(R.id.event_detail_back) void jumpBack(){
         Intent intent = new Intent(this, MainActivity.class);
@@ -82,7 +86,33 @@ public class EventDetailActivity extends AppCompatActivity {
         eventID = bundle.getString("id");
         mEvent = dbhelper.getEventByEventId(eventID);
         setViewDetail();
+        initSensor();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        shakeItOff.register();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        shakeItOff.unRegister();
+    }
+
+    private void initSensor(){
+        shakeItOff = new ShakeUtils(this);
+        shakeItOff.setOnShakeListener(new ShakeUtils.OnShakeListener() {
+            @Override
+            public void onShake() {
+                Intent intent = new Intent(EventDetailActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+    }
+
     public void bindView(){
         event_detail_layout_header = findViewById(R.id.event_detail_header);
         tv_detail_title = findViewById(R.id.event_detail_title);
