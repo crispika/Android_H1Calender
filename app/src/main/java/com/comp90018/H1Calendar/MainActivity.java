@@ -525,7 +525,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         );
         items.add(new RFACLabelItem<Integer>()
                 .setLabel("Bookmark Current Location")
-                .setResId(R.drawable.ic_location_on_grey_600_24dp)
+                .setResId(R.drawable.icon_location)
                 .setIconNormalColor(0xff056f00)
                 .setIconPressedColor(0xff0d5302)
                 .setLabelColor(0xff056f00)

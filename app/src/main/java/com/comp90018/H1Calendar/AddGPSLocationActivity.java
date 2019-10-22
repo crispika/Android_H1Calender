@@ -8,14 +8,11 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.location.LocationProvider;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.PopupMenu;
@@ -24,12 +21,12 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.comp90018.H1Calendar.DBHelper.sqliteHelper;
 import com.comp90018.H1Calendar.utils.EventLocation;
 import com.comp90018.H1Calendar.utils.LocationListAdapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -48,6 +45,7 @@ public class AddGPSLocationActivity extends AppCompatActivity implements Locatio
     private String userId;
     protected List<EventLocation> locationList;
     private sqliteHelper db;
+    private static final int LOCATION_CODE = 1;
 
     @BindView(R.id.gps_location_input)
     EditText gps_location_input;
@@ -65,7 +63,6 @@ public class AddGPSLocationActivity extends AppCompatActivity implements Locatio
             //TODO: save location with name to database
             sqliteHelper db = new sqliteHelper(this);
             EventLocation eventLocation = new EventLocation(userId,locationName,getlatlng());
-
             Boolean status = db.insertLocations(eventLocation);
 
             if(status){
@@ -93,22 +90,58 @@ public class AddGPSLocationActivity extends AppCompatActivity implements Locatio
         ButterKnife.bind(this);
         db = new sqliteHelper(this);
         loadUserInfo();
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-        }else {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, this);
-        }
-
-        locationList = db.getAllLocationsByUserId("");
-//        locationList.add(new EventLocation("gz","12345"));
-//        locationList.add(new EventLocation("bj","12345"));
-//        locationList.add(new EventLocation("sh","12345"));
+        //Todo: loading saved locationns
+        locationList = db.getAllLocationsByUserId(userId);
         LocationListAdapter locationListAdapter = new LocationListAdapter(this,locationList);
         locationListView.setAdapter(locationListAdapter);
         locationListView.setOnItemClickListener(new OnClickLocationListner());
 
 
+        //Todo: getting current location
+
+
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_CODE);
+        }else {
+            grantLocation();
+        }
+
+
+
+
+    }
+
+    private void grantLocation(){
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        List list = locationManager.getProviders(true);
+
+        String provider = "";
+
+        if (list.contains(LocationManager.GPS_PROVIDER)) {
+            //是否为GPS位置控制器
+            provider = LocationManager.GPS_PROVIDER;
+        } else if (list.contains(LocationManager.NETWORK_PROVIDER)) {
+            //是否为网络位置控制器
+            provider = LocationManager.NETWORK_PROVIDER;
+        }
+        if((checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) ){
+            locationManager.requestLocationUpdates(provider, 5000, 10, this);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[],int[] grantResults) {
+        switch (requestCode) {
+            case LOCATION_CODE: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    grantLocation();
+                }
+            }
+        }
     }
 
     @Override
@@ -174,7 +207,7 @@ public class AddGPSLocationActivity extends AppCompatActivity implements Locatio
                 case R.id.delete_location:
                     Toast.makeText(getApplicationContext(), "delete location", Toast.LENGTH_SHORT).show();
                     db.deleteLocationByLocationId(selectedLocationID);
-                    locationList = db.getAllLocationsByUserId("");
+                    locationList = db.getAllLocationsByUserId(userId);
                     LocationListAdapter locationListAdapter = new LocationListAdapter(getApplicationContext(),locationList);
                     locationListView.setAdapter(locationListAdapter);
                     break;

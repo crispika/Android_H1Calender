@@ -18,7 +18,7 @@
         <TextView
             android:id="@+id/gps_title"
             style="@style/ActivityTitleStyle"
-            android:text="Event Schedule"
+            android:text="Bookmark Location"
             android:textSize="18dp" />
 
         <ImageButton
@@ -77,6 +77,11 @@
             android:padding="10dp"
             android:text="saved locations, press to delete"
             android:textAlignment="center"
+            />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:background="@color/colorPrimary"
             />
         <ListView
             android:id="@+id/edit_location_list"
