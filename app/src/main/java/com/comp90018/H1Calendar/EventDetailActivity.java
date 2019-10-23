@@ -2,14 +2,22 @@ package com.comp90018.H1Calendar;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -18,12 +26,15 @@ import com.comp90018.H1Calendar.DBHelper.sqliteHelper;
 import com.comp90018.H1Calendar.EventSettingActivity.EventQRShare;
 import com.comp90018.H1Calendar.EventView.DeleteDialog;
 import com.comp90018.H1Calendar.utils.CalenderEvent;
+import com.comp90018.H1Calendar.utils.DistanceCalculator;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton;
+
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class EventDetailActivity extends AppCompatActivity {
+public class EventDetailActivity extends AppCompatActivity implements LocationListener {
 
     private sqliteHelper dbhelper;
     private CalenderEvent mEvent;
@@ -35,13 +46,20 @@ public class EventDetailActivity extends AppCompatActivity {
     private ImageButton btn_detail_share;
     private RapidFloatingActionButton rfab_detail_update;
 
+    private static final int LOCATION_CODE = 1;
+    protected LocationManager locationManager;
+    private boolean hasLocation;
+    private String eventLocationStr;
     private String eventID;
+
     private TextView tv_detail_title;
     private TextView tv_detail_date;
     private TextView tv_detail_start_end_time;
     private TextView tv_detail_alarm_time;
     private TextView tv_detail_location;
     private TextView tv_detail_event_description;
+    private TextView tv_detail_event_distance;
+    private LinearLayout distanceView;
 
     @OnClick(R.id.event_detail_back) void jumpBack(){
         Intent intent = new Intent(this, MainActivity.class);
@@ -82,6 +100,15 @@ public class EventDetailActivity extends AppCompatActivity {
         eventID = bundle.getString("id");
         mEvent = dbhelper.getEventByEventId(eventID);
         setViewDetail();
+
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_CODE);
+        }else {
+            grantLocation();
+        }
+
     }
     public void bindView(){
         event_detail_layout_header = findViewById(R.id.event_detail_header);
@@ -91,10 +118,22 @@ public class EventDetailActivity extends AppCompatActivity {
         tv_detail_alarm_time = findViewById(R.id.event_detail_alarm_time);
         tv_detail_location = findViewById(R.id.event_detail_location);
         tv_detail_event_description = findViewById(R.id.event_detail_description);
+        tv_detail_event_distance = findViewById(R.id.event_detail_distance);
+        distanceView = findViewById(R.id.detail_distance_view);
     }
     public void setViewDetail(){
         String dateStr = mEvent.getDay() + " / "+mEvent.getMonth() + " / " + mEvent.getYear();
         setTimeStr();
+
+        if(!mEvent.getLocationId().equals("")){
+            hasLocation = true;
+            eventLocationStr = mEvent.getCoordinate();
+            grantLocation();
+
+        }else {
+            hasLocation = false;
+            distanceView.setVisibility(View.GONE);
+        }
 
         event_detail_layout_header.setBackgroundColor(this.getResources().getColor(getColor(mEvent)));
         tv_detail_title.setText(mEvent.getTitle());
@@ -163,5 +202,58 @@ public class EventDetailActivity extends AppCompatActivity {
             }
         });
         builder.show();
+    }
+
+    private void grantLocation(){
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        List list = locationManager.getProviders(true);
+
+        String provider = "";
+
+       if (list.contains(LocationManager.NETWORK_PROVIDER)) {
+           //是否为网络位置控制器
+           provider = LocationManager.NETWORK_PROVIDER;
+       }else if (list.contains(LocationManager.GPS_PROVIDER)) {
+           //是否为GPS位置控制器
+           provider = LocationManager.GPS_PROVIDER;
+       }
+       if((checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) ){
+           locationManager.requestLocationUpdates(provider, 5000, 10, this);
+       }
+    }
+
+
+    @Override
+    public void onLocationChanged(Location location) {
+        if(hasLocation){
+            Location eventLocation = new Location("dummyprovider");
+            String[]latlng = eventLocationStr.split(",");
+            //System.out.println(location.getLatitude() +" "+ location.getLongitude());
+            eventLocation.setLatitude(Float.valueOf(latlng[0]));
+            eventLocation.setLongitude(Float.valueOf(latlng[1]));
+            //System.out.println(eventLocation.getLatitude() +" "+ eventLocation.getLongitude());
+            String distance = DistanceCalculator.distanceBetween(location,eventLocation);
+            tv_detail_event_distance.setText(distance);
+
+        }
+
+
+
+    }
+
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+
     }
 }
