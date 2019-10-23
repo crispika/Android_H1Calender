@@ -394,8 +394,12 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                                     Toast.makeText(getApplicationContext(), json.msg,
                                             Toast.LENGTH_SHORT).show();
                                 }
-                                else {
+                                else if (json.code == 400){
                                     Toast.makeText(getApplicationContext(), json.msg,
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                                else {
+                                    Toast.makeText(getApplicationContext(), "unexpected error",
                                             Toast.LENGTH_SHORT).show();
                                 }
                             }
@@ -754,9 +758,12 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                     if(isWifiConnected(getApplicationContext())){
                         syncToCloud(userToken, userName);
                     }
+                }else if (json.code == 401){
+                    Toast.makeText(getApplicationContext(), json.msg,
+                            Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    Toast.makeText(getApplicationContext(), json.msg,
+                    Toast.makeText(getApplicationContext(), "unexpected error",
                             Toast.LENGTH_SHORT).show();
                 }
             }};
