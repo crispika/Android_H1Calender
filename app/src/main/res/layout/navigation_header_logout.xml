@@ -41,7 +41,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_toRightOf="@id/iv_userName"
                 android:background="@null"
-                android:textColor="#000"
+                android:textColor="@color/text_color"
                 android:textSize="15dp"
                 android:gravity="center_vertical"/>
 
@@ -74,7 +74,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_toRightOf="@id/iv_useremail"
                 android:background="@null"
-                android:textColor="#000"
+                android:textColor="@color/text_color"
                 android:textSize="15dp"
                 android:gravity="center_vertical"/>
 

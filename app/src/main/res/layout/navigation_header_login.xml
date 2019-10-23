@@ -44,7 +44,7 @@
                 android:cursorVisible="true"
                 android:inputType="textEmailAddress"
                 android:hint="your username here"
-                android:textColor="#000"
+                android:textColor="@color/text_color"
                 android:textColorHint="#717070"
                 android:textSize="15sp"/>
 
@@ -80,7 +80,7 @@
                 android:cursorVisible="true"
                 android:inputType="textPassword"
                 android:hint="your password here"
-                android:textColor="#000"
+                android:textColor="@color/text_color"
                 android:textColorHint="#717070"
                 android:textSize="15dp"/>
 
