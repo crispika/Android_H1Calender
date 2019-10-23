@@ -143,7 +143,7 @@ public class sqliteHelper extends SQLiteOpenHelper {
         int month = calenderEvent.getMonth() + 1;
         int year = calenderEvent.getYear();
 
-        String dateStr = day + "/" + month + "/" + year;
+        String dateStr = String.format("%04d", year) + "-" + String.format("%02d", month) + "-" + String.format("%02d", day);
         Log.d("dateeee1", String.valueOf(day) + String.valueOf(month) + String.valueOf(year));
 
         contentValues.put("adate", dateStr);
@@ -325,7 +325,8 @@ public class sqliteHelper extends SQLiteOpenHelper {
 
         List<CalenderEvent> calenderEventList = new ArrayList<CalenderEvent>();
 
-        Cursor cursor = sqlitedb.rawQuery("SELECT * FROM EVENT WHERE userId = ? and isDelete = 'F' and adate BETWEEN ? AND ?", new String[]{userid, startDay, endDay});
+        //Cursor cursor = sqlitedb.rawQuery("SELECT * FROM EVENT WHERE userId = ? and isDelete = 'F' and adate BETWEEN ? AND ?", new String[]{userid, startDay, endDay});
+        Cursor cursor = sqlitedb.rawQuery("SELECT * FROM EVENT WHERE userId = ? and isDelete = 'F' and date(adate) BETWEEN date(?) AND date(?)", new String[]{userid, startDay, endDay});
 
         while (cursor.moveToNext()) {
 
@@ -432,7 +433,7 @@ public class sqliteHelper extends SQLiteOpenHelper {
         int month = calenderEvent.getMonth() + 1;
         int year = calenderEvent.getYear();
 
-        String dateStr = day + "/" + month + "/" + year;
+        String dateStr = String.format("%04d", year) + "-" + String.format("%02d", month) + "-" + String.format("%02d", day);
 
         contentValues.put("adate", dateStr);
         contentValues.put("startTimeHour", calenderEvent.getStartTimeHour());
@@ -497,10 +498,10 @@ public class sqliteHelper extends SQLiteOpenHelper {
         calenderEvent.setIsNeedNotify((cursor.getInt(3) == 1) ? true : false);
 
         String date = cursor.getString(4);
-        String[] subStrings = date.split("/");
-        calenderEvent.setDay(Integer.parseInt(subStrings[0]));
+        String[] subStrings = date.split("-");
+        calenderEvent.setDay(Integer.parseInt(subStrings[2]));
         calenderEvent.setMonth(Integer.parseInt(subStrings[1]) - 1);
-        calenderEvent.setYear(Integer.parseInt(subStrings[2]));
+        calenderEvent.setYear(Integer.parseInt(subStrings[0]));
 
         calenderEvent.setStartTimeHour(Integer.parseInt(cursor.getString(5)));
         calenderEvent.setStartTimeMinute(Integer.parseInt(cursor.getString(6)));

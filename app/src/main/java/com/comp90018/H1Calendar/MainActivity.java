@@ -968,7 +968,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                 if (json.code == 201) {
                     saveUserInfo(json.token, json.userInfo.userid,json.userInfo.email,json.userInfo.username);
                     loadUserInfo();
-                    updateEventAndLocationFromSync(userId, json.events, json.locations);
+                    updateEventAndLocationFromSync(userId, json.events, json.locations, dbhelper);
                     dbhelper.deleteEventByEventIdForReal();
                     dbhelper.deleteLocationByLocationIdForReal();
 
@@ -1016,7 +1016,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
     }
 
-    public void updateEventAndLocationFromSync(String userid, List<Event> events, List<Location> locations){
+    public void updateEventAndLocationFromSync(String userid, List<Event> events, List<Location> locations, sqliteHelper dbhelper){
 
         List<Event> localEvents = dbhelper.syncGetAllEventsByUserId(userid);
         HashMap<String, Event> eventMap = new HashMap<String, Event>();
