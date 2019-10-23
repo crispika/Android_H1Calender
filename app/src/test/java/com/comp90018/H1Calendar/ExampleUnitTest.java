@@ -68,7 +68,10 @@ public class ExampleUnitTest {
     }
 
     @Test
-    public void testNotification(){
+    public void testDate(){
+        Calendar day = Calendar.getInstance();
+        day.set(Calendar.WEEK_OF_YEAR, 19);
+        System.out.println(DateManager.dateToStr(day.getTime()));
 
     }
 
