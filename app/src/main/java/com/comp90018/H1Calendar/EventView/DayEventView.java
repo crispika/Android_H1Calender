@@ -75,7 +75,6 @@ public class DayEventView extends Fragment {
                 //System.out.println(dayEventListViewAdapter.getEvent(i).getEventId());
                 intent.putExtras(bundle);
                 startActivity(intent);
-                System.out.println(dayEventListViewAdapter.getEvent(i).getTitle());
             }
         });
 
