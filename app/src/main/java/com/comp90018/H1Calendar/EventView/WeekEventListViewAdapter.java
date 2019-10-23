@@ -2,6 +2,7 @@ package com.comp90018.H1Calendar.EventView;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +57,8 @@ public class WeekEventListViewAdapter extends BaseAdapter {
     public void setDate(String start, String end){
         mDateStart = start;
         mDateEnd = end;
+        Log.d("dateStart",start);
+        Log.d("dateEnd",end);
         setEventList();
     }
     public void setEventList(){
