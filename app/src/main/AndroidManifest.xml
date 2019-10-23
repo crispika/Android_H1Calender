@@ -57,7 +57,8 @@
         <receiver android:name=".Alarm.AlarmReceiver"/>
 
         <!--background service: WiFiAutoSync-->
-        <service android:enabled="true" android:name=".WiFiAutoSync" android:process="system"></service>
+<!--        <service android:enabled="true" android:name=".WiFiAutoSync" android:process="system"></service>-->
+        <service android:enabled="true" android:name=".WiFiAutoSync"></service>
 
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>
