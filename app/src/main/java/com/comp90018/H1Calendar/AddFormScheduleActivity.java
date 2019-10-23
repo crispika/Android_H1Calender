@@ -65,6 +65,7 @@ public class AddFormScheduleActivity extends Activity {
     private static final String USERNAME = "username";
     private static final String USERPWD = "userpwd";
 
+
     // variable used to store user info that get from shared preferences
     private String userToken, userId, userEmail, userName, userPwd;
 

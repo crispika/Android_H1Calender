@@ -2,6 +2,8 @@ package com.comp90018.H1Calendar;
 
 import java.io.OutputStream;
 import java.io.InputStream;
+
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -80,6 +82,7 @@ import com.google.gson.Gson;
 
 public class MainActivity extends AppCompatActivity implements RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener {
 
+    private static final int SETTING_CODE = 15;
     private LightSensorUtils lightSensor;
 
     private DayEventView dayEventView;
@@ -104,9 +107,13 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
     private static final String USEREMAIL = "useremail";
     private static final String USERNAME = "username";
     private static final String USERPWD = "userpwd";
+    private static final String NIGHTAUTO = "nightModeAuto";
+    private static final String NIGHT = "nightMode";
+    private static final String SHAKE = "shakeMode";
 
     // variable used to store user info that get from shared preferences
     private String userToken, userId, userEmail, userName, userPwd;
+    private boolean nightAuto,nightMode,shakeMode;
 
     // db helper
     sqliteHelper dbhelper;
@@ -608,6 +615,16 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         userPwd = sharedPreferences.getString(USERPWD, "");
 
     }
+    public void loadSetting() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHAREDPREFS, Context.MODE_PRIVATE);
+
+        // the default values of these setting variables are ""
+        nightAuto = sharedPreferences.getBoolean(NIGHTAUTO,true);
+        nightMode = sharedPreferences.getBoolean(NIGHT,true);
+        shakeMode = sharedPreferences.getBoolean(SHAKE,true);
+
+    }
+
 
     // http post
 //        public String sendPost(String urlAddress, String paramValue){
@@ -1085,12 +1102,35 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                             myEditor.putBoolean("isDayView",false);
                             myEditor.apply();
                             break;
+                        case R.id.setting:
+                            //TODO: switch to Setting Activity
+                            Intent intent_to_setting = new Intent();
+                            intent_to_setting.setClass(getApplicationContext(), SettingActivity.class);
+                            startActivityForResult(intent_to_setting,SETTING_CODE);
                         default:
                             break;
                     }
                     return false;
                 }
             });
+        }
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode,resultCode,data);
+
+        if(requestCode == SETTING_CODE){
+            if(resultCode == SETTING_CODE){
+                loadSetting();
+                if(nightAuto){
+                    lightSensor.unRegister();
+                }else {
+                    lightSensor.register();
+                }
+
+            }
         }
 
     }
