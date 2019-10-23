@@ -27,7 +27,8 @@ public class DateManager {
     }
 
     public static String dateToStr(Date date){
-        SimpleDateFormat dateFormat = new SimpleDateFormat("d-M-yyyy");
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("d-M-yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("d/M/yyyy");
         String dateString = dateFormat.format(date);
 
 //        String part1 = dateString.substring(0,3);
