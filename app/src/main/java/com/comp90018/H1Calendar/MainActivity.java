@@ -249,7 +249,10 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         // user info is available
         if (!userToken.equals("") && !userName.equals("") && !userId.equals("") && !userEmail.equals("") && !userPwd.equals("")) {
 
+            jumpToNavigationHeaderLogout();
+
             // network is working
+            /*
             if(isNetworkConnected(getApplicationContext())){
 
                 userValidation(userName, userPwd);
@@ -257,7 +260,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
             }
             else{
                 Toast.makeText(getApplicationContext(), "network is not available", Toast.LENGTH_SHORT).show();
-            }
+            }*/
 
         }
         // user info is not available
@@ -383,8 +386,11 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
                                     saveUserInfo(json.token, json.userInfo.userid,json.userInfo.email,json.userInfo.username,registerPwd);
                                     loadUserInfo();
-
                                     jumpToNavigationHeaderLogout();
+                                    if(isWifiConnected(getApplicationContext())){
+                                        syncToCloud(userToken, userName);
+                                    }
+
                                     Toast.makeText(getApplicationContext(), json.msg,
                                             Toast.LENGTH_SHORT).show();
                                 }
@@ -708,7 +714,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 //
 //    }
 
-    // TODO: user validation
+
     // return user info and validation state
     public void userValidation(String username, String password){
 
@@ -745,6 +751,9 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                     jumpToNavigationHeaderLogout();
                     Toast.makeText(getApplicationContext(), "login successfully",
                             Toast.LENGTH_SHORT).show();
+                    if(isWifiConnected(getApplicationContext())){
+                        syncToCloud(userToken, userName);
+                    }
                 }
                 else{
                     Toast.makeText(getApplicationContext(), json.msg,
