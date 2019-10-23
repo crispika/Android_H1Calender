@@ -27,10 +27,18 @@ public class DateManager {
     }
 
     public static String dateToStr(Date date){
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("d-M-yyyy");
         String dateString = dateFormat.format(date);
-        if (dateString.substring(0,1).equals("0"))
-            dateString = dateString.substring(1);
+
+//        String part1 = dateString.substring(0,3);
+//        String part2 = dateString.substring(3);
+//
+//        if (part1.substring(0,1).equals("0"))
+//            part1 = part1.substring(1);
+//        if (part2.substring(0,1).equals("0"))
+//            part2 = part2.substring(1);
+
+//        return part1+part2;
         return dateString;
     }
 
