@@ -208,8 +208,8 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         // Tao: start here
 
         // start background service - auto sync if wifi is available
-//        Intent intent = new Intent(this, WiFiAutoSync.class);
-//        startService(intent);
+        Intent intent = new Intent(this, WiFiAutoSync.class);
+        startService(intent);
 
         navigationView = findViewById(R.id.navigation);
 
@@ -978,6 +978,8 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                             Toast.LENGTH_SHORT).show();
                 } else if (json.code == 408) {
                     jumpToNavigationHeaderLogin();
+                    saveUserInfo("", "", "", "", "");
+                    loadUserInfo();
                     Toast.makeText(getApplicationContext(), json.msg,
                             Toast.LENGTH_SHORT).show();
                 } else {
