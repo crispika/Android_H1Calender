@@ -70,115 +70,44 @@ public class WiFiAutoSync extends Service {
 
         timer.scheduleAtFixedRate(new TimerTask() {
 
-
             // calling UI handler to show the message
-            sqliteHelper dbhelper = new sqliteHelper(getApplicationContext());
-            List<Event> allCurrentEventList = dbhelper.syncGetAllEventsByUserId(userId);
-            // locationList need more word
-            List<Location> allCurentLocationList = dbhelper.syncGetAllLocationsByUserId(userId);
-            // EventSync
-            EventSync eventSync = new EventSync();
-
-            Gson gson1 = new GsonBuilder().serializeNulls().create();
-            Gson gson = new Gson();
-            String jsonObject = gson1.toJson(eventSync);
-            String urlAddress = "http://35.197.167.33:8222/sync";
-            Handler handler = new Handler() {
-                public void handleMessage(Message msg) {
-
-                    super.handleMessage(msg);
-                    eventSync.events = allCurrentEventList;
-                    eventSync.locations = allCurentLocationList;
-                    eventSync.token = userToken;
-                    eventSync.username = userName;
-                    Bundle bundle = msg.getData();
-                    String jsonString = bundle.getString("result");
-                    ResultFromSync json = gson.fromJson(jsonString, ResultFromSync.class);
-                    //register success, login
-                    if (json.code == 201) {
-                        saveUserInfo(json.token, json.userInfo.userid,json.userInfo.email,json.userInfo.username);
-                        loadUserInfo();
-                        //updateEventAndLocationFromSync(userId, json.events, json.locations);
-                        dbhelper.deleteEventByEventIdForReal();
-                        dbhelper.deleteLocationByLocationIdForReal();
-
-                    } else if (json.code == 408) {
-                        //jumpToNavigationHeaderLogin();
-
-                    } else {
-
-                    }
+            private Handler updateUI = new Handler(){
+                @Override
+                public void dispatchMessage(Message message){
+                    super.dispatchMessage(message);
+                    showToastMessage();
                 }
             };
 
             @Override
             public void run() {
-                if (isWifiConnected(getApplicationContext())){
+                try{
 
+                    if (isWifiConnected(getApplicationContext())) {
+                        System.out.println("wifi");
+                        loadUserInfo();
+                        String userid = userId;
+                        String usertoken = userToken;
 
-                    Log.d("start post:", jsonObject);
-                    if(urlAddress.equals("") || urlAddress == null) {
-                        Log.d("No url:", jsonObject);
-                        return;
-                    }
-                    String res = "";
-                    HttpURLConnection connection = null;
-                    OutputStream outStream = null;
-                    BufferedReader bufferedReader = null;
-                    Message msg = null;
-                    try{
-                        URL url_path = new URL(urlAddress.trim());
-                        connection = (HttpURLConnection) url_path.openConnection();
-                        connection.setDoOutput(true);
-                        connection.setDoInput(true);
-                        connection.setUseCaches(false);
-                        connection.setInstanceFollowRedirects(true);
-                        connection.setRequestMethod("POST");
-                        connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-                        //获取连接
-                        connection.connect();
-                        outStream = connection.getOutputStream();
-                        outStream.write(jsonObject.getBytes());
-                        outStream.flush();
-                        outStream.close();
-                        bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+                        Log.e("background service", "===========runnable=======");
+                        //updateUI.sendEmptyMessage(0);
 
+                        if(!userid.equals("") && !usertoken.equals("")){
 
-                        String line;
-                        while ((line = bufferedReader.readLine()) != null) {
-                            res += line;
+                            //updateUI.sendEmptyMessage(0);
                         }
-                        Log.d("nework", res);
-                        bufferedReader.close();
-                        msg = handler.obtainMessage();
-                        Bundle bundle = new Bundle();
-                        bundle.putString("result", res);
-                        msg.setData(bundle);
-                        handler.sendMessage(msg);
 
-                    }catch (Exception e){
-                        Log.d("nework", "quest problem");
-                        e.printStackTrace();
-                    }finally {
-                        try {
-                            if (outStream != null) {
-                                outStream.close();
-                            }
-                            if (bufferedReader != null) {
-                                bufferedReader.close();
-                            }
-                            if (connection != null) {
-                                connection.disconnect();
-                            }
-                        } catch (Exception e) {
-                            Log.d("nework", "close problem");
-                            e.printStackTrace();
-                        } }, DELAY, PERIOD);
+
+
+                    }
                 }
+                catch (Exception e) {e.printStackTrace(); }
             }
-        }
+        }, DELAY, PERIOD);
+
         return super.onStartCommand(intent, flags, startId);
     }
+
 
     // check for wifi
     public boolean isWifiConnected(Context context) {
