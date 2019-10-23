@@ -14,6 +14,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.hardware.Sensor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -31,6 +32,9 @@ import com.comp90018.H1Calendar.utils.DistanceCalculator;
 import com.comp90018.H1Calendar.utils.ShakeUtils;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -41,6 +45,9 @@ public class EventDetailActivity extends AppCompatActivity implements LocationLi
     private sqliteHelper dbhelper;
     private CalenderEvent mEvent;
     private String timeStr;
+    private String startTimeStr;
+    private String endTimeStr;
+    private String dateStr;
 
     private RelativeLayout event_detail_layout_header;
     private ImageButton btn_detail_back;
@@ -158,7 +165,8 @@ public class EventDetailActivity extends AppCompatActivity implements LocationLi
     }
     public void setViewDetail(){
         Integer realMonth = mEvent.getMonth()+1;
-        String dateStr = mEvent.getDay() + " / "+ realMonth + " / " + mEvent.getYear();
+        dateStr = mEvent.getDay() + "/"+ realMonth + "/" + mEvent.getYear();
+        dateStr = convertDate(dateStr);
         setTimeStr();
 
         if(mEvent.getLocationId() != null){
@@ -179,9 +187,7 @@ public class EventDetailActivity extends AppCompatActivity implements LocationLi
         tv_detail_location.setText(mEvent.getLocal());
         tv_detail_event_description.setText(mEvent.getDescription());
     }
-    public void bindOnClickAction(){
 
-    }
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(this, MainActivity.class);
@@ -208,13 +214,43 @@ public class EventDetailActivity extends AppCompatActivity implements LocationLi
         }
     }
 
-    public void setTimeStr(){
-        if(mEvent.getIsAllday()){
+    public void setTimeStr() {
+        if (mEvent.getIsAllday()) {
             timeStr = "Full Day";
-        }else{
-            timeStr = mEvent.getStartTimeHour() + " : " + mEvent.getStartTimeMinute() + " - " +
-                    mEvent.getEndTimeHour() + " : " + mEvent.getEndTimeMinute();
+        } else {
+            startTimeStr = mEvent.getStartTimeHour() + " : " + mEvent.getStartTimeMinute();
+            endTimeStr = mEvent.getEndTimeHour() + " : " + mEvent.getEndTimeMinute();
+            startTimeStr = convertTime(startTimeStr);
+            endTimeStr = convertTime(endTimeStr);
+            timeStr = startTimeStr + " - " + endTimeStr;
         }
+    }
+    public String convertTime(String timeString){
+        String result = "";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("h : m");
+        SimpleDateFormat dateFormat2 = new SimpleDateFormat("HH : mm");
+        try {
+            Date date = dateFormat.parse(timeString);
+
+            result = dateFormat2.format(date);
+            Log.e("Time", result);
+        } catch (ParseException e) {
+        }
+        return result;
+
+    }
+    public String convertDate(String dateString){
+        String result = "";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("d/MM/yyyy");
+        SimpleDateFormat dateFormat2 = new SimpleDateFormat("dd / MM / yyyy - E");
+        try {
+            Date date = dateFormat.parse(dateString);
+
+            result = dateFormat2.format(date);
+            Log.e("Time", result);
+        } catch (ParseException e) {
+        }
+        return result;
     }
 
     public void setAlermText(){
@@ -255,10 +291,12 @@ public class EventDetailActivity extends AppCompatActivity implements LocationLi
         String provider = "";
         if (list.contains(LocationManager.GPS_PROVIDER)) {
             //是否为GPS位置控制器
+            //GPS location controller
             provider = LocationManager.GPS_PROVIDER;
         }
         else if (list.contains(LocationManager.NETWORK_PROVIDER)) {
            //是否为网络位置控制器
+           //Internet location controller
            provider = LocationManager.NETWORK_PROVIDER;
         }
         if((checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED

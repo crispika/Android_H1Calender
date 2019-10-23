@@ -14,7 +14,10 @@ import com.comp90018.H1Calendar.R;
 import com.comp90018.H1Calendar.DBHelper.sqliteHelper;
 import com.comp90018.H1Calendar.utils.CalenderEvent;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public class WeekEventListViewAdapter extends BaseAdapter {
@@ -23,10 +26,13 @@ public class WeekEventListViewAdapter extends BaseAdapter {
     private LayoutInflater myLayoutInflater;
     private String mDateStart;
     private String mDateEnd;
-    private String timeStr;
     private sqliteHelper dbhelper;
     private List<CalenderEvent> weekEvents;
     private CalenderEvent mEvent;
+
+    private String timeStr;
+    private String startTimeStr;
+    private String endTimeStr;
 
     public WeekEventListViewAdapter(Context context) {
         myContext = context;
@@ -57,8 +63,6 @@ public class WeekEventListViewAdapter extends BaseAdapter {
     public void setDate(String start, String end){
         mDateStart = start;
         mDateEnd = end;
-        Log.d("dateStart",start);
-        Log.d("dateEnd",end);
         setEventList();
     }
     public void setEventList(){
@@ -106,7 +110,8 @@ public class WeekEventListViewAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) view.getTag();
         }
-        dateStr = mEvent.getDay() + " / "+mEvent.getMonth() + " / " + mEvent.getYear();
+        dateStr = mEvent.getDay() + "/"+(mEvent.getMonth()+1) + "/" + mEvent.getYear();
+        dateStr = convertDate(dateStr);
         setTimeStr();
         holder.tvWeekEventTitle.setText(mEvent.getTitle());
         holder.tvWeekEventLocation.setText(mEvent.getLocal());
@@ -120,14 +125,46 @@ public class WeekEventListViewAdapter extends BaseAdapter {
     public List<CalenderEvent> getEvantList(){
         return weekEvents;
     }
-    public void setTimeStr(){
-        if(mEvent.getIsAllday()){
+
+    public void setTimeStr() {
+        if (mEvent.getIsAllday()) {
             timeStr = "Full Day";
-        }else{
-            timeStr = mEvent.getStartTimeHour() + " : " + mEvent.getStartTimeMinute() + " - " +
-                    mEvent.getEndTimeHour() + " : " + mEvent.getEndTimeMinute();
+        } else {
+            startTimeStr = mEvent.getStartTimeHour() + " : " + mEvent.getStartTimeMinute();
+            endTimeStr = mEvent.getEndTimeHour() + " : " + mEvent.getEndTimeMinute();
+            startTimeStr = convertTime(startTimeStr);
+            endTimeStr = convertTime(endTimeStr);
+            timeStr = startTimeStr + " - " + endTimeStr;
         }
     }
+    public String convertTime(String timeString){
+        String result = "";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("h : m");
+        SimpleDateFormat dateFormat2 = new SimpleDateFormat("HH : mm");
+        try {
+            Date date = dateFormat.parse(timeString);
+
+            result = dateFormat2.format(date);
+            Log.e("Time", result);
+        } catch (ParseException e) {
+        }
+        return result;
+
+    }
+    public String convertDate(String dateString){
+        String result = "";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("d/MM/yyyy");
+        SimpleDateFormat dateFormat2 = new SimpleDateFormat("dd / MM / yyyy - E");
+        try {
+            Date date = dateFormat.parse(dateString);
+
+            result = dateFormat2.format(date);
+            Log.e("Time", result);
+        } catch (ParseException e) {
+        }
+        return result;
+    }
+
     private int getColor(CalenderEvent mEvent){
         String color;
         if (mEvent == null) return R.color.Default;

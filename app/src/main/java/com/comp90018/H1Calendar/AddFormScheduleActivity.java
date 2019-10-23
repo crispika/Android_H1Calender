@@ -151,6 +151,9 @@ public class AddFormScheduleActivity extends Activity {
         } else if (event_date.getText().toString().equals("Set Event Date")) {
             Toast.makeText(getApplicationContext(), "Event Date Missing",
                     Toast.LENGTH_SHORT).show();
+        }else if (event_start_time.getText().toString().equals("Start Time") && !isAllDay){
+            Toast.makeText(getApplicationContext(), "Event Start Time Missing",
+                    Toast.LENGTH_SHORT).show();
         } else {
             //set title
             cEvent.setTitle(event_title.getText().toString());
@@ -177,6 +180,10 @@ public class AddFormScheduleActivity extends Activity {
                 cEvent.setEndTimeMinute(0);
             } else {
                 cEvent.setIsAllday(false);
+                if(event_end_time.getText().toString().equals("End Time")){
+                    cEvent.setEndTimeHour(23);
+                    cEvent.setEndTimeMinute(59);
+                }
             }
 
             // Tao
@@ -349,7 +356,7 @@ public class AddFormScheduleActivity extends Activity {
                 if(endTime == null || calendar.before(endTime)){
                     startTime = calendar;
                     event_start_time.setText("From: " + df.format(calendar.getTime()));
-                    //设置开始时间的小时、分钟
+                    //set starting Hour and Minute
                     cEvent.setStartTimeHour(hourOfDay);
                     cEvent.setStartTimeMinute(minute);
                 }else {
