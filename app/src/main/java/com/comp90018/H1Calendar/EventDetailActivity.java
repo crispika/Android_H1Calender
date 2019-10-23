@@ -245,18 +245,18 @@ public class EventDetailActivity extends AppCompatActivity implements LocationLi
         List list = locationManager.getProviders(true);
 
         String provider = "";
-
-       if (list.contains(LocationManager.NETWORK_PROVIDER)) {
+        if (list.contains(LocationManager.GPS_PROVIDER)) {
+            //是否为GPS位置控制器
+            provider = LocationManager.GPS_PROVIDER;
+        }
+        else if (list.contains(LocationManager.NETWORK_PROVIDER)) {
            //是否为网络位置控制器
            provider = LocationManager.NETWORK_PROVIDER;
-       }else if (list.contains(LocationManager.GPS_PROVIDER)) {
-           //是否为GPS位置控制器
-           provider = LocationManager.GPS_PROVIDER;
-       }
-       if((checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        }
+        if((checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) ){
            locationManager.requestLocationUpdates(provider, 100, 10, this);
-       }
+        }
     }
 
     private void displayDistance(Location curLoc){
