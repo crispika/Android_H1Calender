@@ -29,7 +29,8 @@ public class DateManager {
     public static String dateToStr(Date date){
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         String dateString = dateFormat.format(date);
-
+        if (dateString.substring(0,1).equals("0"))
+            dateString = dateString.substring(1);
         return dateString;
     }
 
