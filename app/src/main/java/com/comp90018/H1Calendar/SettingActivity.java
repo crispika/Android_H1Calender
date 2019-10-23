@@ -31,18 +31,19 @@ public class SettingActivity extends Activity {
 
     @OnClick(R.id.sw_night_mode_auto)
     void nightModeAuto() {
-
+        nightAuto = !nightAuto;
 
     }
 
     @OnClick(R.id.sw_night_mode)
     void nightMode() {
+        nightMode = !nightMode;
 
     }
 
     @OnClick(R.id.sw_shake)
     void shakeMode() {
-
+        shakeMode = !shakeMode;
     }
 
     @OnClick(R.id.setting_save)
@@ -58,8 +59,9 @@ public class SettingActivity extends Activity {
         setContentView(R.layout.activity_app_setting);
         ButterKnife.bind(this);
         loadSetting();
+        System.out.println("night auto : "+nightAuto);
         sw_night_mode_auto.setChecked(nightAuto);
-        sw_night_mode_auto.setChecked(nightMode);
+        sw_night_mode.setChecked(nightMode);
         sw_shake.setChecked(shakeMode);
 
 
@@ -69,9 +71,10 @@ public class SettingActivity extends Activity {
     private void saveSettingPref(){
         SharedPreferences sharedPreferences = getSharedPreferences(SHAREDPREFS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("nightModeAuto",sw_night_mode_auto.isChecked());
-        editor.putBoolean("nightMode",sw_night_mode.isChecked());
-        editor.putBoolean("shakeMode",sw_night_mode.isChecked());
+        editor.putBoolean("nightModeAuto",nightAuto);
+        editor.putBoolean("nightMode",nightMode);
+        editor.putBoolean("shakeMode",shakeMode);
+        editor.apply();
 
     }
 
@@ -79,9 +82,9 @@ public class SettingActivity extends Activity {
         SharedPreferences sharedPreferences = getSharedPreferences(SHAREDPREFS, Context.MODE_PRIVATE);
 
         // the default values of these setting variables are ""
-        nightAuto = sharedPreferences.getBoolean("nightModeAuto",true);
-        nightMode = sharedPreferences.getBoolean("nightMode",true);
-        shakeMode = sharedPreferences.getBoolean("shakeMode",true);
+        nightAuto = sharedPreferences.getBoolean("nightModeAuto",false);
+        nightMode = sharedPreferences.getBoolean("nightMode",false);
+        shakeMode = sharedPreferences.getBoolean("shakeMode",false);
 
     }
 

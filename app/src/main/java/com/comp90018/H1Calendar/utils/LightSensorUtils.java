@@ -15,16 +15,37 @@ import java.util.LinkedList;
 public class LightSensorUtils implements SensorEventListener {
 
     private int count = 0;
+    private boolean isOnAuto = true;
     private boolean nowIsDay = true;
+
+    public boolean isOnAuto() {
+        return isOnAuto;
+    }
+
+    public void setOnAuto(boolean onAuto) {
+        isOnAuto = onAuto;
+    }
+
     public interface LightListener {
         public void toLight();
         public void toDark();
     }
 
+
+
     private LightListener mlightListener;
     private SensorManager mSensorManager;
     boolean isDay;
     private final float DAY_LIGHT = 70.0f;
+
+
+    public void setDark(){
+        mlightListener.toDark();
+    }
+
+    public void  setLight(){
+        mlightListener.toLight();
+    }
 
     public LightSensorUtils(Context context) {
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
@@ -49,6 +70,10 @@ public class LightSensorUtils implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
+//        System.out.println(isOnAuto);
+        if (!isOnAuto){
+            return;
+        }
         if (sensorEvent.sensor.getType() == Sensor.TYPE_LIGHT) {
             int i = 0;
             Log.d("Theme", "Sensor Changed " + count + nowIsDay);

@@ -233,6 +233,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         // load user info from shared preferences
         // assign the values to userToken, userId, userName, userPwd, the default values are ""
         loadUserInfo();
+        loadSetting();
 
         // user info is available
         if (!userToken.equals("") && !userName.equals("") && !userId.equals("") && !userEmail.equals("") && !userPwd.equals("")) {
@@ -625,9 +626,17 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         SharedPreferences sharedPreferences = getSharedPreferences(SHAREDPREFS, Context.MODE_PRIVATE);
 
         // the default values of these setting variables are ""
-        nightAuto = sharedPreferences.getBoolean(NIGHTAUTO,true);
-        nightMode = sharedPreferences.getBoolean(NIGHT,true);
-        shakeMode = sharedPreferences.getBoolean(SHAKE,true);
+        nightAuto = sharedPreferences.getBoolean(NIGHTAUTO,false);
+        nightMode = sharedPreferences.getBoolean(NIGHT,false);
+        shakeMode = sharedPreferences.getBoolean(SHAKE,false);
+        lightSensor.setOnAuto(nightAuto);
+        if(!nightAuto){
+            if(nightMode){
+                lightSensor.setDark();
+            }else {
+                lightSensor.setLight();
+            }
+        }
 
     }
 
@@ -1135,11 +1144,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         if(requestCode == SETTING_CODE){
             if(resultCode == SETTING_CODE){
                 loadSetting();
-                if(nightAuto){
-                    lightSensor.unRegister();
-                }else {
-                    lightSensor.register();
-                }
+                System.out.println("setting info: " + nightAuto);
 
             }
         }

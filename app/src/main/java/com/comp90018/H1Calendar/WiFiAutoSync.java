@@ -196,7 +196,7 @@ public class WiFiAutoSync extends Service {
                     Log.e("background service", "===========sync=======");
                     saveUserInfo(json.token, json.userInfo.userid,json.userInfo.email,json.userInfo.username);
                     loadUserInfo();
-                    updateEventAndLocationFromSync(userId, json.events, json.locations);
+                    updateEventAndLocationFromSync(userId, json.events, json.locations,dbhelper);
                     dbhelper.deleteEventByEventIdForReal();
                     dbhelper.deleteLocationByLocationIdForReal();
 
