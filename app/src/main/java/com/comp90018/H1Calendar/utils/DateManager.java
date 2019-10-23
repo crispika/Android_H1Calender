@@ -40,7 +40,7 @@ public class DateManager {
         head.set(Calendar.WEEK_OF_YEAR, week_of_year);// first day of the week
         tail.set(Calendar.WEEK_OF_YEAR, week_of_year);
         head.set(Calendar.DAY_OF_WEEK,1);
-        tail.set(Calendar.DAY_OF_WEEK, 7);// last day of the week
+        tail.set(Calendar.DAY_OF_WEEK, 7); // last day of the week
         String[] index = {dateToStr(head.getTime()),dateToStr(tail.getTime())};
         return index;
     }

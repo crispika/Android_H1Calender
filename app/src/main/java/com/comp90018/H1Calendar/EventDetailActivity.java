@@ -123,7 +123,8 @@ public class EventDetailActivity extends AppCompatActivity {
         tv_detail_event_description = findViewById(R.id.event_detail_description);
     }
     public void setViewDetail(){
-        String dateStr = mEvent.getDay() + " / "+mEvent.getMonth() + " / " + mEvent.getYear();
+        Integer realMonth = mEvent.getMonth()+1;
+        String dateStr = mEvent.getDay() + " / "+ realMonth + " / " + mEvent.getYear();
         setTimeStr();
 
         event_detail_layout_header.setBackgroundColor(this.getResources().getColor(getColor(mEvent)));
