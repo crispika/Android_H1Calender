@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import java.text.SimpleDateFormat;
@@ -39,7 +40,7 @@ import com.comp90018.H1Calendar.EventSettingActivity.EventLocalSet;
 import com.comp90018.H1Calendar.EventSettingActivity.EventQRShare;
 import com.comp90018.H1Calendar.utils.*;
 
-public class AddFormScheduleActivity extends Activity {
+public class AddFormScheduleActivity extends AppCompatActivity {
 
     private DatePickerDialog mDataPicker;
     private TimePickerDialog mStartTimePicker;

@@ -1,6 +1,5 @@
 package com.comp90018.H1Calendar;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,6 +7,7 @@ import android.os.Bundle;
 import android.widget.Switch;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.gson.Gson;
 
@@ -18,7 +18,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class SettingActivity extends Activity {
+public class SettingActivity extends AppCompatActivity {
     private static final String SHAREDPREFS = "sharedPrefs";
 
     boolean nightAuto,nightMode,shakeMode;

@@ -76,7 +76,7 @@
                         android:layout_height="50dp"
                         android:gravity="center_vertical"
                         android:paddingLeft="75dp"
-                        android:textColor="#000"
+                        android:textColor="@color/text_color"
                         android:text="Set Event Date"/>
 
                 </RelativeLayout>
@@ -99,7 +99,7 @@
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@id/ev_all_day"
                         android:layout_marginLeft="25dp"
-                        android:textColor="#000"
+                        android:textColor="@color/text_color"
                         android:text="All Day"/>
 
                     <Switch
@@ -117,7 +117,7 @@
                     android:layout_height="50dp"
                     android:gravity="center_vertical"
                     android:paddingLeft="75dp"
-                    android:textColor="#000"
+                    android:textColor="@color/text_color"
                     android:text="Start Time"/>
 
                 <TextView
@@ -126,7 +126,7 @@
                     android:layout_height="50dp"
                     android:gravity="center_vertical"
                     android:paddingLeft="75dp"
-                    android:textColor="#000"
+                    android:textColor="@color/text_color"
                     android:text="End Time"/>
 
 
@@ -154,7 +154,7 @@
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@+id/iv_notify"
                         android:layout_marginLeft="40dp"
-                        android:textColor="#000"
+                        android:textColor="@color/text_color"
                         android:text="Notification"/>
 
                     <Switch
@@ -189,6 +189,7 @@
                         android:layout_toRightOf="@id/iv_local"
                         android:layout_marginLeft="40dp"
                         android:text="Add Location"
+                        android:textColor="@color/text_color"
                         />
                 </RelativeLayout>
 
@@ -214,7 +215,7 @@
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@id/iv_color"
                         android:layout_marginLeft="40dp"
-                        android:textColor="#000"
+                        android:textColor="@color/text_color"
                         android:text="Color : Default"
                         />
                 </RelativeLayout>
@@ -253,6 +254,7 @@
                         android:lines="5"
                         android:background="@null"
                         android:textSize="14sp"
+                        android:textColor="@color/text_color"
                         android:hint="Additional Detail"/>
                 </RelativeLayout>
 

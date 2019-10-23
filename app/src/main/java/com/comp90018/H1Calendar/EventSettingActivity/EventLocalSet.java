@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.comp90018.H1Calendar.DBHelper.sqliteHelper;
 import com.comp90018.H1Calendar.R;
@@ -25,7 +26,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.ButterKnife;
 
-public class EventLocalSet extends Activity {
+public class EventLocalSet extends AppCompatActivity {
     // store user info into shared preferences
     private static final String SHAREDPREFS  = "sharedPrefs";
     private static final String USERID = "userid";

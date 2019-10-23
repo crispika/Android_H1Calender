@@ -55,7 +55,7 @@
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@id/iv_night_mode_auto"
                         android:layout_marginLeft="40dp"
-                        android:textColor="#000"
+                        android:textColor="@color/text_color"
                         android:text="Automatic Night Mode"/>
 
                     <Switch
@@ -92,7 +92,7 @@
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@+id/iv_night_mode"
                         android:layout_marginLeft="40dp"
-                        android:textColor="#000"
+                        android:textColor="@color/text_color"
                         android:text="Night Mode"/>
 
                     <Switch
@@ -133,7 +133,7 @@
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@+id/iv_shake"
                         android:layout_marginLeft="40dp"
-                        android:textColor="#000"
+                        android:textColor="@color/text_color"
                         android:text="Notification"/>
 
                     <Switch

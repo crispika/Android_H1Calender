@@ -3,10 +3,10 @@
 
     <group android:checkableBehavior="single">
 
-        <item android:id="@+id/schedule"
-            android:checkable="true"
-            android:title="schedule"
-            android:icon="@drawable/ic_schedule"/>
+<!--        <item android:id="@+id/schedule"-->
+<!--            android:checkable="true"-->
+<!--            android:title="schedule"-->
+<!--            android:icon="@drawable/ic_schedule"/>-->
 
         <item android:id="@+id/dayview"
             android:checkable="true"
@@ -23,10 +23,10 @@
             android:title="setting"
             android:icon="@drawable/ic_setting"/>
 
-        <item android:id="@+id/contactus"
-            android:checkable="true"
-            android:title="contact us"
-            android:icon="@drawable/ic_contactus"/>
+<!--        <item android:id="@+id/contactus"-->
+<!--            android:checkable="true"-->
+<!--            android:title="contact us"-->
+<!--            android:icon="@drawable/ic_contactus"/>-->
 
     </group>
 

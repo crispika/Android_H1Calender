@@ -7,6 +7,7 @@
     import android.widget.Toast;
 
     import androidx.annotation.Nullable;
+    import androidx.appcompat.app.AppCompatActivity;
     import androidx.core.app.ActivityCompat;
     import androidx.core.content.ContextCompat;
 
@@ -17,7 +18,7 @@
 
 
 
-    public class AddQRCodeScheduleActivity extends Activity {
+    public class AddQRCodeScheduleActivity extends AppCompatActivity {
 
 
         public static final int PHOTO_REQUEST_CAMERA = 0x0000c0de;// QR scan intent code
@@ -56,6 +57,7 @@
 
         @Override
         protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+            super.onActivityResult(requestCode,resultCode,data);
             switch (requestCode) {
                 case PHOTO_REQUEST_CAMERA:
                     IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);

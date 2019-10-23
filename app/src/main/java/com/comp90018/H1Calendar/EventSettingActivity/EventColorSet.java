@@ -7,11 +7,13 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.comp90018.H1Calendar.R;
 
-public class EventColorSet extends Activity implements View.OnClickListener {
+public class EventColorSet extends AppCompatActivity implements View.OnClickListener {
     private TextView color_red,color_green,color_yellow,color_blue;
     @OnClick(R.id.color_select_back) void finishClose(){
         finish();

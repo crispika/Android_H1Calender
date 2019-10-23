@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.comp90018.H1Calendar.R;
 import com.comp90018.H1Calendar.utils.CalenderEvent;
@@ -16,7 +17,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class EventQRShare extends Activity {
+public class EventQRShare extends AppCompatActivity {
     @BindView(R.id.qr_image)
     ImageView qrImage;
 
