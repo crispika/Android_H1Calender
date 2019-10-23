@@ -45,8 +45,8 @@
         android:layout_alignParentRight="true"
         android:background="@drawable/icon_bg"
         android:layout_marginTop="10dp"
-        android:layout_marginRight="50dp"
-        android:src="@drawable/share_white_24dp" />
+        android:layout_marginRight="55dp"
+        android:src="@drawable/share_white_48dp" />
     </RelativeLayout>
     <com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton xmlns:rfab="http://schemas.android.com/apk/res-auto"
         android:id="@+id/event_detail_update_rfab"
@@ -79,8 +79,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="20dp"
-                android:background="@drawable/date_gray_48dp" />
+                android:layout_marginLeft="30dp"
+                android:background="@drawable/date_gray_32dp" />
 
             <TextView
                 android:id="@+id/event_detail_date"
@@ -102,8 +102,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="20dp"
-                android:background="@drawable/ic_alarm_grey_600_24dp" />
+                android:layout_marginLeft="30dp"
+                android:background="@drawable/time_duration_gray_32dp" />
 
             <TextView
                 android:id="@+id/event_detail_start_end_time"
@@ -125,8 +125,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="20dp"
-                android:background="@drawable/ic_location_on_grey_600_24dp" />
+                android:layout_marginLeft="30dp"
+                android:background="@drawable/location_gray_32dp" />
 
             <TextView
                 android:id="@+id/event_detail_location"
@@ -147,8 +147,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="20dp"
-                android:background="@drawable/ic_notifications_grey_600_24dp" />
+                android:layout_marginLeft="30dp"
+                android:background="@drawable/alarm_new_gray_32dp" />
 
             <TextView
                 android:id="@+id/event_detail_alarm_time"
@@ -172,8 +172,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="20dp"
-            android:background="@drawable/ic_distance_64dp" />
+            android:layout_marginLeft="30dp"
+            android:background="@drawable/distance_new_gray_32dp" />
 
         <TextView
             android:id="@+id/event_detail_distance"
@@ -195,8 +195,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="20dp"
-                android:background="@drawable/ic_menu_grey_600_24dp" />
+                android:layout_marginLeft="30dp"
+                android:background="@drawable/description_new_gray_32dp" />
 
             <TextView
                 android:id="@+id/event_detail_description"

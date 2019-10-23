@@ -63,19 +63,42 @@
                     android:layout_height="50dp">
 
                     <ImageView
+                        android:id="@+id/ev_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/date_gray_32dp"/>
+
+                    <TextView
+                        android:id="@+id/event_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="75dp"
+                        android:textColor="#000"
+                        android:text="Set Event Date"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp">
+
+                    <ImageView
                         android:id="@+id/ev_all_day"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
+                        android:layout_marginLeft="20dp"
                         android:layout_centerVertical="true"
-                        android:background="@drawable/ic_access_time_grey_600_24dp"/>
+                        android:background="@drawable/time_duration_gray_32dp"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@id/ev_all_day"
-                        android:layout_marginLeft="40dp"
+                        android:layout_marginLeft="25dp"
                         android:textColor="#000"
                         android:text="All Day"/>
 
@@ -87,15 +110,6 @@
                         android:layout_marginRight="10dp"
                         android:layout_centerVertical="true"/>
                 </RelativeLayout>
-
-                <TextView
-                    android:id="@+id/event_date"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="75dp"
-                    android:textColor="#000"
-                    android:text="Set Event Date"/>
 
                 <TextView
                     android:id="@+id/event_start_time"
@@ -131,9 +145,9 @@
                         android:id="@+id/iv_notify"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
+                        android:layout_marginLeft="20dp"
                         android:layout_centerVertical="true"
-                        android:background="@drawable/ic_notifications_grey_600_24dp"/>
+                        android:background="@drawable/alarm_new_gray_32dp"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -163,8 +177,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="10dp"
-                        android:background="@drawable/ic_location_on_grey_600_24dp"
+                        android:layout_marginLeft="20dp"
+                        android:background="@drawable/location_gray_32dp"
                         android:scaleType="center" />
 
                     <TextView
@@ -190,8 +204,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="10dp"
-                        android:background="@drawable/ic_color_edit_grey" />
+                        android:layout_marginLeft="20dp"
+                        android:background="@drawable/color_select_gray_32dp" />
 
                     <TextView
                         android:id="@+id/event_color"
@@ -226,9 +240,9 @@
                         android:id="@+id/iv_description"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
+                        android:layout_marginLeft="20dp"
                         android:layout_centerVertical="true"
-                        android:background="@drawable/ic_menu_grey_600_24dp"/>
+                        android:background="@drawable/description_new_gray_32dp"/>
 
                     <EditText
                         android:id="@+id/event_detail"

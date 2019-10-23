@@ -175,7 +175,7 @@ public class EventDetailActivity extends AppCompatActivity implements LocationLi
         tv_detail_title.setText(mEvent.getTitle());
         tv_detail_date.setText(dateStr);
         tv_detail_start_end_time.setText(timeStr);
-        tv_detail_alarm_time.setText(mEvent.getEventTime());
+        setAlermText();
         tv_detail_location.setText(mEvent.getLocal());
         tv_detail_event_description.setText(mEvent.getDescription());
     }
@@ -214,6 +214,14 @@ public class EventDetailActivity extends AppCompatActivity implements LocationLi
         }else{
             timeStr = mEvent.getStartTimeHour() + " : " + mEvent.getStartTimeMinute() + " - " +
                     mEvent.getEndTimeHour() + " : " + mEvent.getEndTimeMinute();
+        }
+    }
+
+    public void setAlermText(){
+        if(mEvent.getIsNeedNotify()){
+            tv_detail_alarm_time.setText("Alarm Set");
+        }else{
+            tv_detail_alarm_time.setText("No Alarm");
         }
     }
     public void buildDialog(){
