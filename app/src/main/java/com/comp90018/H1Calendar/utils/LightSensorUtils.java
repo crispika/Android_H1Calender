@@ -7,11 +7,15 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
 
+import java.util.LinkedList;
+
 /**
  * 用于光线传感器切换主题
  */
 public class LightSensorUtils implements SensorEventListener {
 
+    private int count = 0;
+    private boolean nowIsDay = true;
     public interface LightListener {
         public void toLight();
         public void toDark();
@@ -20,7 +24,7 @@ public class LightSensorUtils implements SensorEventListener {
     private LightListener mlightListener;
     private SensorManager mSensorManager;
     boolean isDay;
-    private final float DAY_LIGHT = 100.0f;
+    private final float DAY_LIGHT = 70.0f;
 
     public LightSensorUtils(Context context) {
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
@@ -46,14 +50,45 @@ public class LightSensorUtils implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         if (sensorEvent.sensor.getType() == Sensor.TYPE_LIGHT) {
-            isDay = sensorEvent.values[0] > DAY_LIGHT ? true : false;
+            int i = 0;
+            Log.d("Theme", "Sensor Changed " + count + nowIsDay);
+            if (nowIsDay){
+                if (sensorEvent.values[0] < DAY_LIGHT){
+                    count++;
+                }
+                else{
+                    count = 0;
+                }
+                if (count > 2){
+                    nowIsDay = false;
+                    count = 0;
+                    mlightListener.toDark();
+                }
+            }else{
+                if (sensorEvent.values[0] > DAY_LIGHT){
+                    count++;
+                }
+                else{
+                    count = 0;
+                }
+                if (count > 2){
+                    nowIsDay = true;
+                    count = 0;
+                    mlightListener.toLight();
+                }
+            }
+
+            //isDay = true;
+
+
+            //isDay = sensorEvent.values[0] > DAY_LIGHT ? true : false;
             //Log.d("Theme", "Sensor Changed " +sensorEvent.values[0]);
-            if (isDay){
-                mlightListener.toLight();
-            }
-            else{
-                mlightListener.toDark();
-            }
+            //if (isDay){
+            //    mlightListener.toLight();
+            //}
+            //else{
+            //    mlightListener.toDark();
+            //}
         }
     }
 
