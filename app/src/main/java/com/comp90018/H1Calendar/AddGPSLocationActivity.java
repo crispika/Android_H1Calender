@@ -128,7 +128,7 @@ public class AddGPSLocationActivity extends AppCompatActivity implements Locatio
         }
         if((checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) ){
-            locationManager.requestLocationUpdates(provider, 5000, 10, this);
+            locationManager.requestLocationUpdates(provider, 500, 10, this);
         }
     }
 

@@ -61,6 +61,8 @@ public class EventDetailActivity extends AppCompatActivity implements LocationLi
     private TextView tv_detail_event_distance;
     private LinearLayout distanceView;
 
+    private static Location curLocation;
+
     @OnClick(R.id.event_detail_back) void jumpBack(){
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
@@ -108,6 +110,9 @@ public class EventDetailActivity extends AppCompatActivity implements LocationLi
         }else {
             grantLocation();
         }
+        if(curLocation != null && hasLocation){
+            displayDistance(curLocation);
+        }
 
     }
     public void bindView(){
@@ -125,7 +130,7 @@ public class EventDetailActivity extends AppCompatActivity implements LocationLi
         String dateStr = mEvent.getDay() + " / "+mEvent.getMonth() + " / " + mEvent.getYear();
         setTimeStr();
 
-        if(!mEvent.getLocationId().equals("")){
+        if(mEvent.getLocationId() != null){
             hasLocation = true;
             eventLocationStr = mEvent.getCoordinate();
             grantLocation();
@@ -219,28 +224,34 @@ public class EventDetailActivity extends AppCompatActivity implements LocationLi
        }
        if((checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) ){
-           locationManager.requestLocationUpdates(provider, 5000, 10, this);
+           locationManager.requestLocationUpdates(provider, 100, 10, this);
        }
+    }
+
+    private void displayDistance(Location curLoc){
+        Location eventLocation = new Location("dummyprovider");
+        String[]latlng = eventLocationStr.split(",");
+        //System.out.println(location.getLatitude() +" "+ location.getLongitude());
+        eventLocation.setLatitude(Float.valueOf(latlng[0]));
+        eventLocation.setLongitude(Float.valueOf(latlng[1]));
+        //System.out.println(eventLocation.getLatitude() +" "+ eventLocation.getLongitude());
+        String distance = DistanceCalculator.distanceBetween(curLoc,eventLocation);
+        tv_detail_event_distance.setText(distance);
     }
 
 
     @Override
     public void onLocationChanged(Location location) {
         if(hasLocation){
-            Location eventLocation = new Location("dummyprovider");
-            String[]latlng = eventLocationStr.split(",");
-            //System.out.println(location.getLatitude() +" "+ location.getLongitude());
-            eventLocation.setLatitude(Float.valueOf(latlng[0]));
-            eventLocation.setLongitude(Float.valueOf(latlng[1]));
-            //System.out.println(eventLocation.getLatitude() +" "+ eventLocation.getLongitude());
-            String distance = DistanceCalculator.distanceBetween(location,eventLocation);
-            tv_detail_event_distance.setText(distance);
-
+            displayDistance(location);
+            curLocation = location;
         }
 
 
 
     }
+
+
 
     @Override
     public void onStatusChanged(String s, int i, Bundle bundle) {
