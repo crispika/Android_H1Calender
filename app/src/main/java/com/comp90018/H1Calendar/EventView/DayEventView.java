@@ -94,6 +94,7 @@ public class DayEventView extends Fragment {
                 Date date = ((Events.DayClickedEvent) event).getDayItem().getDate();
                 String dateStr = DateManager.dateToStr(date);
                 dayEventListViewAdapter.setDate(dateStr);
+                Log.d("single_day",dateStr);
                 //((DayEventListViewAdapter)lv_day.getAdapter()).setDate(dateStr);
                 //Log.d(LOG_TAG, "Date Setted!");
                 setTitle();

@@ -29,7 +29,8 @@ public class DateManager {
     public static String dateToStr(Date date){
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         String dateString = dateFormat.format(date);
-
+        if (dateString.substring(0,1).equals("0"))
+            dateString = dateString.substring(1);
         return dateString;
     }
 
@@ -38,7 +39,8 @@ public class DateManager {
         Calendar tail = Calendar.getInstance();
         head.set(Calendar.WEEK_OF_YEAR, week_of_year);// first day of the week
         tail.set(Calendar.WEEK_OF_YEAR, week_of_year);
-        tail.set(Calendar.DAY_OF_WEEK, 7);// last day of the week
+        head.set(Calendar.DAY_OF_WEEK,1);
+        tail.set(Calendar.DAY_OF_WEEK, 7); // last day of the week
         String[] index = {dateToStr(head.getTime()),dateToStr(tail.getTime())};
         return index;
     }

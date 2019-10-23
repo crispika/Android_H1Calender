@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.hardware.Sensor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +28,7 @@ import com.comp90018.H1Calendar.EventSettingActivity.EventQRShare;
 import com.comp90018.H1Calendar.EventView.DeleteDialog;
 import com.comp90018.H1Calendar.utils.CalenderEvent;
 import com.comp90018.H1Calendar.utils.DistanceCalculator;
+import com.comp90018.H1Calendar.utils.ShakeUtils;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton;
 
 import java.util.List;
@@ -60,6 +62,8 @@ public class EventDetailActivity extends AppCompatActivity implements LocationLi
     private TextView tv_detail_event_description;
     private TextView tv_detail_event_distance;
     private LinearLayout distanceView;
+
+    private ShakeUtils shakeItOff;
 
     private static Location curLocation;
 
@@ -102,6 +106,7 @@ public class EventDetailActivity extends AppCompatActivity implements LocationLi
         eventID = bundle.getString("id");
         mEvent = dbhelper.getEventByEventId(eventID);
         setViewDetail();
+        initSensor();
 
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -115,6 +120,31 @@ public class EventDetailActivity extends AppCompatActivity implements LocationLi
         }
 
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        shakeItOff.register();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        shakeItOff.unRegister();
+    }
+
+    private void initSensor(){
+        shakeItOff = new ShakeUtils(this);
+        shakeItOff.setOnShakeListener(new ShakeUtils.OnShakeListener() {
+            @Override
+            public void onShake() {
+                Intent intent = new Intent(EventDetailActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+    }
+
     public void bindView(){
         event_detail_layout_header = findViewById(R.id.event_detail_header);
         tv_detail_title = findViewById(R.id.event_detail_title);
@@ -127,7 +157,8 @@ public class EventDetailActivity extends AppCompatActivity implements LocationLi
         distanceView = findViewById(R.id.detail_distance_view);
     }
     public void setViewDetail(){
-        String dateStr = mEvent.getDay() + " / "+mEvent.getMonth() + " / " + mEvent.getYear();
+        Integer realMonth = mEvent.getMonth()+1;
+        String dateStr = mEvent.getDay() + " / "+ realMonth + " / " + mEvent.getYear();
         setTimeStr();
 
         if(mEvent.getLocationId() != null){
