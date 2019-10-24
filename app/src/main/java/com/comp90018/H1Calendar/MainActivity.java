@@ -291,7 +291,9 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         logoutlogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                syncToCloud(userToken, userName);
+                String usertoken = userToken;
+                String username = userName;
+                syncToCloud(usertoken, username);
                 saveUserInfo("", "", "", "", "");
                 loadUserInfo();
 
@@ -310,7 +312,10 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                 if (isWifiConnected(getApplicationContext())) {
                     System.out.println("wifi");
                     // sync
-                    syncToCloud(userToken, userName);
+                    if(isWifiConnected(getApplicationContext())){
+                        syncToCloud(userToken, userName);
+                    }
+
                     EventBus.getInstance().send(new Events.BackToToday());
 
 
@@ -976,8 +981,8 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                 ResultFromSync json = gson.fromJson(jsonString, ResultFromSync.class);
                 //register success, login
                 if (json.code == 201) {
-                    saveUserInfo(json.token, json.userInfo.userid,json.userInfo.email,json.userInfo.username);
-                    loadUserInfo();
+                    //saveUserInfo(json.token, json.userInfo.userid,json.userInfo.email,json.userInfo.username);
+                    //loadUserInfo();
                     updateEventAndLocationFromSync(userId, json.events, json.locations, dbhelper);
                     dbhelper.deleteEventByEventIdForReal();
                     dbhelper.deleteLocationByLocationIdForReal();
