@@ -52,9 +52,11 @@ public class AlarmService extends Service {
         Calendar currentTime = Calendar.getInstance();
         currentTime.setTimeInMillis(System.currentTimeMillis());
         for (CalenderEvent event : todayEvents) {
+            Log.d("Notification", "AlarmTime: "+event.getAlarmTime().getTime().toString());
+            Log.d("Notification", "CurrentTime:  "+currentTime.getTime().toString());
 
-//            if (event.getIsNeedNotify() && event.getAlarmTime().getTimeInMillis() < currentTime.getTimeInMillis()) {
-            if (event.getIsNeedNotify() && event.getAlarmTime().after(currentTime)) {
+            if (event.getIsNeedNotify() && event.getAlarmTime().getTimeInMillis() > currentTime.getTimeInMillis()) {
+//            if (event.getIsNeedNotify() && event.getAlarmTime().after(currentTime)){
                 Log.d("Notification", "AlarmTime: "+event.getAlarmTime().getTime().toString());
                 Log.d("Notification", "CurrentTime:  "+currentTime.getTime().toString());
                 return event;
@@ -63,5 +65,4 @@ public class AlarmService extends Service {
         Log.d("Notification","Currently there is no event to notify.");
         return null;
     }
-
 }

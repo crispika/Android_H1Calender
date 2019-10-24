@@ -75,6 +75,7 @@ public class LightSensorUtils implements SensorEventListener {
             return;
         }
         if (sensorEvent.sensor.getType() == Sensor.TYPE_LIGHT) {
+<<<<<<< Updated upstream
             int i = 0;
             Log.d("Theme", "Sensor Changed " + count + nowIsDay);
             if (nowIsDay){
