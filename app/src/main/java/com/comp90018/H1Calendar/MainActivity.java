@@ -1134,6 +1134,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                             Intent intent_to_setting = new Intent();
                             intent_to_setting.setClass(getApplicationContext(), SettingActivity.class);
                             startActivityForResult(intent_to_setting,SETTING_CODE);
+                            drawer_layout.closeDrawers();
                         default:
                             break;
                     }
