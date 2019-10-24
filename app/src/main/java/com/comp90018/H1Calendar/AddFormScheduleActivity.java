@@ -1,7 +1,6 @@
 package com.comp90018.H1Calendar;
 
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -12,7 +11,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.DatePicker;
-
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Switch;
@@ -23,22 +21,20 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.UUID;
-
-import butterknife.BindView;
-import butterknife.OnClick;
-import butterknife.ButterKnife;
-
 import com.comp90018.H1Calendar.Alarm.SendAlarmBroadcast;
 import com.comp90018.H1Calendar.DBHelper.sqliteHelper;
 import com.comp90018.H1Calendar.EventSettingActivity.EventColorSet;
 import com.comp90018.H1Calendar.EventSettingActivity.EventLocalSet;
-import com.comp90018.H1Calendar.EventSettingActivity.EventQRShare;
-import com.comp90018.H1Calendar.utils.*;
+import com.comp90018.H1Calendar.utils.CalenderEvent;
+import com.comp90018.H1Calendar.utils.ShakeUtils;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.UUID;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class AddFormScheduleActivity extends AppCompatActivity {
 

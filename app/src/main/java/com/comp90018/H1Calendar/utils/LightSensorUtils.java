@@ -7,8 +7,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
 
-import java.util.LinkedList;
-
 /**
  * 用于光线传感器切换主题
  */
