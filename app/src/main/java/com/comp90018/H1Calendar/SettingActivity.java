@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Layout;
+import android.view.View;
 import android.widget.Switch;
 
 import androidx.annotation.Nullable;
@@ -22,8 +24,8 @@ public class SettingActivity extends AppCompatActivity {
     Switch sw_night_mode;
     @BindView(R.id.sw_night_mode_auto)
     Switch sw_night_mode_auto;
-    @BindView(R.id.sw_shake)
-    Switch sw_shake;
+//    @BindView(R.id.sw_shake)
+//    Switch sw_shake;
 
     @OnClick(R.id.sw_night_mode_auto)
     void nightModeAuto() {
@@ -37,10 +39,10 @@ public class SettingActivity extends AppCompatActivity {
 
     }
 
-    @OnClick(R.id.sw_shake)
-    void shakeMode() {
-        shakeMode = !shakeMode;
-    }
+//    @OnClick(R.id.sw_shake)
+//    void shakeMode() {
+//        shakeMode = !shakeMode;
+//    }
 
     @OnClick(R.id.setting_save)
     void settingSave(){
@@ -58,7 +60,9 @@ public class SettingActivity extends AppCompatActivity {
         System.out.println("night auto : "+nightAuto);
         sw_night_mode_auto.setChecked(nightAuto);
         sw_night_mode.setChecked(nightMode);
-        sw_shake.setChecked(shakeMode);
+//        sw_shake.setChecked(shakeMode);
+        View shakeLayout = (View)findViewById(R.id.shake_layout);
+        shakeLayout.setVisibility(View.GONE);
 
 
 
@@ -84,7 +88,7 @@ public class SettingActivity extends AppCompatActivity {
         // the default values of these setting variables are ""
         nightAuto = sharedPreferences.getBoolean("nightModeAuto",false);
         nightMode = sharedPreferences.getBoolean("nightMode",false);
-        shakeMode = sharedPreferences.getBoolean("shakeMode",false);
+//        shakeMode = sharedPreferences.getBoolean("shakeMode",false);
 
     }
 
