@@ -1157,5 +1157,9 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         }
 
     }
+    @Override
+    public void onBackPressed() {
+
+    }
 
 }

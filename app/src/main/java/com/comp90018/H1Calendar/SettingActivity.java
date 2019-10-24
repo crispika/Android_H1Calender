@@ -67,6 +67,10 @@ public class SettingActivity extends AppCompatActivity {
 
 
     }
+    @Override
+    public void onBackPressed() {
+        settingSave();
+    }
 
     private void saveSettingPref(){
         SharedPreferences sharedPreferences = getSharedPreferences(SHAREDPREFS, Context.MODE_PRIVATE);
