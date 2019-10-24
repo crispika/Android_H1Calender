@@ -291,11 +291,12 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         logoutlogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                syncToCloud(userToken, userName);
                 saveUserInfo("", "", "", "", "");
                 loadUserInfo();
 
                 jumpToNavigationHeaderLogin();
+                EventBus.getInstance().send(new Events.BackToToday());
 
             }
         });
@@ -310,6 +311,7 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                     System.out.println("wifi");
                     // sync
                     syncToCloud(userToken, userName);
+                    EventBus.getInstance().send(new Events.BackToToday());
 
 
                 } else if (isMobileConnected(getApplicationContext())) {
@@ -365,10 +367,11 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                                     saveUserInfo(json.token, json.userInfo.userid,json.userInfo.email,json.userInfo.username,registerPwd);
                                     loadUserInfo();
                                     jumpToNavigationHeaderLogout();
+
                                     if(isWifiConnected(getApplicationContext())){
                                         syncToCloud(userToken, userName);
                                     }
-
+                                    EventBus.getInstance().send(new Events.BackToToday());
                                     Toast.makeText(getApplicationContext(), json.msg,
                                             Toast.LENGTH_SHORT).show();
                                 }
@@ -740,11 +743,13 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                     loadUserInfo();
 
                     jumpToNavigationHeaderLogout();
+
                     Toast.makeText(getApplicationContext(), "login successfully",
                             Toast.LENGTH_SHORT).show();
                     if(isWifiConnected(getApplicationContext())){
                         syncToCloud(userToken, userName);
                     }
+                    EventBus.getInstance().send(new Events.BackToToday());
                 }else if (json.code == 401){
                     Toast.makeText(getApplicationContext(), json.msg,
                             Toast.LENGTH_SHORT).show();
