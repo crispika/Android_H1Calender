@@ -32,7 +32,7 @@ public class CalendarView extends LinearLayout {
     private int hearderTextColor, currentDayTextColor, pastDayTextColor;
 
     //Hold 被选中日期的实例dayitem
-    private DayItem daySelected;
+    private DayItem daySelected = CalendarManager.getInstance().getSelectedItem();
 
     //region Constructors
     public CalendarView(Context context) {
