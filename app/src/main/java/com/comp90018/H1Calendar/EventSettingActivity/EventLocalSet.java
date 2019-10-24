@@ -1,6 +1,5 @@
 package com.comp90018.H1Calendar.EventSettingActivity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,9 +21,8 @@ import com.comp90018.H1Calendar.utils.LocationListAdapter;
 import java.util.List;
 
 import butterknife.BindView;
-
-import butterknife.OnClick;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class EventLocalSet extends AppCompatActivity {
     // store user info into shared preferences
