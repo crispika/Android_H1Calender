@@ -194,6 +194,7 @@ public class CalenderEvent implements Serializable,Comparable<CalenderEvent> {
         //Java month problem...
         cal.set(getYear(), getMonth(), getDay(), getStartTimeHour(), getStartTimeMinute());
         cal.add(Calendar.HOUR_OF_DAY, -1);
+        cal.set(Calendar.SECOND,0);
         return cal;
     }
 
