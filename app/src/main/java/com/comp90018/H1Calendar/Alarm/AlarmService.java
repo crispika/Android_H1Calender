@@ -12,6 +12,7 @@ import com.comp90018.H1Calendar.utils.DateManager;
 
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public class AlarmService extends Service {
@@ -41,8 +42,15 @@ public class AlarmService extends Service {
 
     private CalenderEvent getNext() {
 //        Log.d("Notification","start getNext()");
+        Calendar tomorrow = Calendar.getInstance();
+        tomorrow.setTime(CalendarManager.getInstance().getToday());
+        tomorrow.add(Calendar.DATE,1);
+
         db = new sqliteHelper(getApplicationContext());
         List<CalenderEvent> todayEvents = db.getEventsByDay(DateManager.dateToStr(CalendarManager.getInstance().getToday()));
+        List<CalenderEvent> tomorrowEvents = db.getEventsByDay(DateManager.dateToStr(tomorrow.getTime()));
+
+        todayEvents.addAll(tomorrowEvents);
         if (todayEvents.size() == 0) return null;
 
         //sort the event list to make earlier events before later events.
@@ -52,10 +60,8 @@ public class AlarmService extends Service {
         Calendar currentTime = Calendar.getInstance();
         currentTime.setTimeInMillis(System.currentTimeMillis());
         for (CalenderEvent event : todayEvents) {
-
 //            if (event.getIsNeedNotify() && event.getAlarmTime().getTimeInMillis() < currentTime.getTimeInMillis()) {
             if (event.getIsNeedNotify() && event.getAlarmTime().after(currentTime)) {
-                Log.d("Notification", "AlarmTime: "+event.getAlarmTime().getTime().toString());
                 Log.d("Notification", "CurrentTime:  "+currentTime.getTime().toString());
                 return event;
             }

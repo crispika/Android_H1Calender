@@ -193,7 +193,7 @@ public class CalenderEvent implements Serializable,Comparable<CalenderEvent> {
     public Calendar getAlarmTime() {
         Calendar cal = Calendar.getInstance();
         //Java month problem...
-        cal.set(getYear(), getMonth()-1, getDay(), getStartTimeHour(), getStartTimeMinute());
+        cal.set(getYear(), getMonth(), getDay(), getStartTimeHour(), getStartTimeMinute());
         cal.add(Calendar.HOUR_OF_DAY, -1);
         return cal;
     }

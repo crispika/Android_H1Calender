@@ -205,6 +205,7 @@ public class AddFormScheduleActivity extends AppCompatActivity {
                 isSucceed = dbhelper.insert(cEvent);
             }else {
                 isSucceed = dbhelper.updateEventByEventId(cEvent.getEventId(),cEvent);
+                SendAlarmBroadcast.startAlarmService(AddFormScheduleActivity.this);
             }
             if(isSucceed){
                 Toast.makeText(this, "Save Successful!", Toast.LENGTH_SHORT).show();
