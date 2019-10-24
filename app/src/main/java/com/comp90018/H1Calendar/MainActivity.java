@@ -379,6 +379,9 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                         sendPostJson.request();
                     }
                 }
+                else{
+                    Toast.makeText(getApplicationContext(), "network is not available", Toast.LENGTH_SHORT).show();
+                }
             }
 
         });
