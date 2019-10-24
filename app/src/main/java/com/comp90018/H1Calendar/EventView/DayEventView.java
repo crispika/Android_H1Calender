@@ -103,6 +103,7 @@ public class DayEventView extends Fragment {
                 String dateStr = DateManager.dateToStr(CalendarManager.getInstance().getToday());
                 dayEventListViewAdapter.setDate(dateStr);
                 //daySelected = dateStr;
+                setTitle();
             }
         });
     }
