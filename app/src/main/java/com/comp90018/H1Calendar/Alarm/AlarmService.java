@@ -37,7 +37,7 @@ public class AlarmService extends Service {
                 }
             }
         }).start();
-        return START_NOT_STICKY;
+        return START_STICKY;
     }
 
     private CalenderEvent getNext() {
