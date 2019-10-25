@@ -33,13 +33,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class AddGPSLocationActivity extends AppCompatActivity implements LocationListener{
+public class AddGPSLocationActivity extends AppCompatActivity implements LocationListener {
     protected LocationManager locationManager;
     protected Location curLocation;
-    protected String latitude,longitude;
+    protected String latitude, longitude;
     private String locationName;
     // store user info into shared preferences
-    private static final String SHAREDPREFS  = "sharedPrefs";
+    private static final String SHAREDPREFS = "sharedPrefs";
     private static final String USERID = "userid";
     // variable used to store user info that get from shared preferences
     private String userId;
@@ -57,20 +57,20 @@ public class AddGPSLocationActivity extends AppCompatActivity implements Locatio
     ListView locationListView;
 
     @OnClick(R.id.gps_save)
-    void addLocation(){
+    void addLocation() {
         locationName = gps_location_input.getText().toString();
-        if (curLocation != null && !locationName.equals("")){
-            //TODO: save location with name to database
+        if (curLocation != null && !locationName.equals("")) {
+            // save location with name to database
             sqliteHelper db = new sqliteHelper(this);
-            EventLocation eventLocation = new EventLocation(userId,locationName,getlatlng());
+            EventLocation eventLocation = new EventLocation(userId, locationName, getlatlng());
             Boolean status = db.insertLocations(eventLocation);
 
-            if(status){
+            if (status) {
                 Toast.makeText(this, "Location Save Successful!", Toast.LENGTH_SHORT).show();
-            }else {
+            } else {
                 Toast.makeText(this, "Save failed!", Toast.LENGTH_SHORT).show();
             }
-            startActivity(new Intent(this,MainActivity.class));
+            startActivity(new Intent(this, MainActivity.class));
             finish();
         }
 
@@ -79,7 +79,7 @@ public class AddGPSLocationActivity extends AppCompatActivity implements Locatio
     @OnClick(R.id.gps_cancel)
     public void cancelLocalAdd() {
         System.out.println("test cancel");
-        startActivity(new Intent(this,MainActivity.class));
+        startActivity(new Intent(this, MainActivity.class));
         finish();
     }
 
@@ -90,50 +90,48 @@ public class AddGPSLocationActivity extends AppCompatActivity implements Locatio
         ButterKnife.bind(this);
         db = new sqliteHelper(this);
         loadUserInfo();
-        //Todo: loading saved locationns
+        //loading saved locationns
         locationList = db.getAllLocationsByUserId(userId);
-        LocationListAdapter locationListAdapter = new LocationListAdapter(this,locationList);
+        LocationListAdapter locationListAdapter = new LocationListAdapter(this, locationList);
         locationListView.setAdapter(locationListAdapter);
         locationListView.setOnItemClickListener(new OnClickLocationListner());
 
 
-        //Todo: getting current location
+        // getting current location
 
 
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_CODE);
-        }else {
+        } else {
             grantLocation();
         }
 
 
-
-
     }
 
-    private void grantLocation(){
+    private void grantLocation() {
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         List list = locationManager.getProviders(true);
 
         String provider = "";
 
         if (list.contains(LocationManager.GPS_PROVIDER)) {
-            //是否为GPS位置控制器
+            //if it is a GPS location controller
             provider = LocationManager.GPS_PROVIDER;
         } else if (list.contains(LocationManager.NETWORK_PROVIDER)) {
-            //是否为网络位置控制器
+            //if it is a network location controller
             provider = LocationManager.NETWORK_PROVIDER;
         }
-        if((checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) ){
+        if ((checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
             locationManager.requestLocationUpdates(provider, 500, 10, this);
         }
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[],int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case LOCATION_CODE: {
                 if (grantResults.length > 0
@@ -149,8 +147,8 @@ public class AddGPSLocationActivity extends AppCompatActivity implements Locatio
         curLocation = location;
         latitude = String.valueOf(location.getLatitude());
         longitude = String.valueOf(location.getLongitude());
-        System.out.println("find here "+getlatlng());
-        gps_latlng.setText("Current Location: \n"+ latitude +", "+longitude);
+        System.out.println("find here " + getlatlng());
+        gps_latlng.setText("Current Location: \n" + latitude + ", " + longitude);
 
 
     }
@@ -170,14 +168,14 @@ public class AddGPSLocationActivity extends AppCompatActivity implements Locatio
 
     }
 
-    private String getlatlng(){
-        if(latitude == null){
+    private String getlatlng() {
+        if (latitude == null) {
             return " ";
         }
-        return latitude+","+longitude;
+        return latitude + "," + longitude;
     }
 
-    public void loadUserInfo(){
+    public void loadUserInfo() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHAREDPREFS, Context.MODE_PRIVATE);
 
         // the default values of these three variables are ""
@@ -191,24 +189,24 @@ public class AddGPSLocationActivity extends AppCompatActivity implements Locatio
 
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            EventLocation el = (EventLocation)adapterView.getItemAtPosition(i);
+            EventLocation el = (EventLocation) adapterView.getItemAtPosition(i);
             selectedLocationID = el.getLocationId();
-            PopupMenu popup = new PopupMenu(getApplicationContext(),view);
+            PopupMenu popup = new PopupMenu(getApplicationContext(), view);
             MenuInflater inflater = popup.getMenuInflater();
             inflater.inflate(R.menu.popup, popup.getMenu());
             popup.setOnMenuItemClickListener(this);
             popup.show();
         }
 
+        //location item click event
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-            // TODO Auto-generated method stub
             switch (item.getItemId()) {
                 case R.id.delete_location:
                     Toast.makeText(getApplicationContext(), "delete location", Toast.LENGTH_SHORT).show();
                     db.deleteLocationByLocationId(selectedLocationID);
                     locationList = db.getAllLocationsByUserId(userId);
-                    LocationListAdapter locationListAdapter = new LocationListAdapter(getApplicationContext(),locationList);
+                    LocationListAdapter locationListAdapter = new LocationListAdapter(getApplicationContext(), locationList);
                     locationListView.setAdapter(locationListAdapter);
                     break;
                 case R.id.cancel_delete:

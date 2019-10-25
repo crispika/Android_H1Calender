@@ -41,11 +41,11 @@ public class WeekEventListViewAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        if(weekEvents == null){
+        if (weekEvents == null) {
             return 0;
-        }else if(weekEvents.isEmpty()){
+        } else if (weekEvents.isEmpty()) {
             return 0;
-        }else{
+        } else {
             return weekEvents.size();
         }
     }
@@ -60,23 +60,23 @@ public class WeekEventListViewAdapter extends BaseAdapter {
         return 0;
     }
 
-    public void setDate(String start, String end){
+    public void setDate(String start, String end) {
         mDateStart = start;
         mDateEnd = end;
         setEventList();
     }
-    public void setEventList(){
+
+    public void setEventList() {
         dbhelper = new sqliteHelper(myContext.getApplicationContext());
-        weekEvents = dbhelper.getEventsByWeek(mDateStart,mDateEnd);
+        weekEvents = dbhelper.getEventsByWeek(mDateStart, mDateEnd);
         Collections.sort(weekEvents);
         notifyDataSetChanged();
         //System.out.println(dayEvents.size());
     }
 
-    public CalenderEvent getEvent(int position){
+    public CalenderEvent getEvent(int position) {
         return weekEvents.get(position);
     }
-
 
 
     static class ViewHolder {
@@ -90,13 +90,14 @@ public class WeekEventListViewAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
+
         ViewHolder holder = null;
         String dateStr = "";
 
-        if(weekEvents!=null){
+        if (weekEvents != null) {
             mEvent = weekEvents.get(i);
         }
-
+        //create view for each item
         if (view == null) {
             view = myLayoutInflater.inflate(R.layout.week_event_list_layout, null);
             holder = new ViewHolder();
@@ -110,7 +111,7 @@ public class WeekEventListViewAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) view.getTag();
         }
-        dateStr = mEvent.getDay() + "/"+(mEvent.getMonth()+1) + "/" + mEvent.getYear();
+        dateStr = mEvent.getDay() + "/" + (mEvent.getMonth() + 1) + "/" + mEvent.getYear();
         dateStr = convertDate(dateStr);
         setTimeStr();
         holder.tvWeekEventTitle.setText(mEvent.getTitle());
@@ -122,13 +123,13 @@ public class WeekEventListViewAdapter extends BaseAdapter {
         return view;
     }
 
-    public List<CalenderEvent> getEvantList(){
+    public List<CalenderEvent> getEvantList() {
         return weekEvents;
     }
 
     public void setTimeStr() {
         if (mEvent.getIsAllday()) {
-            timeStr = "Full Day";
+            timeStr = "All Day";
         } else {
             startTimeStr = mEvent.getStartTimeHour() + " : " + mEvent.getStartTimeMinute();
             endTimeStr = mEvent.getEndTimeHour() + " : " + mEvent.getEndTimeMinute();
@@ -137,7 +138,9 @@ public class WeekEventListViewAdapter extends BaseAdapter {
             timeStr = startTimeStr + " - " + endTimeStr;
         }
     }
-    public String convertTime(String timeString){
+
+    //convert time string into better format
+    public String convertTime(String timeString) {
         String result = "";
         SimpleDateFormat dateFormat = new SimpleDateFormat("h : m");
         SimpleDateFormat dateFormat2 = new SimpleDateFormat("HH : mm");
@@ -151,7 +154,9 @@ public class WeekEventListViewAdapter extends BaseAdapter {
         return result;
 
     }
-    public String convertDate(String dateString){
+
+    //convert date string into better format
+    public String convertDate(String dateString) {
         String result = "";
         SimpleDateFormat dateFormat = new SimpleDateFormat("d/MM/yyyy");
         SimpleDateFormat dateFormat2 = new SimpleDateFormat("dd / MM / yyyy - E");
@@ -165,13 +170,13 @@ public class WeekEventListViewAdapter extends BaseAdapter {
         return result;
     }
 
-    private int getColor(CalenderEvent mEvent){
+    private int getColor(CalenderEvent mEvent) {
         String color;
         if (mEvent == null) return R.color.Default;
-        if(mEvent.getEventColor() == null) color = "default";
+        if (mEvent.getEventColor() == null) color = "default";
         else color = mEvent.getEventColor();
 
-        switch (color){
+        switch (color) {
             case "Green":
                 return R.color.Green;
             case "Yellow":

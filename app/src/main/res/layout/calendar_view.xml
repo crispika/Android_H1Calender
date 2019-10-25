@@ -1,73 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
+
     <LinearLayout
-        android:background="@color/colorPrimaryDark"
         android:layout_width="match_parent"
         android:layout_height="20dp"
+        android:background="@color/colorPrimaryDark"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textColor="@color/calendar_text_header"
             android:gravity="center"
-            android:text="Sun"/>
+            android:text="Sun"
+            android:textColor="@color/calendar_text_header" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textColor="@color/calendar_text_header"
             android:gravity="center"
-            android:text="Mon"/>
+            android:text="Mon"
+            android:textColor="@color/calendar_text_header" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textColor="@color/calendar_text_header"
             android:gravity="center"
-            android:text="Tue"/>
+            android:text="Tue"
+            android:textColor="@color/calendar_text_header" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textColor="@color/calendar_text_header"
             android:gravity="center"
-            android:text="Wed"/>
+            android:text="Wed"
+            android:textColor="@color/calendar_text_header" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textColor="@color/calendar_text_header"
             android:gravity="center"
-            android:text="Thu"/>
+            android:text="Thu"
+            android:textColor="@color/calendar_text_header" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textColor="@color/calendar_text_header"
             android:gravity="center"
-            android:text="Fri"/>
+            android:text="Fri"
+            android:textColor="@color/calendar_text_header" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textColor="@color/calendar_text_header"
             android:gravity="center"
-            android:text="Sat"/>
+            android:text="Sat"
+            android:textColor="@color/calendar_text_header" />
 
     </LinearLayout>
 
     <com.comp90018.H1Calendar.calendar.WeekView
         android:id="@+id/calendarview_weekview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
+        android:layout_height="wrap_content" />
 
 </merge>

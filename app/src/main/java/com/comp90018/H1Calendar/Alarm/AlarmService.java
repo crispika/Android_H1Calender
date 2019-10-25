@@ -33,7 +33,7 @@ public class AlarmService extends Service {
                 CalenderEvent event = getNext();
                 if (event != null) {
                     event.setAlarm(getApplicationContext());
-                    Log.d("Notification","service already started");
+                    Log.d("Notification", "service already started");
                 }
             }
         }).start();
@@ -44,7 +44,7 @@ public class AlarmService extends Service {
 //        Log.d("Notification","start getNext()");
         Calendar tomorrow = Calendar.getInstance();
         tomorrow.setTime(CalendarManager.getInstance().getToday());
-        tomorrow.add(Calendar.DATE,1);
+        tomorrow.add(Calendar.DATE, 1);
 
         db = new sqliteHelper(getApplicationContext());
         List<CalenderEvent> todayEvents = db.getEventsByDay(DateManager.dateToStr(CalendarManager.getInstance().getToday()));
@@ -62,11 +62,11 @@ public class AlarmService extends Service {
         for (CalenderEvent event : todayEvents) {
 //            if (event.getIsNeedNotify() && event.getAlarmTime().getTimeInMillis() < currentTime.getTimeInMillis()) {
             if (event.getIsNeedNotify() && event.getAlarmTime().after(currentTime)) {
-                Log.d("Notification", "CurrentTime:  "+currentTime.getTime().toString());
+                Log.d("Notification", "CurrentTime:  " + currentTime.getTime().toString());
                 return event;
             }
         }
-        Log.d("Notification","Currently there is no event to notify.");
+        Log.d("Notification", "Currently there is no event to notify.");
         return null;
     }
 

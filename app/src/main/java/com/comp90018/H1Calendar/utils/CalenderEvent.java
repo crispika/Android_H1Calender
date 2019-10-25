@@ -16,8 +16,8 @@ public class CalenderEvent implements Serializable,Comparable<CalenderEvent> {
 
     private String eventId;
     private String title;
-    private boolean isAllday;//是否是全天
-    private boolean isNeedNotify;//是否需要提醒
+    private boolean isAllday;//is all day or not
+    private boolean isNeedNotify;//need notify or not
     private int year;
     private int month;
     private int day;
@@ -185,7 +185,7 @@ public class CalenderEvent implements Serializable,Comparable<CalenderEvent> {
         this.userId = userid;
     }
     /**
-     * 默认提前一个小时提醒
+     * Default alarm: 1 hour prior to the event
      *
      * @return
      */
@@ -216,11 +216,7 @@ public class CalenderEvent implements Serializable,Comparable<CalenderEvent> {
 
     public void setAlarm(Context context) {
         Intent intent = new Intent(context, AlarmReceiver.class);
-//        Intent intent = new Intent().setAction("SendAlarm");
-//        Bundle bundle = new Bundle();
-//        bundle.putSerializable("alarm",this);
         intent.putExtra("id",getEventId());
-//        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, getAlarmTime().getTimeInMillis(), pendingIntent);

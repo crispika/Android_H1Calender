@@ -8,7 +8,7 @@ public class WeekItem {
     private int mWeekInYear;
     private int mYear;
     private int mMonth;
-    private Date mDate; //这周中的一天 （初始日历时，定位这周用的那一天）
+    private Date mDate; //the date for current week
     private String mLabel;
     private ArrayList<DayItem> mDayItems;
 

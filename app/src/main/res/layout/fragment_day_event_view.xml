@@ -10,18 +10,17 @@
         android:layout_marginBottom="5dp">
 
 
-
         <TextView
             android:id="@+id/day_event_textHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_marginLeft="40dp"
-            android:textSize="20sp"
             android:text="These are events for today"
-            />
+            android:textSize="20sp" />
 
     </RelativeLayout>
+
     <ListView
         android:id="@+id/lv_day_event"
         android:layout_width="match_parent"

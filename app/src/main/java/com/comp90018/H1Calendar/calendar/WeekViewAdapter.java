@@ -97,17 +97,17 @@ public class WeekViewAdapter extends RecyclerView.Adapter<WeekViewAdapter.WeekVi
 
             for (int i = 0; i < dayview_list.size(); i++) {
 
-                //得到这一天的数据
+                //get day item
                 final DayItem dayItem = day_list.get(i);
 
-                //得到每个itemView的day_view布局
+                //get layout for each day view
                 LinearLayout dayview = dayview_list.get(i);
-                //绑定每个itemview 的day_view 布局子组件
+                //Bind the day_view layout subcomponent of each itemview
                 TextView day_label = dayview.findViewById(R.id.dayview_day_label);
                 TextView month_label = dayview.findViewById(R.id.dayview_month_label);
                 View circle = dayview.findViewById(R.id.dayview_circle_selected);
 
-                //clear下方曾经用过的设置，下面重新设置，否则会因为view recycle而出现错误设置
+                //clear used settings to avoid error
                 month_label.setVisibility(View.GONE);
                 circle.setVisibility(View.GONE);
                 day_label.setTypeface(null, Typeface.NORMAL);
@@ -120,7 +120,7 @@ public class WeekViewAdapter extends RecyclerView.Adapter<WeekViewAdapter.WeekVi
                 });
 
                 day_label.setText(dayItem.getDayOfTheMonth() + "");
-                //设置字体颜色
+                //set text color
                 if (dayItem.getDate().before(CalendarManager.getInstance().getToday())) {
                     day_label.setTextColor(pastDayTextColor);
                     month_label.setTextColor(pastDayTextColor);
@@ -129,28 +129,28 @@ public class WeekViewAdapter extends RecyclerView.Adapter<WeekViewAdapter.WeekVi
                     month_label.setTextColor(currentDayTextColor);
                 }
 
-                //如果被选中，就只显示选中的背景circle
+                //if selected, show the Selected circle
                 if (dayItem.isSelected()) {
                     circle.setVisibility(View.VISIBLE);
                     circle.setBackgroundResource(R.drawable.dayview_circle_selected);
-                //如果是今天，显示蓝色特殊circle
+                    //if it is today, show blue circle
                 } else if (dayItem.isToday()) {
                     circle.setVisibility(View.VISIBLE);
                     circle.setBackgroundResource(R.drawable.dayview_circle_current);
                 }
-                //控制每月第一天显示month_label
+                //show month label for 1st day every month
                 else if (dayItem.isFirstDayOfTheMonth()) {
                     month_label.setVisibility(View.VISIBLE);
                     month_label.setText(dayItem.getMonth());
-                    //字体加粗
+                    //bold text
                     month_label.setTypeface(null, Typeface.BOLD);
                     day_label.setTypeface(null, Typeface.BOLD);
                     //System.err.println("Month setted for" + dayItem.toString());
                 }
 
-                //当这个月第15号显示在屏幕中时，表明这个月的dayitem占据了CalendarView的大半部分
-                //∴设置Title栏的月份信息为15号的这个月
-                if(dayItem.getDayOfTheMonth() == 15){
+                //When the 15th of the month is displayed on the screen, it indicates that this month's dayitem occupies most of the CalendarView.
+                //Set the month information of the Title column to this month of the 15th
+                if (dayItem.getDayOfTheMonth() == 15) {
                     EventBus.getInstance().send(new Events.MonthChangeEvent(dayItem.getmMonthFullName()));
                 }
             }

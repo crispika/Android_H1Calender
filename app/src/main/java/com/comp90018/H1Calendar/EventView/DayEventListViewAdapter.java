@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+//this is the adapter for day event list
 public class DayEventListViewAdapter extends BaseAdapter {
 
     private Context myContext;
@@ -40,11 +41,11 @@ public class DayEventListViewAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        if(dayEvents == null){
+        if (dayEvents == null) {
             return 0;
-        }else if(dayEvents.isEmpty()){
+        } else if (dayEvents.isEmpty()) {
             return 0;
-        }else{
+        } else {
             return dayEvents.size();
         }
     }
@@ -61,6 +62,7 @@ public class DayEventListViewAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
+        //create view for each item
         ViewHolder holder = null;
         mEvent = dayEvents.get(i);
         if (view == null) {
@@ -85,11 +87,14 @@ public class DayEventListViewAdapter extends BaseAdapter {
         return view;
     }
 
-    public void setDate(String date){
+    //set the selected date
+    public void setDate(String date) {
         mDate = date;
         setEventList();
     }
-    public void setEventList(){
+
+    //get event list from database
+    public void setEventList() {
         dbhelper = new sqliteHelper(myContext.getApplicationContext());
         dayEvents = dbhelper.getEventsByDay(mDate);
         Collections.sort(dayEvents);
@@ -97,21 +102,21 @@ public class DayEventListViewAdapter extends BaseAdapter {
         //System.out.println(dayEvents.size());
     }
 
-    public CalenderEvent getEvent(int position){
+    public CalenderEvent getEvent(int position) {
         return dayEvents.get(position);
     }
 
-    public List<CalenderEvent> getEvantList(){
+    public List<CalenderEvent> getEvantList() {
         return dayEvents;
     }
 
-    private int getColor(CalenderEvent mEvent){
+    private int getColor(CalenderEvent mEvent) {
         String color;
         if (mEvent == null) return R.color.Default;
-        if(mEvent.getEventColor() == null) color = "default";
+        if (mEvent.getEventColor() == null) color = "default";
         else color = mEvent.getEventColor();
 
-        switch (color){
+        switch (color) {
             case "Green":
                 return R.color.Green;
             case "Yellow":
@@ -136,7 +141,7 @@ public class DayEventListViewAdapter extends BaseAdapter {
 
     public void setTimeStr() {
         if (mEvent.getIsAllday()) {
-            timeStr = "Full Day";
+            timeStr = "All Day";
         } else {
             startTimeStr = mEvent.getStartTimeHour() + " : " + mEvent.getStartTimeMinute();
             endTimeStr = mEvent.getEndTimeHour() + " : " + mEvent.getEndTimeMinute();
@@ -146,6 +151,7 @@ public class DayEventListViewAdapter extends BaseAdapter {
         }
     }
 
+    //convert time string into better format
     public String convertTime(String timeString) {
         String result = "";
         SimpleDateFormat dateFormat = new SimpleDateFormat("h : m");

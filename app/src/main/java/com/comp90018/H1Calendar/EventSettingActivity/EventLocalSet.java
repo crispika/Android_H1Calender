@@ -26,7 +26,7 @@ import butterknife.OnClick;
 
 public class EventLocalSet extends AppCompatActivity {
     // store user info into shared preferences
-    private static final String SHAREDPREFS  = "sharedPrefs";
+    private static final String SHAREDPREFS = "sharedPrefs";
     private static final String USERID = "userid";
     // variable used to store user info that get from shared preferences
     private String userId;
@@ -47,15 +47,15 @@ public class EventLocalSet extends AppCompatActivity {
     }
 
     @OnClick(R.id.location_save)
-    void saveLocal(){
+    void saveLocal() {
         String location = location_input.getText().toString();
-        if(!location.equals("")){
-            Intent intent= new Intent();
+        if (!location.equals("")) {
+            Intent intent = new Intent();
 //            intent.putExtra("hasCoor",false);
             intent.putExtra("location", location);
             setResult(1, intent);
             finish();
-        }else {
+        } else {
             Toast.makeText(getApplicationContext(), "Location Missing",
                     Toast.LENGTH_SHORT).show();
         }
@@ -64,15 +64,14 @@ public class EventLocalSet extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState){
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_location);
         ButterKnife.bind(this);
         sqliteHelper db = new sqliteHelper(this);
-        //TODO: getting saved location list from DB
         //test
         List<EventLocation> loclist = db.getAllLocationsByUserId(getUserID());
-        locationListAdapter = new LocationListAdapter(this,loclist);
+        locationListAdapter = new LocationListAdapter(this, loclist);
         location_list.setAdapter(locationListAdapter);
         location_list.setOnItemClickListener(new OnClickLocationListner());
 
@@ -80,22 +79,22 @@ public class EventLocalSet extends AppCompatActivity {
     }
 
 
-   private class OnClickLocationListner implements AdapterView.OnItemClickListener{
+    private class OnClickLocationListner implements AdapterView.OnItemClickListener {
 
-       @Override
-       public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-           EventLocation el = (EventLocation)adapterView.getItemAtPosition(i);
-           Intent intent= new Intent();
-           intent.putExtra("has_coor",true);
-           intent.putExtra("location",el.getName());
-           intent.putExtra("coordinate",el.getCoordinate());
-           intent.putExtra("locationID",el.getLocationId());
-           setResult(1, intent);
-           finish();
-       }
-   }
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            EventLocation el = (EventLocation) adapterView.getItemAtPosition(i);
+            Intent intent = new Intent();
+            intent.putExtra("has_coor", true);
+            intent.putExtra("location", el.getName());
+            intent.putExtra("coordinate", el.getCoordinate());
+            intent.putExtra("locationID", el.getLocationId());
+            setResult(1, intent);
+            finish();
+        }
+    }
 
-    public String getUserID(){
+    public String getUserID() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHAREDPREFS, Context.MODE_PRIVATE);
         return sharedPreferences.getString(USERID, "");
 

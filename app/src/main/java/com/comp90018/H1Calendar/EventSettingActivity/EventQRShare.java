@@ -26,29 +26,31 @@ public class EventQRShare extends AppCompatActivity {
     ImageView qrImage;
 
     @OnClick(R.id.qr_back)
-    void back(){
+    void back() {
         Intent intent = new Intent(this, EventDetailActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putString("id",event_id);
+        bundle.putString("id", event_id);
         intent.putExtras(bundle);
         startActivity(intent);
     }
+
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState){
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.qr_event_share);
         ButterKnife.bind(this);
         event_id = getIntent().getStringExtra("event_id");
         CalenderEvent event = (CalenderEvent) new sqliteHelper(getApplicationContext()).getEventByEventId(event_id);
         String jsonContent = event.toJsonStr();
-        Bitmap qrcode = QRShareUtils.createQRCodeBitmap(jsonContent,700,700);
+        Bitmap qrcode = QRShareUtils.createQRCodeBitmap(jsonContent, 700, 700);
 
         qrImage.setImageBitmap(qrcode);
     }
+
     public void onBackPressed() {
         Intent intent = new Intent(this, EventDetailActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putString("id",event_id);
+        bundle.putString("id", event_id);
         intent.putExtras(bundle);
         startActivity(intent);
     }

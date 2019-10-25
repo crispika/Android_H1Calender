@@ -58,7 +58,7 @@ public class WeekEventView extends Fragment {
         tvWeekEventTextHeader = view.findViewById(R.id.week_event_textHeader);
         weekEventListViewAdapter = new WeekEventListViewAdapter(WeekEventView.this.getActivity());
         lv_week.setAdapter(weekEventListViewAdapter);
-
+        //set day selected into Today's week or last selected week to refresh the layout
         if (CalendarManager.getInstance().getSelectedItem() == null) {
             weekStart = DateManager.headTailOfWeek(CalendarManager.getInstance().getTodayCalendar().get(Calendar.WEEK_OF_YEAR))[0];
             weekEnd = DateManager.headTailOfWeek(CalendarManager.getInstance().getTodayCalendar().get(Calendar.WEEK_OF_YEAR))[1];
@@ -75,7 +75,6 @@ public class WeekEventView extends Fragment {
                 Intent intent = new Intent(WeekEventView.this.getActivity(), EventDetailActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putString("id",weekEventListViewAdapter.getEvent(i).getEventId());
-                //System.out.println(dayEventListViewAdapter.getEvent(i).getEventId());
                 intent.putExtras(bundle);
                 startActivity(intent);
                 System.out.println(weekEventListViewAdapter.getEvent(i).getTitle());
@@ -89,11 +88,11 @@ public class WeekEventView extends Fragment {
         }else if(weekEventListViewAdapter.getEvantList() .isEmpty()){
             tvWeekEventTextHeader.setText("No event for this week, please add one");
         }else{
-            tvWeekEventTextHeader.setText("Weekly Event");
+            tvWeekEventTextHeader.setText("Week Event");
         }
     }
 
-
+    //receive date from event bus
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -107,9 +106,6 @@ public class WeekEventView extends Fragment {
                 CalendarManager.getInstance().setWeekStart(start);
                 CalendarManager.getInstance().setWeekEnd(end);
                 weekEventListViewAdapter.setDate(start,end);
-
-                //((DayEventListViewAdapter)lv_day.getAdapter()).setDate(dateStr);
-                //Log.d(LOG_TAG, "Date Setted!");
                 setTitle();
             }
             else if (event instanceof Events.BackToToday){

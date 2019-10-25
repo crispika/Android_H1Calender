@@ -10,17 +10,17 @@
 
         <item android:id="@+id/dayview"
             android:checkable="true"
-            android:title="day view"
+            android:title="Day"
             android:icon="@drawable/ic_dayview"/>
 
         <item android:id="@+id/weeklyview"
             android:checkable="true"
-            android:title="weeklyview"
+            android:title="Week"
             android:icon="@drawable/ic_weeklyview"/>
 
         <item android:id="@+id/setting"
             android:checkable="true"
-            android:title="setting"
+            android:title="Setting"
             android:icon="@drawable/ic_setting"/>
 
 <!--        <item android:id="@+id/contactus"-->

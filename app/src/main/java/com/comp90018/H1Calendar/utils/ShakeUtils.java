@@ -7,7 +7,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
 /**
- * 实现摇一摇功能
+ * implement shake to return functions
  */
 public class ShakeUtils implements SensorEventListener {
 
@@ -40,11 +40,11 @@ public class ShakeUtils implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            //values[0]:X轴，values[1]：Y轴，values[2]：Z轴
+            //values[0]:X axis，values[1]：Y axis，values[2]：Z axis
             float[] values = sensorEvent.values;
             if (Math.abs(values[0]) > ACCELER_VALUE
                     || Math.abs(values[1]) > ACCELER_VALUE
-                    || Math.abs(values[0]) > ACCELER_VALUE){
+                    || Math.abs(values[0]) > ACCELER_VALUE) {
                 mOnShakeListener.onShake();
             }
         }

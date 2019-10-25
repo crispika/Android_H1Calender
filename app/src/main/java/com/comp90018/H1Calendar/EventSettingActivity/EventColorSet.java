@@ -14,13 +14,15 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class EventColorSet extends AppCompatActivity implements View.OnClickListener {
-    private TextView color_red,color_green,color_yellow,color_blue;
-    @OnClick(R.id.color_select_back) void finishClose(){
+    private TextView color_red, color_green, color_yellow, color_blue;
+
+    @OnClick(R.id.color_select_back)
+    void finishClose() {
         finish();
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState){
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_color);
         ButterKnife.bind(this);
@@ -36,11 +38,10 @@ public class EventColorSet extends AppCompatActivity implements View.OnClickList
     }
 
 
-
     @Override
-    public void onClick(View v){
-        Intent intent=new Intent();
-        switch (v.getId()){
+    public void onClick(View v) {
+        Intent intent = new Intent();
+        switch (v.getId()) {
             case R.id.color_red:
                 intent.putExtra("color", "Red");
                 setResult(2, intent);

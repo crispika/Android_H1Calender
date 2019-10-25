@@ -27,11 +27,13 @@ public class CalendarView extends LinearLayout {
     private final String LOG_TAG = "CalendarView";
 
     //Calendar 组件内部显示每个星期日期的recycler view.
+    //Recycler view showing the date of each week inside the Calendar module
     private WeekView weekView;
 
     private int hearderTextColor, currentDayTextColor, pastDayTextColor;
 
     //Hold 被选中日期的实例dayitem
+    //Hold the instance for day selected
     private DayItem daySelected;
 
     //region Constructors
@@ -43,10 +45,12 @@ public class CalendarView extends LinearLayout {
         super(context, attrs);
 
         //加载布局进这个空layout中
+        //load layout into this empty layout
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         layoutInflater.inflate(R.layout.calendar_view, this, true);
 
-        //设置布局垂直！！一定要设置，不然recyclerview显示不出来，因为默认horizontal的
+        //设置布局垂直！！一定要设置，不然recycler view显示不出来，因为默认horizontal的
+        //set orientation to vertical, or the recycler view can not show up
         setOrientation(VERTICAL);
 
     }
@@ -66,6 +70,7 @@ public class CalendarView extends LinearLayout {
         //set LayoutManager for RecyclerView WeekView
         weekView.setLayoutManager(new LinearLayoutManager(getContext()));
         //因为每个item的高度是固定的，设置这个提高性能
+        //set fix height to each item to increase performance
         weekView.setHasFixedSize(true);
         weekView.setCustomizedScrollListener();
 
@@ -81,8 +86,7 @@ public class CalendarView extends LinearLayout {
         EventBus.getInstance().getSubject().subscribe(event -> {
             if (event instanceof Events.DayClickedEvent) {
                 updateSelectedDay(((Events.DayClickedEvent) event).getDayItem());
-            }
-            else if(event instanceof Events.BackToToday){
+            } else if (event instanceof Events.BackToToday) {
                 updateSelectedDay(CalendarManager.getInstance().getTodayItem());
             }
         });
@@ -95,10 +99,9 @@ public class CalendarView extends LinearLayout {
         this.currentDayTextColor = currentDayTextColor;
         this.pastDayTextColor = pastDayTextColor;
         initWeekView();
-        if (CalendarManager.getInstance().getSelectedItem() == null){
+        if (CalendarManager.getInstance().getSelectedItem() == null) {
             scrollToDate(CalendarManager.getInstance().getToday(), CalendarManager.getInstance().getWeekList());
-        }
-        else{
+        } else {
             scrollToDate(CalendarManager.getInstance().getSelectedDate(), CalendarManager.getInstance().getWeekList());
         }
     }
@@ -111,6 +114,8 @@ public class CalendarView extends LinearLayout {
     /**
      * 将视图scroll到某个日期的那一周处.
      * e.g 在calendarView初始化的时候，从当天的日期开始显示.
+     * scroll view to a date
+     * e.g when initiate calendar view, start the view from Today
      */
     public void scrollToDate(Date date, ArrayList<WeekItem> week_list) {
 
@@ -123,7 +128,6 @@ public class CalendarView extends LinearLayout {
         }
 
         if (position != null) {
-            //Example处用了post()方法run
             //weekView.post(() -> scrollToPosition(position));
             scrollToPosition(position);
         }
@@ -138,7 +142,7 @@ public class CalendarView extends LinearLayout {
         dayItem.setSelected(true);
         if (!dayItem.equals(daySelected)) {
             weekView.getAdapter().notifyItemChanged(dayItem.getWeekListPosition());
-            if (daySelected != null){
+            if (daySelected != null) {
                 daySelected.setSelected(false);
                 weekView.getAdapter().notifyItemChanged(daySelected.getWeekListPosition());
             }

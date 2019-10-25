@@ -7,7 +7,6 @@ import android.util.Log;
 import androidx.appcompat.app.AppCompatDelegate;
 
 
-
 /**
  * Adjust Application setting for switching theme (Day/Night).
  */
@@ -19,7 +18,7 @@ public class CalApplication extends Application {
     public void onCreate() {
         AppCompatDelegate.setDefaultNightMode(
                 AppCompatDelegate.MODE_NIGHT_NO);
-        Log.d(LOG_TAG, "UIMode is set to "+ (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK));
+        Log.d(LOG_TAG, "UIMode is set to " + (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK));
         super.onCreate();
 
     }

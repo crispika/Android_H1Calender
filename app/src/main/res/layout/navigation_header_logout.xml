@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/nav_header_logout"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="450dp"
-    android:gravity="center">
+    android:gravity="center"
+    android:orientation="vertical">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/logoutuserprofile"
@@ -12,15 +12,14 @@
         android:layout_height="100dp"
         android:layout_centerInParent="true"
         android:layout_gravity="center"
-        android:src="@drawable/ic_profile"
-        />
+        android:src="@drawable/ic_profile" />
 
     <LinearLayout
         android:id="@+id/linear_logout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="100px">
+        android:layout_marginTop="100px"
+        android:orientation="vertical">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -30,8 +29,8 @@
                 android:id="@+id/iv_userName"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
                 android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
                 android:src="@drawable/ic_username" />
 
             <TextView
@@ -41,9 +40,9 @@
                 android:layout_marginLeft="20dp"
                 android:layout_toRightOf="@id/iv_userName"
                 android:background="@null"
+                android:gravity="center_vertical"
                 android:textColor="@color/text_color"
-                android:textSize="15dp"
-                android:gravity="center_vertical"/>
+                android:textSize="15dp" />
 
         </RelativeLayout>
 
@@ -63,8 +62,8 @@
                 android:id="@+id/iv_useremail"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
                 android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
                 android:src="@drawable/ic_email" />
 
             <TextView
@@ -74,9 +73,9 @@
                 android:layout_marginLeft="20dp"
                 android:layout_toRightOf="@id/iv_useremail"
                 android:background="@null"
+                android:gravity="center_vertical"
                 android:textColor="@color/text_color"
-                android:textSize="15dp"
-                android:gravity="center_vertical"/>
+                android:textSize="15dp" />
 
         </RelativeLayout>
 
@@ -92,24 +91,24 @@
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
             android:layout_marginTop="20dp"
+            android:layout_marginRight="40dp"
             android:background="#1a56bd"
             android:text="logout"
-            android:textSize="14dp"
-            android:textColor="#fff" />
+            android:textColor="#fff"
+            android:textSize="14dp" />
 
         <Button
             android:id="@+id/btn_sync"
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
             android:layout_marginTop="20dp"
+            android:layout_marginRight="40dp"
             android:background="#1a56bd"
             android:text="sync"
-            android:textSize="14dp"
-            android:textColor="#fff" />
+            android:textColor="#fff"
+            android:textSize="14dp" />
     </LinearLayout>
 
 

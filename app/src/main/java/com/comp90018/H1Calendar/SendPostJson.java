@@ -22,7 +22,7 @@ public class SendPostJson extends Thread {
     private Handler handler = null;
     private Message msg = null;
 
-    public SendPostJson(String url, String jsonString, Handler handler){
+    public SendPostJson(String url, String jsonString, Handler handler) {
         this.handler = handler;
         this.url = url;
         this.jsonSring = jsonString;
@@ -30,14 +30,14 @@ public class SendPostJson extends Thread {
     }
 
     @Override
-    public void run(){
+    public void run() {
         Log.d("start post:", jsonSring);
-        if(url.equals("") || url == null) {
+        if (url.equals("") || url == null) {
             Log.d("No url:", jsonSring);
             return;
         }
         res = "";
-        try{
+        try {
             URL url_path = new URL(url.trim());
             connection = (HttpURLConnection) url_path.openConnection();
             connection.setDoOutput(true);
@@ -46,7 +46,7 @@ public class SendPostJson extends Thread {
             connection.setInstanceFollowRedirects(true);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-            //获取连接
+            //get connection
             connection.connect();
             outStream = connection.getOutputStream();
             outStream.write(jsonSring.getBytes());
@@ -67,21 +67,21 @@ public class SendPostJson extends Thread {
             msg.setData(bundle);
             handler.sendMessage(msg);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             Log.d("nework", "quest problem");
             e.printStackTrace();
-        }finally {
-            try{
-                if(outStream != null){
+        } finally {
+            try {
+                if (outStream != null) {
                     outStream.close();
                 }
-                if(bufferedReader != null){
+                if (bufferedReader != null) {
                     bufferedReader.close();
                 }
-                if(connection != null){
+                if (connection != null) {
                     connection.disconnect();
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 Log.d("nework", "close problem");
                 e.printStackTrace();
             }
@@ -92,7 +92,7 @@ public class SendPostJson extends Thread {
     /**
      * start
      */
-    public void request(){
+    public void request() {
         this.start();
     }
 

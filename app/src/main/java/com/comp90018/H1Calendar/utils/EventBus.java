@@ -13,7 +13,7 @@ import rx.subjects.Subject;
 public class EventBus {
     public static EventBus instance;
 
-    //使subject线程安全
+    //Make the subject thread safe
     private static final Subject<Object, Object> eventBus = new SerializedSubject<>(PublishSubject.create());
 
     public static EventBus getInstance(){
@@ -23,8 +23,8 @@ public class EventBus {
         return instance;
     }
 
-    //发送event
+    //send event
     public static void send(Object object){eventBus.onNext(object);}
-    //得到subject
+    //receive subject
     public Observable<Object> getSubject(){return eventBus;}
 }

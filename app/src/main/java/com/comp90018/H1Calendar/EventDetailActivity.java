@@ -36,6 +36,9 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+/**
+ * This activity shows event details
+ */
 public class EventDetailActivity extends AppCompatActivity implements LocationListener {
 
     private sqliteHelper dbhelper;
@@ -46,10 +49,6 @@ public class EventDetailActivity extends AppCompatActivity implements LocationLi
     private String dateStr;
 
     private RelativeLayout event_detail_layout_header;
-    private ImageButton btn_detail_back;
-    private ImageButton btn_detail_delete;
-    private ImageButton btn_detail_share;
-    private RapidFloatingActionButton rfab_detail_update;
 
     private static final int LOCATION_CODE = 1;
     protected LocationManager locationManager;
@@ -70,32 +69,41 @@ public class EventDetailActivity extends AppCompatActivity implements LocationLi
 
     private static Location curLocation;
 
-    @OnClick(R.id.event_detail_back) void jumpBack(){
+
+    @OnClick(R.id.event_detail_back)
+    void jumpBack() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
     }
-    @OnClick(R.id.event_detail_update_rfab) void updateEvent(){
+
+    @OnClick(R.id.event_detail_update_rfab)
+    void updateEvent() {
         Intent intent = new Intent(this, AddFormScheduleActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putString("type","editEvent");
-        bundle.putString("id",eventID);
+        bundle.putString("type", "editEvent");
+        bundle.putString("id", eventID);
         //System.out.println(eventID);
         intent.putExtras(bundle);
         startActivity(intent);
         finish();
     }
-    @OnClick(R.id.event_detail_share) void shareByQR(){
+
+    @OnClick(R.id.event_detail_share)
+    void shareByQR() {
         Intent intent = new Intent(this, EventQRShare.class);
         Bundle bundle = new Bundle();
-        bundle.putString("event_id",eventID);
+        bundle.putString("event_id", eventID);
         intent.putExtras(bundle);
         startActivity(intent);
         finish();
     }
-    @OnClick(R.id.event_detail_delete) void deleteEvent(){
+
+    @OnClick(R.id.event_detail_delete)
+    void deleteEvent() {
         buildDialog();
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,7 +111,6 @@ public class EventDetailActivity extends AppCompatActivity implements LocationLi
         dbhelper = new sqliteHelper(this);
         ButterKnife.bind(this);
         bindView();
-        //bindOnClickAction();
 
         Bundle bundle = getIntent().getExtras();
         eventID = bundle.getString("id");
@@ -111,14 +118,15 @@ public class EventDetailActivity extends AppCompatActivity implements LocationLi
         setViewDetail();
         initSensor();
 
+        //show distance between current location and target location
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_CODE);
-        }else {
+        } else {
             grantLocation();
         }
-        if(curLocation != null && hasLocation){
+        if (curLocation != null && hasLocation) {
             displayDistance(curLocation);
         }
 
@@ -136,7 +144,7 @@ public class EventDetailActivity extends AppCompatActivity implements LocationLi
         shakeItOff.unRegister();
     }
 
-    private void initSensor(){
+    private void initSensor() {
         shakeItOff = new ShakeUtils(this);
         shakeItOff.setOnShakeListener(new ShakeUtils.OnShakeListener() {
             @Override
@@ -148,7 +156,7 @@ public class EventDetailActivity extends AppCompatActivity implements LocationLi
         });
     }
 
-    public void bindView(){
+    public void bindView() {
         event_detail_layout_header = findViewById(R.id.event_detail_header);
         tv_detail_title = findViewById(R.id.event_detail_title);
         tv_detail_date = findViewById(R.id.event_detail_date);
@@ -159,18 +167,19 @@ public class EventDetailActivity extends AppCompatActivity implements LocationLi
         tv_detail_event_distance = findViewById(R.id.event_detail_distance);
         distanceView = findViewById(R.id.detail_distance_view);
     }
-    public void setViewDetail(){
-        Integer realMonth = mEvent.getMonth()+1;
-        dateStr = mEvent.getDay() + "/"+ realMonth + "/" + mEvent.getYear();
+
+    public void setViewDetail() {
+        Integer realMonth = mEvent.getMonth() + 1;
+        dateStr = mEvent.getDay() + "/" + realMonth + "/" + mEvent.getYear();
         dateStr = convertDate(dateStr);
         setTimeStr();
 
-        if(mEvent.getLocationId() != null){
+        if (mEvent.getLocationId() != null) {
             hasLocation = true;
             eventLocationStr = mEvent.getCoordinate();
             grantLocation();
 
-        }else {
+        } else {
             hasLocation = false;
             distanceView.setVisibility(View.GONE);
         }
@@ -190,13 +199,14 @@ public class EventDetailActivity extends AppCompatActivity implements LocationLi
         startActivity(intent);
         finish();
     }
-    private int getColor(CalenderEvent mEvent){
+
+    private int getColor(CalenderEvent mEvent) {
         String color;
         if (mEvent == null) return R.color.Default;
-        if(mEvent.getEventColor() == null) color = "default";
+        if (mEvent.getEventColor() == null) color = "default";
         else color = mEvent.getEventColor();
 
-        switch (color){
+        switch (color) {
             case "Green":
                 return R.color.Green;
             case "Yellow":
@@ -221,7 +231,9 @@ public class EventDetailActivity extends AppCompatActivity implements LocationLi
             timeStr = startTimeStr + " - " + endTimeStr;
         }
     }
-    public String convertTime(String timeString){
+
+    //convert time string into better format
+    public String convertTime(String timeString) {
         String result = "";
         SimpleDateFormat dateFormat = new SimpleDateFormat("h : m");
         SimpleDateFormat dateFormat2 = new SimpleDateFormat("HH : mm");
@@ -235,7 +247,9 @@ public class EventDetailActivity extends AppCompatActivity implements LocationLi
         return result;
 
     }
-    public String convertDate(String dateString){
+
+    //convert date string into better format
+    public String convertDate(String dateString) {
         String result = "";
         SimpleDateFormat dateFormat = new SimpleDateFormat("d/MM/yyyy");
         SimpleDateFormat dateFormat2 = new SimpleDateFormat("dd / MM / yyyy - E");
@@ -249,14 +263,15 @@ public class EventDetailActivity extends AppCompatActivity implements LocationLi
         return result;
     }
 
-    public void setAlermText(){
-        if(mEvent.getIsNeedNotify()){
+    public void setAlermText() {
+        if (mEvent.getIsNeedNotify()) {
             tv_detail_alarm_time.setText("Alarm Set");
-        }else{
+        } else {
             tv_detail_alarm_time.setText("No Alarm");
         }
     }
-    public void buildDialog(){
+
+    public void buildDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(EventDetailActivity.this);
         builder.setTitle("Attention");
         builder.setMessage("Delete Event?");
@@ -280,50 +295,41 @@ public class EventDetailActivity extends AppCompatActivity implements LocationLi
         builder.show();
     }
 
-    private void grantLocation(){
+    private void grantLocation() {
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         List list = locationManager.getProviders(true);
 
         String provider = "";
         if (list.contains(LocationManager.GPS_PROVIDER)) {
-            //是否为GPS位置控制器
             //GPS location controller
             provider = LocationManager.GPS_PROVIDER;
+        } else if (list.contains(LocationManager.NETWORK_PROVIDER)) {
+            //Internet location controller
+            provider = LocationManager.NETWORK_PROVIDER;
         }
-        else if (list.contains(LocationManager.NETWORK_PROVIDER)) {
-           //是否为网络位置控制器
-           //Internet location controller
-           provider = LocationManager.NETWORK_PROVIDER;
-        }
-        if((checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) ){
-           locationManager.requestLocationUpdates(provider, 100, 10, this);
+        if ((checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
+            locationManager.requestLocationUpdates(provider, 100, 10, this);
         }
     }
 
-    private void displayDistance(Location curLoc){
+    private void displayDistance(Location curLoc) {
         Location eventLocation = new Location("dummyprovider");
-        String[]latlng = eventLocationStr.split(",");
-        //System.out.println(location.getLatitude() +" "+ location.getLongitude());
+        String[] latlng = eventLocationStr.split(",");
         eventLocation.setLatitude(Float.valueOf(latlng[0]));
         eventLocation.setLongitude(Float.valueOf(latlng[1]));
-        //System.out.println(eventLocation.getLatitude() +" "+ eventLocation.getLongitude());
-        String distance = DistanceCalculator.distanceBetween(curLoc,eventLocation);
+        String distance = DistanceCalculator.distanceBetween(curLoc, eventLocation);
         tv_detail_event_distance.setText(distance);
     }
 
 
     @Override
     public void onLocationChanged(Location location) {
-        if(hasLocation){
+        if (hasLocation) {
             displayDistance(location);
             curLocation = location;
         }
-
-
-
     }
-
 
 
     @Override
