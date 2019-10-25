@@ -1,6 +1,5 @@
 package com.comp90018.H1Calendar.EventSettingActivity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -9,11 +8,11 @@ import android.widget.ImageView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.comp90018.H1Calendar.DBHelper.sqliteHelper;
 import com.comp90018.H1Calendar.EventDetailActivity;
 import com.comp90018.H1Calendar.R;
 import com.comp90018.H1Calendar.utils.CalenderEvent;
 import com.comp90018.H1Calendar.utils.QRShareUtils;
-import com.comp90018.H1Calendar.DBHelper.sqliteHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

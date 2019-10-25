@@ -113,8 +113,14 @@ public class WeekEventView extends Fragment {
                 setTitle();
             }
             else if (event instanceof Events.BackToToday){
-                String dateStr = DateManager.dateToStr(CalendarManager.getInstance().getToday());
-
+                String start = DateManager.headTailOfWeek(CalendarManager.getInstance().getTodayCalendar().get(Calendar.WEEK_OF_YEAR))[0];
+                String end = DateManager.headTailOfWeek(CalendarManager.getInstance().getTodayCalendar().get(Calendar.WEEK_OF_YEAR))[1];
+                weekStart = start;
+                weekEnd = end;
+                CalendarManager.getInstance().setWeekStart(start);
+                CalendarManager.getInstance().setWeekEnd(end);
+                weekEventListViewAdapter.setDate(start,end);
+                setTitle();
             }
         });
     }

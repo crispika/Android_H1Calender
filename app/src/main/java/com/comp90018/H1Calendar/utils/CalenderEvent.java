@@ -4,7 +4,6 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.util.Log;
 
 import com.comp90018.H1Calendar.Alarm.AlarmReceiver;
@@ -193,8 +192,9 @@ public class CalenderEvent implements Serializable,Comparable<CalenderEvent> {
     public Calendar getAlarmTime() {
         Calendar cal = Calendar.getInstance();
         //Java month problem...
-        cal.set(getYear(), getMonth()-1, getDay(), getStartTimeHour(), getStartTimeMinute());
+        cal.set(getYear(), getMonth(), getDay(), getStartTimeHour(), getStartTimeMinute());
         cal.add(Calendar.HOUR_OF_DAY, -1);
+        cal.set(Calendar.SECOND,0);
         return cal;
     }
 

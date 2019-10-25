@@ -1,9 +1,5 @@
 package com.comp90018.H1Calendar;
 
-import java.io.OutputStream;
-import java.io.InputStream;
-
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -30,7 +26,6 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.comp90018.H1Calendar.Alarm.AlarmService;
 import com.comp90018.H1Calendar.Alarm.SendAlarmBroadcast;
 import com.comp90018.H1Calendar.DBHelper.sqliteHelper;
 import com.comp90018.H1Calendar.EventView.DayEventView;
@@ -56,12 +51,7 @@ import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout;
 import com.wangjie.rapidfloatingactionbutton.contentimpl.labellist.RFACLabelItem;
 import com.wangjie.rapidfloatingactionbutton.contentimpl.labellist.RapidFloatingActionContentLabelList;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -69,7 +59,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -302,11 +291,14 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
         logoutlogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                String usertoken = userToken;
+                String username = userName;
+                syncToCloud(usertoken, username);
                 saveUserInfo("", "", "", "", "");
                 loadUserInfo();
 
                 jumpToNavigationHeaderLogin();
+                EventBus.getInstance().send(new Events.BackToToday());
 
             }
         });
@@ -320,7 +312,11 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                 if (isWifiConnected(getApplicationContext())) {
                     System.out.println("wifi");
                     // sync
-                    syncToCloud(userToken, userName);
+                    if(isWifiConnected(getApplicationContext())){
+                        syncToCloud(userToken, userName);
+                    }
+
+                    EventBus.getInstance().send(new Events.BackToToday());
 
 
                 } else if (isMobileConnected(getApplicationContext())) {
@@ -376,10 +372,11 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                                     saveUserInfo(json.token, json.userInfo.userid,json.userInfo.email,json.userInfo.username,registerPwd);
                                     loadUserInfo();
                                     jumpToNavigationHeaderLogout();
+
                                     if(isWifiConnected(getApplicationContext())){
                                         syncToCloud(userToken, userName);
                                     }
-
+                                    EventBus.getInstance().send(new Events.BackToToday());
                                     Toast.makeText(getApplicationContext(), json.msg,
                                             Toast.LENGTH_SHORT).show();
                                 }
@@ -751,11 +748,13 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                     loadUserInfo();
 
                     jumpToNavigationHeaderLogout();
+
                     Toast.makeText(getApplicationContext(), "login successfully",
                             Toast.LENGTH_SHORT).show();
                     if(isWifiConnected(getApplicationContext())){
                         syncToCloud(userToken, userName);
                     }
+                    EventBus.getInstance().send(new Events.BackToToday());
                 }else if (json.code == 401){
                     Toast.makeText(getApplicationContext(), json.msg,
                             Toast.LENGTH_SHORT).show();
@@ -982,8 +981,8 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
                 ResultFromSync json = gson.fromJson(jsonString, ResultFromSync.class);
                 //register success, login
                 if (json.code == 201) {
-                    saveUserInfo(json.token, json.userInfo.userid,json.userInfo.email,json.userInfo.username);
-                    loadUserInfo();
+                    //saveUserInfo(json.token, json.userInfo.userid,json.userInfo.email,json.userInfo.username);
+                    //loadUserInfo();
                     updateEventAndLocationFromSync(userId, json.events, json.locations, dbhelper);
                     dbhelper.deleteEventByEventIdForReal();
                     dbhelper.deleteLocationByLocationIdForReal();
@@ -1156,6 +1155,10 @@ public class MainActivity extends AppCompatActivity implements RapidFloatingActi
 
             }
         }
+
+    }
+    @Override
+    public void onBackPressed() {
 
     }
 
