@@ -6,8 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!--DrawerLayout第一个子view是内容区-->
-    <!--FloatingActionButton FAB 组件-->
+    <!--DrawerLayout: first sub view is the content area-->
+    <!--FloatingActionButton FAB function-->
     <com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout xmlns:rfal="http://schemas.android.com/apk/res-auto"
         android:id="@+id/main_fab_layout"
         android:layout_width="match_parent"
@@ -20,7 +20,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <!--导航栏-->
+            <!--Navigation module-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
@@ -31,10 +31,10 @@
                     android:id="@+id/open_drawer_btn"
                     android:layout_width="0dp"
                     android:layout_height="30dp"
-                    android:layout_weight="1"
                     android:layout_gravity="center_vertical"
-                    android:scaleType="centerInside"
+                    android:layout_weight="1"
                     android:background="@color/colorPrimaryDark"
+                    android:scaleType="centerInside"
                     android:src="@drawable/ic_menu_white_24dp" />
 
                 <LinearLayout
@@ -47,30 +47,30 @@
                         android:layout_width="wrap_content"
                         android:layout_height="30dp"
                         android:layout_gravity="center_vertical"
-                        android:textSize="20dp"
                         android:gravity="center"
-                        android:textColor="#fff" />
+                        android:textColor="#fff"
+                        android:textSize="20dp" />
                 </LinearLayout>
 
                 <ImageButton
                     android:id="@+id/back_to_today"
                     android:layout_width="0dp"
                     android:layout_height="30dp"
-                    android:scaleType="centerInside"
-                    android:layout_weight="1"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_today_white_24dp"
-                    android:background="@color/colorPrimaryDark"/>
+                    android:layout_weight="1"
+                    android:background="@color/colorPrimaryDark"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_today_white_24dp" />
 
             </LinearLayout>
 
-            <!--Calendar 自定义组件-->
+            <!--Calendar custom module-->
             <com.comp90018.H1Calendar.calendar.CalendarView
                 android:id="@+id/calendar_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <!--Placeholder for Fragment - Day/WeekPager,具体日程记录显示-->
+            <!--Placeholder for Fragment - Day/WeekPager,event list present module-->
 
             <FrameLayout
                 android:id="@+id/Event_container"
@@ -97,23 +97,6 @@
             rfab:rfab_shadow_radius="7dp"
             rfab:rfab_size="normal" />
     </com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout>
-
-
-    <!--DrawerLayout第二个子view会作为侧滑菜单-->
-    <!--    <LinearLayout-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="match_parent"-->
-    <!--        android:layout_gravity="start"-->
-    <!--        android:background="@android:color/white">-->
-
-    <!--        <ListView-->
-    <!--            android:id="@+id/left_list"-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="match_parent">-->
-
-    <!--        </ListView>-->
-
-    <!--    </LinearLayout>-->
 
 
     <!--navigation view-->

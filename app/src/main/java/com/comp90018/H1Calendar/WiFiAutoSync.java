@@ -33,9 +33,9 @@ import java.util.TimerTask;
 
 public class WiFiAutoSync extends Service {
     private Timer timer = null;
-    // each 10 seconds, execute timer.scheduleAtFixedRate once
+    // every 10 seconds, execute timer.scheduleAtFixedRate once
     static final long PERIOD = 10 * 1000;
-    // 0 seconds, between calling timer.scheduleAtFixedRate and executing run
+    // 0 second, between calling timer.scheduleAtFixedRate and executing run
     static final int DELAY = 0;
 
     // store user info into shared preferences
@@ -48,7 +48,6 @@ public class WiFiAutoSync extends Service {
 
     // variable used to store user info that get from shared preferences
     private String userToken, userId, userEmail, userName, userPwd;
-
 
 
     @Nullable
@@ -64,16 +63,16 @@ public class WiFiAutoSync extends Service {
     // background service, showing toast message to indicate whether sync successfully
     public int onStartCommand(final Intent intent, int flags, int startId) {
 
-        if (null == timer ) {
+        if (null == timer) {
             timer = new Timer();
         }
 
         timer.scheduleAtFixedRate(new TimerTask() {
 
             // calling UI handler to show the message
-            private Handler updateUI = new Handler(){
+            private Handler updateUI = new Handler() {
                 @Override
-                public void dispatchMessage(Message message){
+                public void dispatchMessage(Message message) {
                     super.dispatchMessage(message);
                     showToastMessage();
                 }
@@ -81,7 +80,7 @@ public class WiFiAutoSync extends Service {
 
             @Override
             public void run() {
-                try{
+                try {
 
                     if (isWifiConnected(getApplicationContext())) {
                         System.out.println("wifi");
@@ -92,21 +91,22 @@ public class WiFiAutoSync extends Service {
                         Log.e("background service", "===========runnable=======");
                         //updateUI.sendEmptyMessage(0);
 
-                        if(!userid.equals("") && !usertoken.equals("")){
+                        if (!userid.equals("") && !usertoken.equals("")) {
 
                             //updateUI.sendEmptyMessage(0);
                         }
 
 
-
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                catch (Exception e) {e.printStackTrace(); }
             }
         }, DELAY, PERIOD);
 
         return super.onStartCommand(intent, flags, startId);
     }
+
 
     // check for wifi
     public boolean isWifiConnected(Context context) {
@@ -121,8 +121,8 @@ public class WiFiAutoSync extends Service {
         return false;
     }
 
-    public void showToastMessage(){
-        Toast.makeText(getApplicationContext(),"sync successfully", Toast.LENGTH_LONG).show();
+    public void showToastMessage() {
+        Toast.makeText(getApplicationContext(), "sync successfully", Toast.LENGTH_LONG).show();
     }
 
     // syncToCloud();
@@ -147,14 +147,10 @@ public class WiFiAutoSync extends Service {
         editor.putString(USERID, userid);
         editor.putString(USEREMAIL, useremail);
         editor.putString(USERNAME, username);
-
-        // apply(): apply会把数据同步写入内存缓存，然后异步保存到磁盘，可能会执行失败，失败不会收到错误回调
-        // commit(): commit将同步的把数据写入磁盘和内存缓存
         editor.apply();
-        //Toast.makeText(this, "data saved", Toast.LENGTH_SHORT).show();
     }
 
-    public void syncToCloud(String usertoken, String username){
+    public void syncToCloud(String usertoken, String username) {
 
         // token
         // userinfo
@@ -188,7 +184,7 @@ public class WiFiAutoSync extends Service {
                 //register success, login
                 if (json.code == 201) {
                     Log.e("background service", "===========sync=======");
-                    saveUserInfo(json.token, json.userInfo.userid,json.userInfo.email,json.userInfo.username);
+                    saveUserInfo(json.token, json.userInfo.userid, json.userInfo.email, json.userInfo.username);
                     loadUserInfo();
                     updateEventAndLocationFromSync(userId, json.events, json.locations, dbhelper);
                     dbhelper.deleteEventByEventIdForReal();
@@ -208,61 +204,33 @@ public class WiFiAutoSync extends Service {
         };
         SendPostJson sendPostJson = new SendPostJson(urlAddress, jsonObject, handler);
         sendPostJson.request();
-        // Http request
-
-        //Log.d("json", jsonString);
-//                [{"day":10,"description":"None","endTimeHour":0,"endTimeMinute":0,"eventId":"509b23f6-a73a-4121-8b80-403681c258e6","isAllday":false,"isNeedNotify":false,"local":"None","month":10,"startTimeHour":0,"startTimeMinute":0,"title":"default1","year":2019},
-//                {"day":11,"description":"None","endTimeHour":0,"endTimeMinute":0,"eventId":"e93e3d36-8836-434d-bba7-352846a28eae","isAllday":false,"isNeedNotify":false,"local":"None","month":10,"startTimeHour":0,"startTimeMinute":0,"title":"default2","year":2019},
-//                {"day":13,"description":"None","endTimeHour":0,"endTimeMinute":0,"eventId":"9d01331f-ac2a-4e0a-9b8b-04069d1acd90","isAllday":false,"isNeedNotify":false,"local":"None","month":10,"startTimeHour":0,"startTimeMinute":0,"title":"default3","year":2019}]
-
-
-        // send http
-
-
-        // 收到反馈
-
-        // sync successfully
-        //if(true){
-        //    Toast.makeText(getApplicationContext(), "sync successfully",
-        //            Toast.LENGTH_SHORT).show();
-        //}
-        // sync failed
-        //else{
-        //    Toast.makeText(getApplicationContext(), "sync failed",
-        //            Toast.LENGTH_SHORT).show();
-
-        //}
-
-
     }
 
-    public void updateEventAndLocationFromSync(String userid, List<Event> events, List<Location> locations, sqliteHelper dbhelper){
+    public void updateEventAndLocationFromSync(String userid, List<Event> events, List<Location> locations, sqliteHelper dbhelper) {
 
         List<Event> localEvents = dbhelper.syncGetAllEventsByUserId(userid);
         HashMap<String, Event> eventMap = new HashMap<String, Event>();
-        //Log.d("update", "update");
-        for (Event localevent: localEvents){
+        for (Event localevent : localEvents) {
             eventMap.put(localevent.eventid, localevent);
 
         }
-        for (Event event: events){
-            if (event.isdelete != null && event.isdelete.compareTo("T") == 0){
+        for (Event event : events) {
+            if (event.isdelete != null && event.isdelete.compareTo("T") == 0) {
                 if (eventMap.get(event.eventid) != null) {
                     dbhelper.deleteEventByEventId(event.eventid);
                 }
             }
             if (eventMap.get(event.eventid) == null) {
                 dbhelper.insertSyncEvent(event);
-            }
-            else{
+            } else {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 Event localEvent = eventMap.get(event.eventid);
-                if(event.updatetime != null && localEvent.updatetime != null){
-                    try{
-                        if (simpleDateFormat.parse(event.updatetime).getTime() > simpleDateFormat.parse(localEvent.updatetime).getTime()){
+                if (event.updatetime != null && localEvent.updatetime != null) {
+                    try {
+                        if (simpleDateFormat.parse(event.updatetime).getTime() > simpleDateFormat.parse(localEvent.updatetime).getTime()) {
                             dbhelper.updateEventFromSyncByEventId(event.eventid, event);
                         }
-                    }catch(ParseException e) {
+                    } catch (ParseException e) {
                         e.printStackTrace();
                     }
                 }
@@ -271,11 +239,11 @@ public class WiFiAutoSync extends Service {
 
         List<Location> localLocations = dbhelper.syncGetAllLocationsByUserId(userid);
         HashMap<String, Location> locationMap = new HashMap<String, Location>();
-        for (Location locallocation: localLocations){
+        for (Location locallocation : localLocations) {
             locationMap.put(locallocation.locationid, locallocation);
         }
-        for (Location location: locations){
-            if (location.isdelete != null && location.isdelete.compareTo("T") == 0){
+        for (Location location : locations) {
+            if (location.isdelete != null && location.isdelete.compareTo("T") == 0) {
                 if (locationMap.get(location.locationid) != null) {
                     dbhelper.deleteLocationByLocationId(location.locationid);
                 }
@@ -287,7 +255,7 @@ public class WiFiAutoSync extends Service {
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         Log.e("background service", "===========destroy=======");
         super.onDestroy();
     }

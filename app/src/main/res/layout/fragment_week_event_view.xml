@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginBottom="5dp">
-    <TextView
-        android:id="@+id/week_event_textHeader"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_marginLeft="40dp"
-        android:textSize="20sp"
-        android:text="These are events for today"
-        />
+
+        <TextView
+            android:id="@+id/week_event_textHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="40dp"
+            android:text="These are events for today"
+            android:textSize="20sp" />
     </RelativeLayout>
+
     <ListView
         android:id="@+id/lv_week_event"
         android:layout_width="match_parent"

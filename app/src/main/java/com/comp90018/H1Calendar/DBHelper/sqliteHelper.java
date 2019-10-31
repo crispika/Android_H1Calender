@@ -48,9 +48,10 @@ public class sqliteHelper extends SQLiteOpenHelper {
     }
 
 
-    // onCreate()方法在数据库文件第一次创建时调用。
-    // 如果数据库文件不存在，SQLiteOpenHelper在自动创建数据库后会调用onCreate()方法，在该方法中一般需要创建表、视图等组件
-    // 在创建前数据库一般是空的，因此不需要先删除数据库中相关的组件。
+    // The onCreate() method is called when the database file is first created.
+    // If the database file does not exist, SQLiteOpenHelper will call the onCreate() method after the database is automatically created.
+    // In this method, you need to create components such as tables and views.
+    // The database is generally empty before it is created, so there is no need to delete the relevant components in the database first.
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
@@ -69,8 +70,7 @@ public class sqliteHelper extends SQLiteOpenHelper {
         Log.d("createDB", "successful");
     }
 
-    // 如果数据库文件存在，并且当前版本号高于上次创建或升级的版本号，SQLiteOpenHelper会调用onUpgrade()方法，调用该方法后会更新数据库的版本号。
-    // 在onUpgrade()方法中除了创建表、视图等组件外，还需要先删除这些相关的组件，因此，在调用onUpgrade()方法前，数据库是存在的，里面还原许多数据库组建。
+
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 
@@ -87,7 +87,7 @@ public class sqliteHelper extends SQLiteOpenHelper {
 
     }
 
-    public boolean insertSyncEvent(Event event){
+    public boolean insertSyncEvent(Event event) {
         SQLiteDatabase sqlitedb = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
@@ -108,7 +108,7 @@ public class sqliteHelper extends SQLiteOpenHelper {
         contentValues.put("userId", event.getUserid());
         contentValues.put("locationId", event.getLocationid());
         contentValues.put("updateTime", event.getUpdatetime());
-        // F 没有删除
+        // F means not deleted
         contentValues.put("isDelete", "F");
 
 
@@ -163,7 +163,6 @@ public class sqliteHelper extends SQLiteOpenHelper {
         sdf.applyPattern("yyyy-MM-dd HH:mm:ss");
         Date date = new Date();
         contentValues.put("updateTime", sdf.format(date).toString());
-        // F 没有删除
         contentValues.put("isDelete", "F");
 
 
@@ -262,6 +261,7 @@ public class sqliteHelper extends SQLiteOpenHelper {
 
         return eventList;
     }
+
     public List<Location> syncGetAllLocationsByUserId(String userId) {
         SQLiteDatabase sqlitedb = this.getWritableDatabase();
 
@@ -402,7 +402,6 @@ public class sqliteHelper extends SQLiteOpenHelper {
         contentValues.put("userId", event.getUserid());
         contentValues.put("locationId", event.getLocationid());
         contentValues.put("updateTime", event.getUpdatetime());
-        // F 没有删除
         contentValues.put("isDelete", "F");
 
         // number of rows affected
@@ -466,7 +465,7 @@ public class sqliteHelper extends SQLiteOpenHelper {
 
     }
 
-    // 把default userID 更新到 current userid
+    // update default userID into current userid
     public boolean updateEventsByUserId(String defaultUserId, String currentUserId) {
         SQLiteDatabase sqlitedb = this.getWritableDatabase();
 
@@ -531,7 +530,6 @@ public class sqliteHelper extends SQLiteOpenHelper {
         contentValues.put("locationName", eventLocation.getName());
         contentValues.put("coordinate", eventLocation.getCoordinate());
         contentValues.put("userId", eventLocation.getUserId());
-        // F == 没有删除
         contentValues.put("isDelete", "F");
 
         long result = sqlitedb.insert("LOCATION", null, contentValues);
@@ -555,7 +553,6 @@ public class sqliteHelper extends SQLiteOpenHelper {
         contentValues.put("locationName", location.getLocationname());
         contentValues.put("coordinate", location.getCoordinate());
         contentValues.put("userId", location.getUserid());
-        // F == 没有删除
         contentValues.put("isDelete", "F");
 
         long result = sqlitedb.insert("LOCATION", null, contentValues);
@@ -609,7 +606,7 @@ public class sqliteHelper extends SQLiteOpenHelper {
     }
 
     // delete location
-    public boolean deleteLocationByLocationId(String locationId){
+    public boolean deleteLocationByLocationId(String locationId) {
 
         SQLiteDatabase sqlitedb = this.getWritableDatabase();
 
@@ -646,8 +643,6 @@ public class sqliteHelper extends SQLiteOpenHelper {
 
 
     }
-
-
 
 
     public void loadUserInfo() {

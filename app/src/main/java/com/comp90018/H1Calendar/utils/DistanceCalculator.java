@@ -5,8 +5,8 @@ import android.location.Location;
 import java.text.DecimalFormat;
 
 /**
- * 抽象类
- * 用于计算坐标间距离 以及预估时间
+ * abstract class
+ * Used to calculate the distance between coordinates and the estimated time
  */
 public abstract class DistanceCalculator {
     private static final int speed = 900;

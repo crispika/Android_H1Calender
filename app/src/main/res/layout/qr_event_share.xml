@@ -1,44 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/qr_event_share"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
 
-        <LinearLayout
-            android:id="@+id/qr_action_bar"
+    <LinearLayout
+        android:id="@+id/qr_action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/qr_back"
+            style="@style/imageButtonStyleTwo"
+            android:src="@drawable/ic_keyboard_backspace_white_24dp" />
+
+        <TextView
+            android:id="@+id/qr_title"
+            style="@style/ActivityTitleStyleTwo"
+            android:text="Share Event"
+            android:textSize="18dp" />
+
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/qr_image"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@color/colorPrimary"
-            android:orientation="horizontal">
-
-            <ImageButton
-                android:id="@+id/qr_back"
-                style="@style/imageButtonStyleTwo"
-                android:src="@drawable/ic_keyboard_backspace_white_24dp" />
-
-            <TextView
-                android:id="@+id/qr_title"
-                style="@style/ActivityTitleStyleTwo"
-                android:text="Share Event"
-                android:textSize="18dp" />
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_margin="50dp"
+            android:layout_marginTop="50dp" />
 
 
-        </LinearLayout>
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:id="@+id/qr_image"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="50dp"
-                android:layout_centerVertical="true"
-                android:layout_marginTop="50dp"
-                />
-
-
-        </RelativeLayout>
+    </RelativeLayout>
 
 
 </LinearLayout>

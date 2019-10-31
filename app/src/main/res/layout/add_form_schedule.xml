@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/action_bar"
@@ -42,16 +43,15 @@
                 android:id="@+id/event_title"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:paddingLeft="20dp"
                 android:layout_marginTop="5dp"
                 android:background="@null"
-                android:hint="Add Event Title"/>
+                android:hint="Add Event Title"
+                android:paddingLeft="20dp" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#4fa3a3a3"
-                />
+                android:background="#4fa3a3a3" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -63,39 +63,53 @@
                     android:layout_height="50dp">
 
                     <ImageView
+                        android:id="@+id/ev_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="20dp"
+                        android:background="@drawable/date_gray_32dp" />
+
+                    <TextView
+                        android:id="@+id/event_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="75dp"
+                        android:text="Set Event Date"
+                        android:textColor="@color/text_color" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp">
+
+                    <ImageView
                         android:id="@+id/ev_all_day"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
                         android:layout_centerVertical="true"
-                        android:background="@drawable/ic_access_time_grey_600_24dp"/>
+                        android:layout_marginLeft="20dp"
+                        android:background="@drawable/time_duration_gray_32dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
+                        android:layout_marginLeft="25dp"
                         android:layout_toRightOf="@id/ev_all_day"
-                        android:layout_marginLeft="40dp"
-                        android:textColor="#000"
-                        android:text="All Day"/>
+                        android:text="All Day"
+                        android:textColor="@color/text_color" />
 
                     <Switch
                         android:id="@+id/all_day_switch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
-                        android:layout_marginRight="10dp"
-                        android:layout_centerVertical="true"/>
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="10dp" />
                 </RelativeLayout>
-
-                <TextView
-                    android:id="@+id/event_date"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="75dp"
-                    android:textColor="#000"
-                    android:text="Set Event Date"/>
 
                 <TextView
                     android:id="@+id/event_start_time"
@@ -103,8 +117,8 @@
                     android:layout_height="50dp"
                     android:gravity="center_vertical"
                     android:paddingLeft="75dp"
-                    android:textColor="#000"
-                    android:text="Start Time"/>
+                    android:text="Start Time"
+                    android:textColor="@color/text_color" />
 
                 <TextView
                     android:id="@+id/event_end_time"
@@ -112,15 +126,14 @@
                     android:layout_height="50dp"
                     android:gravity="center_vertical"
                     android:paddingLeft="75dp"
-                    android:textColor="#000"
-                    android:text="End Time"/>
+                    android:text="End Time"
+                    android:textColor="@color/text_color" />
 
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="#4fa3a3a3"
-                    />
+                    android:background="#4fa3a3a3" />
 
                 <RelativeLayout
                     android:id="@+id/layout_event_notify"
@@ -131,25 +144,26 @@
                         android:id="@+id/iv_notify"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
                         android:layout_centerVertical="true"
-                        android:background="@drawable/ic_notifications_grey_600_24dp"/>
+                        android:layout_marginLeft="20dp"
+                        android:background="@drawable/alarm_new_gray_32dp" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_toRightOf="@+id/iv_notify"
                         android:layout_marginLeft="40dp"
-                        android:textColor="#000"
-                        android:text="Notification"/>
+                        android:layout_toRightOf="@+id/iv_notify"
+                        android:text="Notification"
+                        android:textColor="@color/text_color" />
 
                     <Switch
                         android:id="@+id/notify_switch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
-                        android:layout_marginRight="10dp"
-                        android:layout_centerVertical="true"/>
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="10dp" />
                 </RelativeLayout>
 
 
@@ -163,8 +177,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="10dp"
-                        android:background="@drawable/ic_location_on_grey_600_24dp"
+                        android:layout_marginLeft="20dp"
+                        android:background="@drawable/location_gray_32dp"
                         android:scaleType="center" />
 
                     <TextView
@@ -172,12 +186,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_toRightOf="@id/iv_local"
                         android:layout_marginLeft="40dp"
+                        android:layout_toRightOf="@id/iv_local"
                         android:text="Add Location"
-                        />
+                        android:textColor="@color/text_color" />
                 </RelativeLayout>
-
 
 
                 <RelativeLayout
@@ -190,31 +203,29 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="10dp"
-                        android:background="@drawable/ic_color_edit_grey" />
+                        android:layout_marginLeft="20dp"
+                        android:background="@drawable/color_select_gray_32dp" />
 
                     <TextView
                         android:id="@+id/event_color"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_toRightOf="@id/iv_color"
                         android:layout_marginLeft="40dp"
-                        android:textColor="#000"
+                        android:layout_toRightOf="@id/iv_color"
                         android:text="Color : Default"
-                        />
+                        android:textColor="@color/text_color" />
                 </RelativeLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="#4fa3a3a3"
-                    />
+                    android:background="#4fa3a3a3" />
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="#4fa3a3a3"
-                    />
+                    android:background="#4fa3a3a3" />
 
 
                 <RelativeLayout
@@ -226,27 +237,27 @@
                         android:id="@+id/iv_description"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
                         android:layout_centerVertical="true"
-                        android:background="@drawable/ic_menu_grey_600_24dp"/>
+                        android:layout_marginLeft="20dp"
+                        android:background="@drawable/description_new_gray_32dp" />
 
                     <EditText
                         android:id="@+id/event_detail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="75dp"
                         android:layout_marginTop="5dp"
-                        android:lines="5"
                         android:background="@null"
-                        android:textSize="14sp"
-                        android:hint="Additional Detail"/>
+                        android:hint="Additional Detail"
+                        android:lines="5"
+                        android:paddingLeft="75dp"
+                        android:textColor="@color/text_color"
+                        android:textSize="14sp" />
                 </RelativeLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="#4fa3a3a3"
-                    />
+                    android:background="#4fa3a3a3" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

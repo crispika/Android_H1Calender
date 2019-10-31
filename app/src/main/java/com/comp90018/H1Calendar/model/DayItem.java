@@ -6,15 +6,15 @@ import java.util.Date;
 
 public class DayItem implements Serializable {
 
-    private Date mDate; //日期
-    private int mDayOfTheMonth; //相当于Day_OF_Month,一月中的第几天
-    private int mDayOfTheWeek; //一个星期中的第几天
-    private boolean mToday; //是否是今天
-    private boolean mFirstDayOfTheMonth = false; //是否是当前月的第一天
-    private boolean isSelected;//是否选中
-    private String mMonth; // 月份名的简称
+    private Date mDate; //date
+    private int mDayOfTheMonth; //day number in month
+    private int mDayOfTheWeek; //day number in week
+    private boolean mToday; //today or not
+    private boolean mFirstDayOfTheMonth = false; //the first day of current month
+    private boolean isSelected;//is selected
+    private String mMonth; // short version of month name
     private int weekListPosition;
-    private String mMonthFullName; //月份全称
+    private String mMonthFullName; //month full name
     private int mWeekOfTheYear;
 
     // region Constructor

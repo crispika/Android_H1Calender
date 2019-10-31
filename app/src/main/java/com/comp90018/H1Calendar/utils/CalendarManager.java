@@ -16,12 +16,12 @@ public class CalendarManager {
 
     private Calendar calendar = Calendar.getInstance();
     /**
-     * 传入参数，设置calendar的地区
+     * receive parameter to set calendar locale
      */
     private Locale locale;
 
     /**
-     * 日历开始的最小、最大日期
+     * min and max date for a calendar
      */
     private Calendar min_date, max_Date;
 
@@ -107,7 +107,7 @@ public class CalendarManager {
 
         WeekItem weekItem = new WeekItem(year, month, week_of_year, date);
 
-        //将这周include的dayitem列表加入weekItem中
+        //Add the list of dayitem included this week to weekItem
         weekItem.setDayItems(getDayItemList(year, week_of_year,week_list_position));
 
         return weekItem;
@@ -135,7 +135,7 @@ public class CalendarManager {
             if(isToday) todayItem =dayItem;
             day_list.add(dayItem);
 
-            //日期往后推一天
+            //push date 1 day later
             temp_cal.add(Calendar.DATE, 1);
         }
         return day_list;

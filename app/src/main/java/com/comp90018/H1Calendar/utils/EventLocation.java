@@ -3,9 +3,9 @@ package com.comp90018.H1Calendar.utils;
 import java.util.UUID;
 
 /**
- * 基础类
- * 用于储存地点信息的对象
- * 包含用户定义的地名以及相应坐标
+ * basic class
+ * Object for storing location information
+ * Contains user-defined place names and corresponding coordinates
  *
  */
 public class EventLocation {

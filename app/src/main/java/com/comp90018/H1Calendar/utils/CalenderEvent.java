@@ -4,7 +4,6 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.util.Log;
 
 import com.comp90018.H1Calendar.Alarm.AlarmReceiver;
@@ -17,8 +16,8 @@ public class CalenderEvent implements Serializable,Comparable<CalenderEvent> {
 
     private String eventId;
     private String title;
-    private boolean isAllday;//是否是全天
-    private boolean isNeedNotify;//是否需要提醒
+    private boolean isAllday;//is all day or not
+    private boolean isNeedNotify;//need notify or not
     private int year;
     private int month;
     private int day;
@@ -186,15 +185,16 @@ public class CalenderEvent implements Serializable,Comparable<CalenderEvent> {
         this.userId = userid;
     }
     /**
-     * 默认提前一个小时提醒
+     * Default alarm: 1 hour prior to the event
      *
      * @return
      */
     public Calendar getAlarmTime() {
         Calendar cal = Calendar.getInstance();
         //Java month problem...
-        cal.set(getYear(), getMonth()-1, getDay(), getStartTimeHour(), getStartTimeMinute());
+        cal.set(getYear(), getMonth(), getDay(), getStartTimeHour(), getStartTimeMinute());
         cal.add(Calendar.HOUR_OF_DAY, -1);
+        cal.set(Calendar.SECOND,0);
         return cal;
     }
 
@@ -216,11 +216,7 @@ public class CalenderEvent implements Serializable,Comparable<CalenderEvent> {
 
     public void setAlarm(Context context) {
         Intent intent = new Intent(context, AlarmReceiver.class);
-//        Intent intent = new Intent().setAction("SendAlarm");
-//        Bundle bundle = new Bundle();
-//        bundle.putSerializable("alarm",this);
         intent.putExtra("id",getEventId());
-//        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, getAlarmTime().getTimeInMillis(), pendingIntent);
